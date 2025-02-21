@@ -4,47 +4,17 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/passenger.css">
+    <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" 
      crossorigin="anonymous" referrerpolicy="no-referrence">
     <link rel="website icon" href="images/megacitycablogo.png" type="png">
-    <title>Mega City Cab | Passenger </title>
+    <title>Mega City Cab | Admin </title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
-
-
-<<<<<<< HEAD
-  
-        <style>
-=======
-    <style>
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
-        .account ul {
-    list-style-type: none; 
-    padding: 0;
-    margin: 0; 
-}
-
-.account li {
-    display: inline; 
-    margin-right: 15px; 
-}
-
-.account i {
-    color: #fcca03; 
-    text-decoration: none; 
-    transition: color 0.3s; 
-}
-
-.account i:hover {
-    color: white;
-}
-    </style>
-<<<<<<< HEAD
-
-=======
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
+   
+    
+    
     
     </head>
     
@@ -66,24 +36,8 @@
             <ul>
         
                 
-                <li><a href="reservation.php">Reservations</a></li>
-                <li><a href="events.php">Events & Promotions</a></li>
-                <li><a href="gallery.html">Gallery</a></li>
-                <li><a href="contactus.php">Contact Us</a></li>
-             
-            </ul>
-        </div>
-        <div class="account">
-            <ul>
-            
-              
-             
                 
-                <li id="iconWrapper">
-                    <a href="index.html">
-                        <i class="fa-solid fa-home" id="user-lap"></i>
-                    </a>
-                </li>
+             
             </ul>
         </div>
        
@@ -95,19 +49,16 @@
         
     <div class="container1">
   <h1>Sign Up</h1>
-  <form id="signupForm" method="post">
+  <form id="signupForm" method="post" >
     <div class="form-group">
-      <label for="fullName">Full Name</label>
-      <input type="text" id="fullName" name="fullName" required>
-    </div>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" required>
-    </div>
-    <div class="form-group">
-      <label for="phone">Phone</label>
-      <input type="tel" id="phone" name="phone" required>
-    </div>
+  <label for="adminId">Admin ID</label>
+  <input type="text" id="adminId" name="adminId" required>
+</div>
+      <div class="form-group">
+  <label for="adminName">Admin Name</label>
+  <input type="text" id="adminName" name="adminName" required>
+</div>
+
     <div class="form-group">
       <label for="password">Password</label>
       <input type="password" id="password" name="password" required>
@@ -116,23 +67,14 @@
       <label for="confirmPassword">Confirm Password</label>
       <input type="password" id="confirmPassword" name="confirmPassword" required>
     </div>
-    <div class="form-group">
-      <label for="nic">NIC</label>
-      <input type="text" id="nic" name="nic" required>
-    </div>
-    <div class="form-group">
-      <label for="address">Address</label>
-      <textarea id="address" name="address" rows="3" required></textarea>
-    </div>
     <button type="submit">Sign Up</button>
   </form>
-  <p style="margin-top: 50px;">Already have an account? <a href="login.html" class="login-link">Log In</a></p>
 </div>
-        <div id="message"style="display: none;" >Passenger Registration Successful!</div>
+<div id="message"style="display: none;" >Admin Registration Successful!</div>
 
         
         
-        
+ 
         
         
         
@@ -147,9 +89,7 @@
     </div>
     <div class="column">
       
-      <a href="about.html">About Us</a>
-      <a href="contactus.php">Contact Us</a>
-      <a href="logout.php">Claim Admin</a>
+      
     </div>
    
   
@@ -158,22 +98,23 @@
 </div>
   </div>
         
-         <script>
+        
+            <script>
 $(document).ready(function() {
     $('#signupForm').on('submit', function(event) {
-        event.preventDefault(); 
+        event.preventDefault(); // Prevent the default form submission
 
-        
+        // Serialize the form data
         var formData = $(this).serialize();
 
-       
-        $.post('passengerSignup', formData, function(response) {
-            
+        // Send the form data using AJAX
+        $.post('adminSignup', formData, function(response) {
+            // Set the message text
             $('#message').text(response.message);
 
-            
+            // Show the message and fade it out after 2 seconds
             $('#message').fadeIn(300).delay(2000).fadeOut(300, function() {
-                
+                // Refresh the page after the message fades out
                 location.reload();
             });
         });

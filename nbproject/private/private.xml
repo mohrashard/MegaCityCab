@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/DriverDAO.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/DriverSignupServlet.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/LoginServlet.java</file>
@@ -27,6 +28,21 @@
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/PassengerService.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Driver.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AdminSignupServlet.java</file>
+=======
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/index.html</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DriverSignupServlet.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DBConnection.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/passenger_signup.html</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/Passenger.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DriverRepositoryImpl.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/Driver.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DriverService.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/admin_register.html</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/Admin.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DriverRepository.java</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/css/style.css</file>
+            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/driver_signup.html</file>
+>>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
         </group>
     </open-files>
 </project-private>

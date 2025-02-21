@@ -7,8 +7,13 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
+<<<<<<< HEAD
 <project name="CabSystem" default="default" basedir=".">
     <description>Builds, tests, and runs the project CabSystem.</description>
+=======
+<project name="MegaCabCitySystem" default="default" basedir=".">
+    <description>Builds, tests, and runs the project MegaCabCitySystem.</description>
+>>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
     <import file="nbproject/build-impl.xml"/>
     <!--
 
