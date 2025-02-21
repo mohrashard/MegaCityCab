@@ -3,8 +3,29 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Netbeans24/CabSystem/web/index.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/DriverDAO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/DriverSignupServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/LoginServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/AdminService.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/admin_login.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/PassengerDAO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/factory/AdminDAOFactory.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AdminLoginServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/PassengerSignupServlet.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/AdminDAO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/passenger_signup.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/IAdminDAO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Admin.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/config/DBConnection.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/DriverService.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/login.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/css/admin.css</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Passenger.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/driver_signup.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/index.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/admin_register.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/PassengerService.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Driver.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AdminSignupServlet.java</file>
         </group>
     </open-files>

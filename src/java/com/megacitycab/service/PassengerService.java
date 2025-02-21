@@ -11,15 +11,15 @@ public class PassengerService {
     }
 
 public boolean registerPassenger(Passenger passenger) {
-    // You can add validation logic here if needed
+ 
     try {
-        // Attempt to save the passenger using the DAO
+      
         passengerDAO.savePassenger(passenger);
-        return true; // Return true if save is successful
+        return true; 
     } catch (Exception e) {
-        // Handle exceptions (e.g., log the error, throw a custom exception, etc.)
+        
         System.out.println("Error registering passenger: " + e.getMessage());
-        return false; // Return false if there was an error
+        return false; 
     }
 }
 

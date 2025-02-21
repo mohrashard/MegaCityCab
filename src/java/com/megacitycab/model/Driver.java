@@ -9,7 +9,7 @@ public class Driver {
     private String vehicleType;
     private String vehicleReg;
 
-    // Constructor, Getters, and Setters
+    
     public Driver(String fullName, String email, String phone, String password, String licenseNo, String vehicleType, String vehicleReg) {
         this.fullName = fullName;
         this.email = email;
@@ -20,7 +20,7 @@ public class Driver {
         this.vehicleReg = vehicleReg;
     }
 
-    // Getters and Setters
+
 
     public String getFullName() {
         return fullName;

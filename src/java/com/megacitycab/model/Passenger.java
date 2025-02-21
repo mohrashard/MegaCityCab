@@ -8,7 +8,7 @@ public class Passenger {
     private String nic;
     private String address;
 
-    // Constructor, Getters, and Setters
+ 
     public Passenger(String fullName, String email, String phone, String password, String nic, String address) {
         this.fullName = fullName;
         this.email = email;
@@ -18,7 +18,7 @@ public class Passenger {
         this.address = address;
     }
 
-    // Getters and Setters
+
 
     public String getFullName() {
         return fullName;

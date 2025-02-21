@@ -1,22 +1,41 @@
 package com.megacitycab.model;
 
 public class Admin {
-    private String adminID;
+    private int adminId;
+    private String username;
     private String adminName;
     private String password;
 
-    public Admin(String adminID, String adminName, String password) {
-        this.adminID = adminID;
+    // Constructor for retrieving from DB
+    public Admin(int adminId, String username, String adminName, String password) {
+        this.adminId = adminId;
+        this.username = username;
         this.adminName = adminName;
         this.password = password;
     }
 
-    public String getAdminID() {
-        return adminID;
+    // Constructor for sign-up (without adminId)
+    public Admin(String username, String adminName, String password) {
+        this.username = username;
+        this.adminName = adminName;
+        this.password = password;
     }
 
-    public void setAdminID(String adminID) {
-        this.adminID = adminID;
+    // Getters and Setters
+    public int getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(int adminId) {
+        this.adminId = adminId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getAdminName() {
@@ -34,8 +53,4 @@ public class Admin {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
-    
-    
 }
