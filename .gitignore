@@ -1,1 +1,10 @@
+# Ignore everything in the build directory
+/build/*
+
+# Keep the lib folder and its contents
+!/build/web/WEB-INF/lib/
+!/build/web/WEB-INF/lib/*
+
+# Ignore the dist directory
 /dist/
+
