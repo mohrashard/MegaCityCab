@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
-<Context path="/CabSystem"/>
-=======
-<Context path="/MegaCabCitySystem"/>
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
+<Context path="/CabSystem">
+    <!-- Additional configuration for CabSystem can go here -->
+</Context>

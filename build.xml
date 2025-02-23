@@ -7,13 +7,9 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<<<<<<< HEAD
+
 <project name="CabSystem" default="default" basedir=".">
     <description>Builds, tests, and runs the project CabSystem.</description>
-=======
-<project name="MegaCabCitySystem" default="default" basedir=".">
-    <description>Builds, tests, and runs the project MegaCabCitySystem.</description>
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
     <import file="nbproject/build-impl.xml"/>
     <!--
 
@@ -30,14 +26,14 @@
       -pre-compile-test:         called before javac compilation of JUnit tests
       -post-compile-test:        called after javac compilation of JUnit tests
       -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
+      -post-compile-test-single: called after javac compilation of single JUnit test
       -pre-dist:                 called before archive building 
       -post-dist:                called after archive building 
       -post-clean:               called after cleaning build products 
       -pre-run-deploy:           called before deploying
       -post-run-deploy:          called after deploying
 
-    Example of pluging an obfuscator after the compilation could look like 
+    Example of plugging an obfuscator after the compilation could look like 
 
         <target name="-post-compile">
             <obfuscate>
@@ -47,7 +43,6 @@
 
     For list of available properties check the imported 
     nbproject/build-impl.xml file. 
-
 
     Other way how to customize the build is by overriding existing main targets.
     The target of interest are: 

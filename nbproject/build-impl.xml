@@ -17,11 +17,7 @@
         - cleanup
 
         -->
-<<<<<<< HEAD
-<project xmlns:webproject1="http://www.netbeans.org/ns/web-project/1" xmlns:webproject2="http://www.netbeans.org/ns/web-project/2" xmlns:webproject3="http://www.netbeans.org/ns/web-project/3" basedir=".." default="default" name="CabSystem-impl">
-=======
 <project xmlns:webproject1="http://www.netbeans.org/ns/web-project/1" xmlns:webproject2="http://www.netbeans.org/ns/web-project/2" xmlns:webproject3="http://www.netbeans.org/ns/web-project/3" basedir=".." default="default" name="MegaCabCitySystem-impl">
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
     <import file="ant-deploy.xml"/>
     <fail message="Please build using Ant 1.7.1 or higher.">
         <condition>
@@ -474,11 +470,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                     </fileset>
                 </union>
                 <taskdef classname="org.testng.TestNGAntTask" classpath="${run.test.classpath}" name="testng"/>
-<<<<<<< HEAD
-                <testng classfilesetref="test.set" failureProperty="tests.failed" listeners="org.testng.reporters.VerboseReporter" methods="${testng.methods.arg}" mode="${testng.mode}" outputdir="${build.test.results.dir}" suitename="CabSystem" testname="TestNG tests" workingDir="${basedir}">
-=======
                 <testng classfilesetref="test.set" failureProperty="tests.failed" listeners="org.testng.reporters.VerboseReporter" methods="${testng.methods.arg}" mode="${testng.mode}" outputdir="${build.test.results.dir}" suitename="MegaCabCitySystem" testname="TestNG tests" workingDir="${basedir}">
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
                     <xmlfileset dir="${build.test.classes.dir}" includes="@{testincludes}"/>
                     <propertyset>
                         <propertyref prefix="test-sys-prop."/>
@@ -626,11 +618,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                 <condition else="-testclass @{testClass}" property="test.class.or.method" value="-methods @{testClass}.@{testMethod}">
                     <isset property="test.method"/>
                 </condition>
-<<<<<<< HEAD
-                <condition else="-suitename CabSystem -testname @{testClass} ${test.class.or.method}" property="testng.cmd.args" value="@{testClass}">
-=======
                 <condition else="-suitename MegaCabCitySystem -testname @{testClass} ${test.class.or.method}" property="testng.cmd.args" value="@{testClass}">
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
                     <matches pattern=".*\.xml" string="@{testClass}"/>
                 </condition>
                 <delete dir="${build.test.results.dir}" quiet="true"/>
@@ -994,24 +982,14 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist,-do-dist-with-manifest,-do-dist-without-manifest" name="do-dist"/>
     <target depends="init" if="dist.ear.dir" name="library-inclusion-in-manifest">
-<<<<<<< HEAD
-        <copyfiles files="${file.reference.json-20250107.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.mssql-jdbc-12.8.1.jre8.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-=======
         <copyfiles files="${file.reference.mssql-jdbc-12.8.1.jre8.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.json-20250107.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
-<<<<<<< HEAD
-        <copyfiles files="${file.reference.json-20250107.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.mssql-jdbc-12.8.1.jre8.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-=======
         <copyfiles files="${file.reference.mssql-jdbc-12.8.1.jre8.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.json-20250107.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>

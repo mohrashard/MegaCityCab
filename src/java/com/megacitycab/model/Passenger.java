@@ -8,11 +8,7 @@ public class Passenger {
     private String nic;
     private String address;
 
-<<<<<<< HEAD
- 
-=======
-    // Constructor, Getters, and Setters
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
+
     public Passenger(String fullName, String email, String phone, String password, String nic, String address) {
         this.fullName = fullName;
         this.email = email;
@@ -22,11 +18,6 @@ public class Passenger {
         this.address = address;
     }
 
-<<<<<<< HEAD
-
-=======
-    // Getters and Setters
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
 
     public String getFullName() {
         return fullName;

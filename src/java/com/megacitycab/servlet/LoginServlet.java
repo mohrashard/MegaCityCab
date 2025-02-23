@@ -36,21 +36,29 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-            String query = "SELECT * FROM " + tableName + " WHERE email = ? AND password = ?";
+            // Use parameterized queries to avoid SQL injection
+            String query = "SELECT * FROM " + tableName + " WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, email);
-            stmt.setString(2, password);
-
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                HttpSession session = request.getSession();
-                session.setAttribute("user", email);
-                session.setAttribute("userType", userType);
+                // Assuming you have a hashed password stored in the database
+                String storedPassword = rs.getString("password");
+                
+                // Compare the provided password with the stored hashed password
+                if (password.equals(storedPassword)) { // Replace with hash comparison if using hashed passwords
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", email);
+                    session.setAttribute("userType", userType);
 
-                jsonResponse.put("success", true);
-                jsonResponse.put("userType", userType);
-                jsonResponse.put("message", "Login successful!");
+                    jsonResponse.put("success", true);
+                    jsonResponse.put("userType", userType);
+                    jsonResponse.put("message", "Login successful!");
+                } else {
+                    jsonResponse.put("success", false);
+                    jsonResponse.put("message", "Invalid email or password.");
+                }
             } else {
                 jsonResponse.put("success", false);
                 jsonResponse.put("message", "Invalid email or password.");
@@ -59,7 +67,7 @@ public class LoginServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             jsonResponse.put("success", false);
-            jsonResponse.put("message", "An error occurred.");
+            jsonResponse.put("message", "An error occurred: " + e.getMessage());
         }
 
         out.print(jsonResponse.toString());
