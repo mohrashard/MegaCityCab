@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link rel="stylesheet" href="css/driverdashboard.css">
+    <title>Driver Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+</head>
+<body>
+    <div class="dashboard-container">
+     
+        <nav class="sidebar glass">
+           <div class="sidebar-header">
+    <img src="images/megacitycablogo.png" alt="Mega City Cab Logo" class="logo-img">
+    <h2>Mega City Cab</h2>
+</div>
+
+            <div class="nav-item active">
+                <i class="fas fa-home"></i> Dashboard
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-route"></i> Current Rides
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-history"></i> Ride History
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-wallet"></i> Earnings
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-user"></i> Profile
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-question-circle"></i> Help Center
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </div>
+        </nav>
+
+        <main class="main-content">
+         
+            <div class="top-bar glass">
+                <div class="menu-toggle">
+                    <h1>Hello, John! 👋</h1>
+                    <p>Ready for your next ride?</p>
+                </div>
+                <div class="driver-status">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="statusToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="statusText">Go Online</span>
+                </div>
+            </div>
+
+            
+            <div class="dashboard-content fade-in">
+      
+
+                
+                <div class="cards-grid">
+                    <div class="card glass">
+                        <h3>Today's Earnings</h3>
+                        <h2>$124.50</h2>
+                        <p>3 Rides Completed</p>
+                    </div>
+                    <div class="card glass">
+                        <h3>Rating</h3>
+                        <h2>4.8 ⭐</h2>
+                        <p>Last 7 days</p>
+                    </div>
+                    <div class="card glass">
+                        <h3>Current Status</h3>
+                        <h2 id="rideStatus">Looking for rides...</h2>
+                    </div>
+                    <div class="card glass">
+                        <h3>Weather</h3>
+                        <h2>24°C</h2>
+                        <p>Sunny</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-section fade-in">
+                <div class="analytics-card">
+                    <div class="analytics-header">
+                        <h2 class="analytics-title">Earnings Analytics</h2>
+                        <div class="analytics-period">Last 28 Days</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="earningsChart"></canvas>
+                    </div>
+                    <div class="earnings-summary">
+                        <div class="summary-card">
+                            <h4>Total Earnings</h4>
+                            <p>$3,245.50</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Average Daily</h4>
+                            <p>$115.91</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Best Day</h4>
+                            <p>$189.00</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Total Rides</h4>
+                            <p>142</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        });
+
+ 
+        const statusToggle = document.getElementById('statusToggle');
+        const statusText = document.getElementById('statusText');
+        const rideStatus = document.getElementById('rideStatus');
+
+        statusToggle.addEventListener('change', () => {
+            if (statusToggle.checked) {
+                statusText.textContent = 'Online';
+                rideStatus.textContent = 'Looking for rides...';
+                simulateRideRequests();
+            } else {
+                statusText.textContent = 'Offline';
+                rideStatus.textContent = 'You are offline';
+            }
+        });
+
+      
+        function simulateRideRequests() {
+            if (statusToggle.checked) {
+                setTimeout(() => {
+                    rideStatus.textContent = 'New ride request!';
+               
+                    rideStatus.classList.add('fade-in');
+                    
+                    
+                    setTimeout(() => {
+                        rideStatus.classList.remove('fade-in');
+                    }, 500);
+                }, 3000);
+            }
+        }
+
+      
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                item.classList.add('active');
+            });
+        });
+
+        function generateEarningsData() {
+    const data = [];
+    let date = new Date();
+    date.setDate(date.getDate() - 27);
+    
+    for (let i = 0; i < 28; i++) {
+        data.push({
+            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            earnings: Math.floor(Math.random() * (200 - 80) + 80)
+        });
+        date.setDate(date.getDate() + 1);
+    }
+    return data;
+}
+
+
+function initializeEarningsChart() {
+    const ctx = document.getElementById('earningsChart').getContext('2d');
+    const earningsData = generateEarningsData();
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: earningsData.map(d => d.date),
+            datasets: [{
+                label: 'Daily Earnings ($)',
+                data: earningsData.map(d => d.earnings),
+                borderColor: '#d4a700',  
+                backgroundColor: 'rgba(212, 167, 0, 0.2)', 
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#d4a700', 
+                pointBorderColor: '#d4a700'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#d4a700',  
+                    titleColor: '#ffffff',
+                    bodyColor: '#ffffff',
+                    borderColor: '#282a2c', 
+                    borderWidth: 1,
+                    padding: 10,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `$${context.parsed.y.toFixed(2)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(212, 167, 0, 0.1)' 
+                    },
+                    ticks: {
+                        color: '#000', 
+                        callback: function(value) {
+                            return '$' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+
+        window.addEventListener('load', initializeEarningsChart);
+    </script>
+</body>
+</html>
