@@ -24,10 +24,10 @@ public class DriverSignupServlet extends HttpServlet {
         String password = request.getParameter("password");
         String licenseNo = request.getParameter("nic");
         String vehicleType = request.getParameter("vehicle-type");
-        String vehicleReg = request.getParameter("vehicle-number");
+        
 
        
-        Driver driver = new Driver(fullName, email, phone, password, licenseNo, vehicleType, vehicleReg);
+        Driver driver = new Driver(fullName, email, phone, password, licenseNo, vehicleType);
 
        
         boolean isRegistered = driverService.registerDriver(driver);

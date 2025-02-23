@@ -7,17 +7,17 @@ public class Driver {
     private String password;
     private String licenseNo;
     private String vehicleType;
-    private String vehicleReg;
+    
 
 
-    public Driver(String fullName, String email, String phone, String password, String licenseNo, String vehicleType, String vehicleReg) {
+    public Driver(String fullName, String email, String phone, String password, String licenseNo, String vehicleType) {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
         this.password = password;
         this.licenseNo = licenseNo;
         this.vehicleType = vehicleType;
-        this.vehicleReg = vehicleReg;
+        
     }
 
 
@@ -69,12 +69,6 @@ public class Driver {
         this.vehicleType = vehicleType;
     }
 
-    public String getVehicleReg() {
-        return vehicleReg;
-    }
-
-    public void setVehicleReg(String vehicleReg) {
-        this.vehicleReg = vehicleReg;
-    }
+   
     
 }

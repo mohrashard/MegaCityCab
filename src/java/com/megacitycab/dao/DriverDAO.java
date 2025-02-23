@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class DriverDAO {
 
     public void saveDriver(Driver driver) {
-        String sql = "INSERT INTO Drivers (full_name, email, phone, password, license_no, vehicle_type, vehicle_reg) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Drivers (full_name, email, phone, password, license_no, vehicle_type) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -22,7 +22,7 @@ public class DriverDAO {
             pstmt.setString(4, driver.getPassword());
             pstmt.setString(5, driver.getLicenseNo());
             pstmt.setString(6, driver.getVehicleType());
-            pstmt.setString(7, driver.getVehicleReg());
+            
             pstmt.executeUpdate();
 
             System.out.println("Driver saved successfully!");
@@ -48,8 +48,8 @@ public class DriverDAO {
                     rs.getString("phone"),
                     rs.getString("password"),
                     rs.getString("license_no"),
-                    rs.getString("vehicle_type"),
-                    rs.getString("vehicle_reg")
+                    rs.getString("vehicle_type")
+                   
                 );
             }
         } catch (SQLException e) {

@@ -36,18 +36,18 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-            // Use parameterized queries to avoid SQL injection
+            
             String query = "SELECT * FROM " + tableName + " WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // Assuming you have a hashed password stored in the database
+                
                 String storedPassword = rs.getString("password");
                 
-                // Compare the provided password with the stored hashed password
-                if (password.equals(storedPassword)) { // Replace with hash comparison if using hashed passwords
+                
+                if (password.equals(storedPassword)) { 
                     HttpSession session = request.getSession();
                     session.setAttribute("user", email);
                     session.setAttribute("userType", userType);
