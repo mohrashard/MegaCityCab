@@ -23,10 +23,10 @@ public class AdminLoginServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         if (loginController.login(username, password)) {
-            // Redirect to admin dashboard if login is successful
+            
             response.sendRedirect("adminDashboard.html");
         } else {
-            // Set an error message and forward back to the login page
+            
             request.setAttribute("errorMessage", "Invalid username or password.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }

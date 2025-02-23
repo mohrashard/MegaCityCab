@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/admindashboard.css"/>
+    <title>Admin Dashboard</title>
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+  
+</head>
+<body>
+    <div class="container">
+        <div class="menu-toggle"></div>
+        <aside class="sidebar">
+            <div class="logo">Mega City Cab</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-page="dashboard">Dashboard</a></li>
+                <li><a href="#" data-page="bookings">Bookings</a></li>
+                <li><a href="#" data-page="customers">Customers</a></li>
+                <li><a href="#" data-page="drivers">Drivers</a></li>
+                <li><a href="#" data-page="vehicles">Vehicles</a></li>
+                <li><a href="#" data-page="logout">Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Dashboard</h1>
+             
+            </header>
+
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Total Bookings</h3>
+                    <div class="value">247</div>
+                </div>
+                <div class="card">
+                    <h3>Active Customers</h3>
+                    <div class="value">1,832</div>
+                </div>
+                <div class="card">
+                    <h3>Available Cars</h3>
+                    <div class="value">42</div>
+                </div>
+                <div class="card">
+                    <h3>Assigned Drivers</h3>
+                    <div class="value">38</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <canvas id="bookingsChart"></canvas>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Recent Bookings</h2>
+                    <input type="text" class="search-box" placeholder="Search bookings...">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Customer Name</th>
+                            <th>Pickup Location</th>
+                            <th>Destination</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>B001</td>
+                            <td>John Doe</td>
+                            <td>Airport Terminal 1</td>
+                            <td>Downtown Plaza</td>
+                            <td>Active</td>
+                            <td>
+                                <button class="btn btn-primary">View</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>B002</td>
+                            <td>Jane Smith</td>
+                            <td>Central Station</td>
+                            <td>Business District</td>
+                            <td>Completed</td>
+                            <td>
+                                <button class="btn btn-primary">View</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        
+      
+
+
+        
+        const navLinks = document.querySelectorAll('.nav-links a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                if (link.dataset.page === 'logout') {
+                    alert('Logged out successfully!');
+                }
+            });
+        });
+
+        
+       const ctx = document.getElementById('bookingsChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+        datasets: [{
+            label: 'Monthly Bookings',
+            data: [65, 59, 80, 81, 56, 55, 45, 43, 43, 43, 43, 43],
+            borderColor: '#d4a700', // Updated to darker yellow
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Monthly Booking Trends'
+            }
+        }
+    }
+});
+
+
+        
+        const searchBox = document.querySelector('.search-box');
+        searchBox.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr');
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

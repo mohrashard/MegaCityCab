@@ -3,46 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/DriverDAO.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/DriverSignupServlet.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/LoginServlet.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/AdminService.java</file>
             <file>file:/C:/Netbeans24/CabSystem/web/admin_login.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/PassengerDAO.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/factory/AdminDAOFactory.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AdminLoginServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/PassengerSignupServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/AdminDAO.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/passenger_signup.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/IAdminDAO.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Admin.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/config/DBConnection.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/DriverService.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/login.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/css/admin.css</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Passenger.java</file>
             <file>file:/C:/Netbeans24/CabSystem/web/driver_signup.html</file>
             <file>file:/C:/Netbeans24/CabSystem/web/index.html</file>
             <file>file:/C:/Netbeans24/CabSystem/web/admin_register.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/PassengerService.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Driver.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/PassengerSignupServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/AdminDAO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Admin.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AdminSignupServlet.java</file>
-=======
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/index.html</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DriverSignupServlet.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DBConnection.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/passenger_signup.html</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/Passenger.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DriverRepositoryImpl.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/Driver.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DriverService.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/admin_register.html</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/Admin.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/src/java/DriverRepository.java</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/css/style.css</file>
-            <file>file:/C:/Users/User/OneDrive/Documents/NetBeansProjects/MegaCabCitySystem/web/driver_signup.html</file>
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/AdminDAOInterface.java</file>
         </group>
     </open-files>
 </project-private>

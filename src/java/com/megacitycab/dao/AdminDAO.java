@@ -19,7 +19,7 @@ public class AdminDAO implements AdminDAOInterface {
 
             pstmt.setString(1, admin.getUsername());
             pstmt.setString(2, admin.getAdminName());
-            pstmt.setString(3, admin.getPassword());  // Hash the password here
+            pstmt.setString(3, admin.getPassword());  
             
             pstmt.executeUpdate();
             System.out.println("Admin saved successfully!");
