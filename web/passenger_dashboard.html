@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passenger Dashboard</title>
+    <link rel="stylesheet" href="css/passengerdashboard.css">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <nav class="sidebar">
+            <div class="logo">
+    <img src="images/megacitycablogo.png" alt="Mega City Cab Logo" class="logo-img">
+  Mega City Cab
+</div>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-car"></i> Book a Ride
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-history"></i> My Bookings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-credit-card"></i> Billing
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-question-circle"></i> Help
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+       
+        <main class="main-content">
+            <header class="header">
+                <div class="greeting">Hello, John! 👋</div>
+               
+            </header>
+
+           
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total Rides</div>
+                    <div class="stat-value">127</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Money Spent</div>
+                    <div class="stat-value">$1,234</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Miles Traveled</div>
+                    <div class="stat-value">892</div>
+                </div>
+            </div>
+
+            <section class="quick-book">
+                <h2>Need a ride?</h2>
+                <p>Book instantly with our quick booking feature</p>
+                <button class="quick-book-btn">Quick Book</button>
+            </section>
+
+          
+            <h2>Recent Bookings</h2>
+            <table class="bookings-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Today, 2:30 PM</td>
+                        <td>Home</td>
+                        <td>Office</td>
+                        <td><span class="status status-confirmed">Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td>Yesterday</td>
+                        <td>Mall</td>
+                        <td>Home</td>
+                        <td><span class="status status-pending">Completed</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <h2>Logout Confirmation</h2>
+            <p>Are you sure you want to logout?</p>
+            <button class="quick-book-btn">Confirm</button>
+        </div>
+    </div>
+
+    <script>
+ 
+
+     
+        const quickBookBtn = document.querySelector('.quick-book-btn');
+        quickBookBtn.addEventListener('click', () => {
+            quickBookBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                quickBookBtn.style.transform = 'scale(1)';
+            }, 100);
+        });
+
+        
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+       
+    </script>
+</body>
+</html>

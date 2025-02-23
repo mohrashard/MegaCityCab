@@ -303,7 +303,15 @@ input:focus, textarea:focus {
         transform: translate(-50%, 0);
     }
 }
+.account i {
+    color: #fcca03; 
+    text-decoration: none; 
+    transition: color 0.3s; 
+}
 
+.account i:hover {
+    color: white;
+}
         
   
     </style>
@@ -313,7 +321,7 @@ input:focus, textarea:focus {
     
     <body>
         
-            <header>
+<header>
         
     <div class="header" >
         <div class="logo">
@@ -324,12 +332,18 @@ input:focus, textarea:focus {
             <i class="fa-solid fa-bars"></i>
             <i class="fa-solid fa-xmark" id="hdcross"></i>
         </div>
-        <div class="nav">
-            <ul>
         
-                
-                
+        <div class="account">
+            <ul>
+            
+              
              
+                
+                <li id="iconWrapper">
+                    <a href="index.html">
+                        <i class="fa-solid fa-home" id="user-lap"></i>
+                    </a>
+                </li>
             </ul>
         </div>
        
@@ -352,7 +366,7 @@ input:focus, textarea:focus {
       <input type="password" id="password" name="password" required>
     </div>
     
-    <button type="submit">Sign Up</button>
+    <button type="submit">Claim</button>
   </form>
 </div>
 
