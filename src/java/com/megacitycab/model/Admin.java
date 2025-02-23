@@ -6,6 +6,7 @@ public class Admin {
     private String username; // Corresponds to username in the database
     private String adminName; // Corresponds to admin_name in the database
     private String password; // Corresponds to password in the database
+    
 
     // Constructor for retrieving from DB
     public Admin(int adminId, String username, String adminName, String password) {

@@ -14,7 +14,18 @@
     
    
     
-    
+    <style>
+        .error-message {
+    color: red;             
+    margin-top: 10px;      
+    background-color: #ffe6e6; 
+    border: 1px solid red;  
+    padding: 10px;         
+    border-radius: 5px;    
+    display: none;          
+    text-align: center;
+}
+    </style>
     
     </head>
     
@@ -71,6 +82,7 @@
       <input type="password" id="confirmPassword" name="confirmPassword" required>
     </div>
     <button type="submit">Sign Up</button>
+    <div class="error-message" id="error-message" style="color: red; display: none; margin-top: 10px;"></div>
   </form>
 </div>
 <div id="message"style="display: none;" >Admin Registration Successful!</div>
@@ -105,26 +117,40 @@
             <script>
 $(document).ready(function() {
     $('#signupForm').on('submit', function(event) {
-
         event.preventDefault(); 
 
-     
-        var formData = $(this).serialize();
+        let password = $('#password').val();
+        let confirmPassword = $('#confirmPassword').val();
 
-     
-        $.post('adminSignup', formData, function(response) {
-   
-            $('#message').text(response.message);
+        let errorMessage = "";
+        let errorContainer = $("#error-message");
 
-       
-            $('#message').fadeIn(300).delay(2000).fadeOut(300, function() {
-             
+        errorContainer.hide(); 
+        let passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if (!passwordPattern.test(password)) {
+            errorMessage = "Password must be at least 8 characters long and contain at least 1 special character.";
+        } 
+        else if (password !== confirmPassword) {
+            errorMessage = "Passwords do not match.";
+        }
 
-   
+        if (errorMessage !== "") {
+            errorContainer.html(errorMessage);
+            errorContainer.show(); 
+        } else {
+            errorContainer.hide(); 
+            
+
+            var formData = $(this).serialize();
+            $.post('adminSignup', formData, function(response) {
+                $('#message').text(response.message);
+                $('#message').fadeIn(300).delay(2000).fadeOut(300);
             });
-        });
+        }
     });
 });
+
+
 
 
     </script>

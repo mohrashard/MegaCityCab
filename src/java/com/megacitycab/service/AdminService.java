@@ -3,6 +3,7 @@ package com.megacitycab.service;
 import com.megacitycab.dao.AdminDAOInterface;
 import com.megacitycab.dao.AdminDAO;
 import com.megacitycab.model.Admin;
+import com.megacitycab.util.PasswordUtil;
 
 public class AdminService {
 
@@ -14,23 +15,19 @@ public class AdminService {
 
     public boolean registerAdmin(Admin admin) {
         try {
+            String hashedPassword = PasswordUtil.hashPassword(admin.getPassword());
+            admin.setPassword(hashedPassword);
             adminDAO.saveAdmin(admin);
-            return true; // Return true if save is successful
+            return true;
         } catch (Exception e) {
             System.out.println("Error registering admin: " + e.getMessage());
-            return false; // Return false if there was an error
+            return false;
         }
     }
 
- 
-
     public boolean login(String username, String password) {
-        Admin admin = adminDAO.getAdminByUsername(username);
-        if (admin != null) {
-            // Here you can use a method to check hashed passwords.
-            return admin.getPassword().equals(password);
-        }
-        return false; // Login failed
+        // Validate the admin using the AdminDAO's validateAdmin method
+        return adminDAO.validateAdmin(username, password);
     }
 
     public Admin getAdminByUsername(String username) {

@@ -1,19 +1,16 @@
 package com.megacitycab.controller;
 
-import com.megacitycab.model.Admin;
-import com.megacitycab.service.AdminService;
+import com.megacitycab.dao.AdminDAO;
 
 public class LoginController {
-    private AdminService adminService;
+    private AdminDAO adminDAO;
 
     public LoginController() {
-        adminService = new AdminService();
+        adminDAO = new AdminDAO();
     }
 
     public boolean login(String username, String password) {
-        // Retrieve the admin by username
-        Admin admin = adminService.getAdminByUsername(username);
-        // Check if the admin exists and the password matches (use hashed password comparison in production)
-        return admin != null && admin.getPassword().equals(password);
+        // Validate the admin using the AdminDAO's validateAdmin method
+        return adminDAO.validateAdmin(username, password);
     }
 }
