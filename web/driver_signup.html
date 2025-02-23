@@ -35,6 +35,17 @@
 .account i:hover {
     color: white;
 }
+.error-message {
+    color: red;              
+    margin-top: 10px;       
+    background-color: #ffe6e6; 
+    border: 1px solid red;  
+    padding: 10px;         
+    border-radius: 5px;     
+    display: none;       
+    text-align: center;
+}
+
     </style>
     
     
@@ -123,6 +134,8 @@
 </div>
    
     <button type="submit">Sign Up</button>
+    
+     <div id="error-message" class="error-message"></div>
   </form>
   
   <p style="margin-top: 50px;">Already have an account? <a href="login.html" class="login-link">Log In</a></p>
@@ -163,23 +176,55 @@
 $(document).ready(function() {
     $('#signupForm').on('submit', function(event) {
         event.preventDefault(); 
-
         
-        var formData = $(this).serialize();
+        
+        let fullName = $('#fullName').val().trim();
+        let email = $('#email').val().trim();
+        let phone = $('#phone').val().trim();
+        let password = $('#password').val();
+        let confirmPassword = $('#confirmPassword').val();
+        let nic = $('#nic').val().trim();
+        
+        let errorMessage = "";
+        let errorContainer = $("#error-message");
+        errorContainer.hide(); 
 
        
-        $.post('driverSignup', formData, function(response) {
-            
-            $('#message').text(response.message);
-
-            
-            $('#message').fadeIn(300).delay(2000).fadeOut(300, function() {
-                
-                location.reload();
+        let phonePattern = /^07\d{8}$/;
+        if (!phonePattern.test(phone)) {
+            errorMessage = "Invalid Sri Lankan Phone Number";
+        } else {  
+            let passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+            if (!passwordPattern.test(password)) {
+                errorMessage = "Password must be at least 8 characters long and contain 1 Special Character";
+            } else {
+                if (password !== confirmPassword) {
+                    errorMessage = "Passwords do not match";
+                } else {
+                    let licensePattern = /^[A-Z]{1,2}\d{4,7}$/; 
+                    if (!licensePattern.test(nic)) {
+                        errorMessage = "Invalid Sri Lankan Driver's License Number";
+                    }
+                }
+            }
+        }
+        if (errorMessage !== "") {
+            errorContainer.html(errorMessage);
+            errorContainer.show(); 
+        } else {
+            errorContainer.hide(); 
+            var formData = $(this).serialize();
+            $.post('driverSignup', formData, function(response) {
+                $('#message').text(response.message);
+                $('#message').fadeIn(300).delay(2000).fadeOut(300, function() {
+                    location.reload();
+                });
             });
-        });
+        }
     });
 });
+
+
 
 
     </script>
