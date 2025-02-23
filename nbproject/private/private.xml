@@ -3,18 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/DriverSignupServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/DriverDAO.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/LoginServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/AdminService.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/admin_login.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/DriverSignupServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/login.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/css/driver.css</file>
             <file>file:/C:/Netbeans24/CabSystem/web/driver_signup.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/index.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/admin_register.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/PassengerSignupServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/AdminDAO.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Admin.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AdminSignupServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/AdminDAOInterface.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/driver_dashboard.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/css/driverdashboard.css</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Driver.java</file>
         </group>
     </open-files>
 </project-private>
