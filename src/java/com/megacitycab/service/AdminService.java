@@ -12,20 +12,29 @@ public class AdminService {
         adminDAO = new AdminDAO();
     }
 
-    public boolean registerAdmin(Admin admin , String password) {
-    try {
-        String salt = PasswordUtil.generateSalt();
-        String hashedPassword = PasswordUtil.hashPassword(password, salt);
-        admin.setPassword(hashedPassword);
-        admin.setSalt(salt);
-        adminDAO.saveAdmin(admin);
-        return true;
-    } catch (Exception e) {
-        System.out.println("Error registering admin: " + e.getMessage());
-        return false;
-    }
-}
 
+    public boolean isUsernameTaken(String username) {
+        Admin admin = adminDAO.getAdminByUsername(username);
+        return admin != null; 
+    }
+
+    public boolean registerAdmin(Admin admin, String password) {
+        if (isUsernameTaken(admin.getUsername())) {
+            return false;
+        }
+
+        try {
+            String salt = PasswordUtil.generateSalt();
+            String hashedPassword = PasswordUtil.hashPassword(password, salt);
+            admin.setPassword(hashedPassword);
+            admin.setSalt(salt);
+            adminDAO.saveAdmin(admin);
+            return true; 
+        } catch (Exception e) {
+            System.out.println("Error registering admin: " + e.getMessage());
+            return false;
+        }
+    }
 
     public Admin getAdminByUsername(String username) {
         return adminDAO.getAdminByUsername(username);

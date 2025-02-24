@@ -3,7 +3,6 @@ package com.megacitycab.servlet;
 import com.megacitycab.model.Admin;
 import com.megacitycab.service.AdminService;
 import org.json.JSONObject;
-import com.megacitycab.util.PasswordUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,25 +16,26 @@ import java.io.PrintWriter;
 public class AdminSignupServlet extends HttpServlet {
     private AdminService adminService = new AdminService();
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String adminName = request.getParameter("adminName");
         String password = request.getParameter("password");
-       
 
         JSONObject jsonResponse = new JSONObject();
 
-       
-
         Admin admin = new Admin(username, adminName);
 
-        boolean isRegistered = adminService.registerAdmin(admin, password);
-
-
-        if (isRegistered) {
-            jsonResponse.put("message", "Admin Registration Successful!");
+       
+        if (adminService.isUsernameTaken(username)) {
+            jsonResponse.put("message", "Username is already taken");
         } else {
-            jsonResponse.put("message", "Error registering admin.");
+            boolean isRegistered = adminService.registerAdmin(admin, password);
+            if (isRegistered) {
+                jsonResponse.put("message", "Admin Registration Successful!");
+            } else {
+                jsonResponse.put("message", "Error registering admin.");
+            }
         }
 
         sendResponse(response, jsonResponse);

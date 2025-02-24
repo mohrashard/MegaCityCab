@@ -140,11 +140,15 @@ $(document).ready(function() {
         } else {
             errorContainer.hide(); 
             
-
             var formData = $(this).serialize();
             $.post('adminSignup', formData, function(response) {
-                $('#message').text(response.message);
-                $('#message').fadeIn(300).delay(2000).fadeOut(300);
+                if (response.message.includes("taken")) {
+                    errorContainer.html(response.message);
+                    errorContainer.show();
+                } else {
+                    $('#message').text(response.message);
+                    $('#message').fadeIn(300).delay(2000).fadeOut(300);
+                }
             });
         }
     });
