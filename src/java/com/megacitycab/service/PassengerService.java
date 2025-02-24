@@ -2,6 +2,7 @@ package com.megacitycab.service;
 
 import com.megacitycab.dao.PassengerDAO;
 import com.megacitycab.model.Passenger;
+import com.megacitycab.util.PasswordUtil;
 
 public class PassengerService {
     private PassengerDAO passengerDAO;
@@ -10,15 +11,18 @@ public class PassengerService {
         passengerDAO = new PassengerDAO();
     }
 
-    public boolean registerPassenger(Passenger passenger) {
+    public boolean registerPassenger(Passenger passenger , String password) {
         try {
-            // Attempt to save the passenger using the DAO
+       
+            String salt = PasswordUtil.generateSalt();
+            String hashedPassword = PasswordUtil.hashPassword(password, salt);
+            passenger.setPassword(hashedPassword);
+            passenger.setSalt(salt);
             passengerDAO.savePassenger(passenger);
-            return true; // Return true if save is successful
+            return true; 
         } catch (Exception e) {
-            // Handle exceptions (e.g., log the error, throw a custom exception, etc.)
             System.out.println("Error registering passenger: " + e.getMessage());
-            return false; // Return false if there was an error
+            return false; 
         }
     }
 

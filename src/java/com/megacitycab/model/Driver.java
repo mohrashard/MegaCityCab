@@ -4,10 +4,10 @@ public class Driver {
     private String fullName;
     private String email;
     private String phone;
-    private String password; // Hashed password
+    private String password;
     private String licenseNo;
     private String vehicleType;
-    private String salt; // Added field for storing salt
+    private String salt; 
 
     public Driver(String fullName, String email, String phone, String licenseNo, String vehicleType) {
         this.fullName = fullName;
@@ -17,7 +17,7 @@ public class Driver {
         this.vehicleType = vehicleType;
     }
 
-    // Getter and Setter methods
+
     public String getFullName() {
         return fullName;
     }
@@ -47,7 +47,7 @@ public class Driver {
     }
 
     public void setPassword(String password) {
-        this.password = password; // Set hashed password
+        this.password = password; 
     }
 
     public String getLicenseNo() {
@@ -67,10 +67,10 @@ public class Driver {
     }
 
     public String getSalt() {
-        return salt; // Getter for salt
+        return salt; 
     }
 
     public void setSalt(String salt) {
-        this.salt = salt; // Setter for salt
+        this.salt = salt; 
     }
 }

@@ -7,6 +7,7 @@ public class Passenger {
     private String password;
     private String nic;
     private String address;
+    private String salt; 
 
 
     public Passenger(String fullName, String email, String phone, String password, String nic, String address) {
@@ -65,6 +66,13 @@ public class Passenger {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+       public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
     
 }

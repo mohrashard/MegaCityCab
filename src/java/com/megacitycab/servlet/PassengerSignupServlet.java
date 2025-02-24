@@ -25,24 +25,26 @@ public class PassengerSignupServlet extends HttpServlet {
         String nic = request.getParameter("nic");
         String address = request.getParameter("address");
 
-        
-        Passenger passenger = new Passenger(fullName, email, phone, password, nic, address);
+       
+        Passenger passenger = new Passenger(fullName, email, phone, null, nic, address);
 
-        
-        boolean isRegistered = passengerService.registerPassenger(passenger);
+      
+        boolean isRegistered = passengerService.registerPassenger(passenger, password);
+
         
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-       JSONObject jsonResponse = new JSONObject();
+       
+        JSONObject jsonResponse = new JSONObject();
         if (isRegistered) {
             jsonResponse.put("message", "Passenger Registration Successful!");
         } else {
-            jsonResponse.put("message", "Error registering admin.");
+            jsonResponse.put("message", "Error registering passenger.");
         }
 
-      
+        
         out.print(jsonResponse.toString());
-        out.flush(); 
+        out.flush();
     }
 }
