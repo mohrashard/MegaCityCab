@@ -15,8 +15,14 @@ public class AdminService {
 
     public boolean registerAdmin(Admin admin) {
         try {
-            String hashedPassword = PasswordUtil.hashPassword(admin.getPassword());
-            admin.setPassword(hashedPassword);
+            // Generate salt and hash the password
+            String salt = PasswordUtil.generateSalt();
+            String hashedPassword = PasswordUtil.hashPassword(admin.getPassword(), salt);
+            admin.setPassword(hashedPassword); // Set the hashed password
+
+            // Set the salt in the admin object
+            admin.setSalt(salt); // Make sure to have a setSalt method in the Admin model
+
             adminDAO.saveAdmin(admin);
             return true;
         } catch (Exception e) {

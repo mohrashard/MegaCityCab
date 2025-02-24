@@ -2,7 +2,6 @@ package com.megacitycab.servlet;
 
 import com.megacitycab.model.Driver;
 import com.megacitycab.service.DriverService;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,26 +23,24 @@ public class DriverSignupServlet extends HttpServlet {
         String password = request.getParameter("password");
         String licenseNo = request.getParameter("nic");
         String vehicleType = request.getParameter("vehicle-type");
-        
 
-       
-        Driver driver = new Driver(fullName, email, phone, password, licenseNo, vehicleType);
 
-       
-        boolean isRegistered = driverService.registerDriver(driver);
-        
+        Driver driver = new Driver(fullName, email, phone, licenseNo, vehicleType);
+
+
+        boolean isRegistered = driverService.registerDriver(driver, password);
+
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-         JSONObject jsonResponse = new JSONObject();
+        JSONObject jsonResponse = new JSONObject();
         if (isRegistered) {
             jsonResponse.put("message", "Driver Registration Successful!");
         } else {
-            jsonResponse.put("message", "Error registering admin.");
+            jsonResponse.put("message", "Error registering driver.");
         }
 
-      
         out.print(jsonResponse.toString());
-        out.flush(); 
+        out.flush();
     }
 }

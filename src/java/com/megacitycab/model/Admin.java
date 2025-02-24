@@ -6,14 +6,15 @@ public class Admin {
     private String username; // Corresponds to username in the database
     private String adminName; // Corresponds to admin_name in the database
     private String password; // Corresponds to password in the database
-    
+    private String salt; // New field for storing salt
 
     // Constructor for retrieving from DB
-    public Admin(int adminId, String username, String adminName, String password) {
+    public Admin(int adminId, String username, String adminName, String password, String salt) {
         this.adminId = adminId;
         this.username = username;
         this.adminName = adminName;
         this.password = password;
+        this.salt = salt; // Initialize salt
     }
 
     // Constructor for sign-up (without adminId)
@@ -54,5 +55,13 @@ public class Admin {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt; // Getter for salt
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt; // Setter for salt
     }
 }

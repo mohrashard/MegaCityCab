@@ -13,7 +13,7 @@ public class AdminDAO implements AdminDAOInterface {
 
     @Override
     public void saveAdmin(Admin admin) {
-        String sql = "INSERT INTO Admins (username, admin_name, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Admins (username, admin_name, password, salt) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -21,8 +21,11 @@ public class AdminDAO implements AdminDAOInterface {
             pstmt.setString(1, admin.getUsername());
             pstmt.setString(2, admin.getAdminName());
 
-            String hashedPassword = PasswordUtil.hashPassword(admin.getPassword());
+            String salt = PasswordUtil.generateSalt();
+            String hashedPassword = PasswordUtil.hashPassword(admin.getPassword(), salt);
+
             pstmt.setString(3, hashedPassword);
+            pstmt.setString(4, salt);
 
             pstmt.executeUpdate();
             System.out.println("Admin saved successfully!");
@@ -46,7 +49,8 @@ public class AdminDAO implements AdminDAOInterface {
                     rs.getInt("adminId"),
                     rs.getString("username"),
                     rs.getString("admin_name"),
-                    rs.getString("password")
+                    rs.getString("password"),
+                    rs.getString("salt") // Retrieve the salt
                 );
             }
         } catch (SQLException e) {
@@ -72,7 +76,8 @@ public class AdminDAO implements AdminDAOInterface {
                     rs.getInt("adminId"),
                     rs.getString("username"),
                     rs.getString("admin_name"),
-                    rs.getString("password")
+                    rs.getString("password"),
+                    rs.getString("salt") // Retrieve the salt
                 );
             }
         } catch (SQLException e) {
@@ -83,29 +88,27 @@ public class AdminDAO implements AdminDAOInterface {
     }
 
     @Override
-public boolean validateAdmin(String username, String password) {
-    String sql = "SELECT password FROM Admins WHERE username = ?";
-    boolean isValid = false;
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        
-        pstmt.setString(1, username);
-        ResultSet rs = pstmt.executeQuery();
-        
-        if (rs.next()) {
-            String storedHashedPassword = rs.getString("password");
-            String hashedInputPassword = PasswordUtil.hashPassword(password);
-            System.out.println("Stored hashed password: " + storedHashedPassword);
-            System.out.println("Input hashed password: " + hashedInputPassword);
-            isValid = storedHashedPassword.equals(hashedInputPassword);
-        } else {
-            System.out.println("No admin found with username: " + username);
+    public boolean validateAdmin(String username, String password) {
+        String sql = "SELECT password, salt FROM Admins WHERE username = ?";
+        boolean isValid = false;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String storedHashedPassword = rs.getString("password");
+                String salt = rs.getString("salt");
+                isValid = PasswordUtil.verifyPassword(password, storedHashedPassword, salt);
+            } else {
+                System.out.println("No admin found with username: " + username);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error validating admin: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.out.println("Error validating admin: " + e.getMessage());
+
+        return isValid;
     }
-    return isValid;
-}
-
-
 }

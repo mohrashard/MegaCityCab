@@ -1,6 +1,7 @@
 package com.megacitycab.servlet;
 
 import com.megacitycab.config.DBConnection;
+import com.megacitycab.util.PasswordUtil;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +23,7 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String userType = request.getParameter("user-type");
 
-        String tableName = userType.equals("driver") ? "Drivers" : "Passengers"; 
+        String tableName = userType.equals("driver") ? "Drivers" : "Passengers";
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -36,18 +37,18 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-            
-            String query = "SELECT * FROM " + tableName + " WHERE email = ?";
+  
+            String query = "SELECT password, salt FROM " + tableName + " WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                
-                String storedPassword = rs.getString("password");
-                
-                
-                if (password.equals(storedPassword)) { 
+                String storedHashedPassword = rs.getString("password");
+                String storedSalt = rs.getString("salt");
+
+       
+                if (PasswordUtil.verifyPassword(password, storedHashedPassword, storedSalt)) {
                     HttpSession session = request.getSession();
                     session.setAttribute("user", email);
                     session.setAttribute("userType", userType);
