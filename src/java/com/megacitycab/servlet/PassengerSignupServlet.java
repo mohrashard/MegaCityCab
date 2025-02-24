@@ -25,25 +25,35 @@ public class PassengerSignupServlet extends HttpServlet {
         String nic = request.getParameter("nic");
         String address = request.getParameter("address");
 
-       
-        Passenger passenger = new Passenger(fullName, email, phone, null, nic, address);
-
-      
-        boolean isRegistered = passengerService.registerPassenger(passenger, password);
-
-        
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-
-       
-        JSONObject jsonResponse = new JSONObject();
-        if (isRegistered) {
-            jsonResponse.put("message", "Passenger Registration Successful!");
-        } else {
-            jsonResponse.put("message", "Error registering passenger.");
+        // Check for uniqueness
+        if (passengerService.isEmailTaken(email)) {
+            sendResponse(response, "Email already in use.");
+            return;
+        }
+        if (passengerService.isPhoneTaken(phone)) {
+            sendResponse(response, "Phone number already in use.");
+            return;
+        }
+        if (passengerService.isNicTaken(nic)) {
+            sendResponse(response, "NIC number already in use.");
+            return;
         }
 
-        
+        Passenger passenger = new Passenger(fullName, email, phone, null, nic, address);
+        boolean isRegistered = passengerService.registerPassenger(passenger, password);
+
+        if (isRegistered) {
+            sendResponse(response, "Passenger Registration Successful!");
+        } else {
+            sendResponse(response, "Error registering passenger.");
+        }
+    }
+
+    private void sendResponse(HttpServletResponse response, String message) throws IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("message", message);
         out.print(jsonResponse.toString());
         out.flush();
     }

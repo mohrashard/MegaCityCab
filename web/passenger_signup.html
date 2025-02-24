@@ -171,33 +171,29 @@ $(document).ready(function() {
     $('#signupForm').on('submit', function(event) {
         event.preventDefault(); 
         
-      
         let phone = $('#phone').val().trim();
         let password = $('#password').val();
         let confirmPassword = $('#confirmPassword').val();
         let nic = $('#nic').val().trim();
+        let email = $('#email').val().trim(); // Ensure you also get the email value
 
         let errorMessage = "";
         let errorContainer = $("#error-message");
 
         errorContainer.hide();
 
-        
         let phonePattern = /^07\d{8}$/;
         if (!phonePattern.test(phone)) {
-            errorMessage = "Invalid Sri Lankan phone number";
+            errorMessage = "Invalid Sri Lankan phone number.";
         } 
-        
         else if (!/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(password)) {
             errorMessage = "Password must be at least 8 characters long and contain at least 1 special character.";
         } 
-        
         else if (password !== confirmPassword) {
-            errorMessage = "Passwords do not match";
+            errorMessage = "Passwords do not match.";
         } 
-       
         else if (!/^(\d{9}[Vv]|[0-9]{12})$/.test(nic)) {
-            errorMessage = "Invalid Sri Lankan NIC number";
+            errorMessage = "Invalid Sri Lankan NIC number.";
         }
 
         if (errorMessage !== "") {
@@ -206,17 +202,22 @@ $(document).ready(function() {
         } else {
             errorContainer.hide(); 
             
-            
             var formData = $(this).serialize();
             $.post('passengerSignup', formData, function(response) {
-                $('#message').text(response.message);
-                $('#message').fadeIn(300).delay(2000).fadeOut(300, function() {
-                    location.reload();
-                });
+                if (response.message.includes("already in use")) {
+                    errorContainer.html(response.message);
+                    errorContainer.show();
+                } else {
+                    $('#message').text(response.message);
+                    $('#message').fadeIn(300).delay(2000).fadeOut(300, function() {
+                        location.reload();
+                    });
+                }
             });
         }
     });
 });
+
 
 
 

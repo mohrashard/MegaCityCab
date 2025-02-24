@@ -11,9 +11,8 @@ public class PassengerService {
         passengerDAO = new PassengerDAO();
     }
 
-    public boolean registerPassenger(Passenger passenger , String password) {
+    public boolean registerPassenger(Passenger passenger, String password) {
         try {
-       
             String salt = PasswordUtil.generateSalt();
             String hashedPassword = PasswordUtil.hashPassword(password, salt);
             passenger.setPassword(hashedPassword);
@@ -24,6 +23,18 @@ public class PassengerService {
             System.out.println("Error registering passenger: " + e.getMessage());
             return false; 
         }
+    }
+
+    public boolean isEmailTaken(String email) {
+        return passengerDAO.getPassengerByEmail(email) != null;
+    }
+
+    public boolean isPhoneTaken(String phone) {
+        return passengerDAO.getPassengerByPhone(phone) != null; 
+    }
+
+    public boolean isNicTaken(String nic) {
+        return passengerDAO.getPassengerByNic(nic) != null; 
     }
 
     public Passenger getPassengerByEmail(String email) {
