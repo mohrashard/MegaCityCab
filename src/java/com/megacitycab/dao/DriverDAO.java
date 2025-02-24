@@ -19,8 +19,8 @@ public class DriverDAO {
             pstmt.setString(1, driver.getFullName());
             pstmt.setString(2, driver.getEmail());
             pstmt.setString(3, driver.getPhone());
-            pstmt.setString(4, driver.getPassword()); 
-            pstmt.setString(5, driver.getSalt()); 
+            pstmt.setString(4, driver.getPassword());
+            pstmt.setString(5, driver.getSalt());
             pstmt.setString(6, driver.getLicenseNo());
             pstmt.setString(7, driver.getVehicleType());
 
@@ -42,7 +42,62 @@ public class DriverDAO {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                
+                driver = new Driver(
+                    rs.getString("full_name"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("license_no"),
+                    rs.getString("vehicle_type")
+                );
+                driver.setPassword(rs.getString("password")); 
+                driver.setSalt(rs.getString("salt")); 
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving driver: " + e.getMessage());
+        }
+
+        return driver;
+    }
+
+    public Driver getDriverByPhone(String phone) {
+        String sql = "SELECT * FROM Drivers WHERE phone = ?";
+        Driver driver = null;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, phone);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                driver = new Driver(
+                    rs.getString("full_name"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("license_no"),
+                    rs.getString("vehicle_type")
+                );
+                driver.setPassword(rs.getString("password")); 
+                driver.setSalt(rs.getString("salt")); 
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving driver: " + e.getMessage());
+        }
+
+        return driver;
+    }
+
+    public Driver getDriverByLicense(String licenseNo) {
+        String sql = "SELECT * FROM Drivers WHERE license_no = ?";
+        Driver driver = null;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, licenseNo);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
                 driver = new Driver(
                     rs.getString("full_name"),
                     rs.getString("email"),
