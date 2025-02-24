@@ -2,36 +2,18 @@ package com.megacitycab.model;
 
 public class Admin {
 
-    private int adminId; // Corresponds to adminId in the database
-    private String username; // Corresponds to username in the database
-    private String adminName; // Corresponds to admin_name in the database
-    private String password; // Corresponds to password in the database
-    private String salt; // New field for storing salt
+    private String username; 
+    private String adminName; 
+    private String password; 
+    private String salt; 
 
-    // Constructor for retrieving from DB
-    public Admin(int adminId, String username, String adminName, String password, String salt) {
-        this.adminId = adminId;
+  
+    public Admin(String username, String adminName) {
         this.username = username;
         this.adminName = adminName;
-        this.password = password;
-        this.salt = salt; // Initialize salt
+      
     }
 
-    // Constructor for sign-up (without adminId)
-    public Admin(String username, String adminName, String password) {
-        this.username = username;
-        this.adminName = adminName;
-        this.password = password;
-    }
-
-    // Getters and Setters
-    public int getAdminId() {
-        return adminId;
-    }
-
-    public void setAdminId(int adminId) {
-        this.adminId = adminId;
-    }
 
     public String getUsername() {
         return username;
@@ -58,10 +40,10 @@ public class Admin {
     }
 
     public String getSalt() {
-        return salt; // Getter for salt
+        return salt;
     }
 
     public void setSalt(String salt) {
-        this.salt = salt; // Setter for salt
+        this.salt = salt;
     }
 }

@@ -3,15 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/AdminService.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/controller/LoginController.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/admin_login.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AdminLoginServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/AdminDAO.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Admin.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/DriverService.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/PassengerDAO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/PassengerSignupServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/PassengerService.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/util/PasswordUtil.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/AdminDAOInterface.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AdminSignupServlet.java</file>
         </group>
     </open-files>
 </project-private>

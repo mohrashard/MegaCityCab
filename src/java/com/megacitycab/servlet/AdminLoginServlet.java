@@ -1,65 +1,72 @@
 package com.megacitycab.servlet;
 
-import com.megacitycab.controller.LoginController;
+import com.megacitycab.config.DBConnection;
+import com.megacitycab.util.PasswordUtil;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import org.json.JSONObject;
 
 @WebServlet("/adminLogin")
 public class AdminLoginServlet extends HttpServlet {
-    private LoginController loginController;
-    
-    @Override
-    public void init() throws ServletException {
-        System.out.println("AdminLoginServlet initialized");
-        loginController = new LoginController();
-    }
-    
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "POST");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-        
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        
-        // Debug logs
-        System.out.println("Login attempt - Username: " + username);
-        
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
         JSONObject jsonResponse = new JSONObject();
-        try {
-            // Add debug logs around the login attempt
-            System.out.println("Attempting login validation...");
-            boolean loginSuccess = loginController.login(username, password);
-            System.out.println("Login validation result: " + loginSuccess);
-            
-            if (loginSuccess) {
-                jsonResponse.put("success", true);
-                jsonResponse.put("redirectUrl", "adminDashboard.html");
-                System.out.println("Login successful - redirecting to dashboard");
+
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn == null) {
+                jsonResponse.put("success", false);
+                jsonResponse.put("message", "Database connection failed.");
+                out.print(jsonResponse.toString());
+                return;
+            }
+
+  
+            String query = "SELECT password, salt FROM Admins WHERE username = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String storedHashedPassword = rs.getString("password");
+                String storedSalt = rs.getString("salt");
+
+        
+                if (PasswordUtil.verifyPassword(password, storedHashedPassword, storedSalt)) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("admin", username);
+                    
+                    jsonResponse.put("success", true);
+                    jsonResponse.put("message", "Login successful!");
+                    jsonResponse.put("redirectUrl", "adminDashboard.html");
+                } else {
+                    jsonResponse.put("success", false);
+                    jsonResponse.put("message", "Invalid username or password.");
+                }
             } else {
                 jsonResponse.put("success", false);
-                jsonResponse.put("errorMessage", "Invalid username or password.");
-                System.out.println("Login failed - invalid credentials");
+                jsonResponse.put("message", "Invalid username or password.");
             }
         } catch (Exception e) {
             e.printStackTrace();
             jsonResponse.put("success", false);
-            jsonResponse.put("errorMessage", "An internal error occurred: " + e.getMessage());
-            System.out.println("Login error: " + e.getMessage());
+            jsonResponse.put("message", "An error occurred during login.");
         }
-        
-        PrintWriter out = response.getWriter();
+
         out.print(jsonResponse.toString());
         out.flush();
     }
