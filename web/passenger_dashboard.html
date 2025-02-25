@@ -7,7 +7,28 @@
     <link rel="stylesheet" href="css/passengerdashboard.css">
     <link rel="website icon" href="images/megacitycablogo.png" type="png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+    <style>
+          .nav-links a.active {
+        background: #fff9e6;
+            
+            color: #d4a700;
+            font-weight: bolder;
+        }
+                .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #f8d161;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -20,12 +41,12 @@
 
             <ul class="nav-links">
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="#" class="nav-link active">
                         <i class="fas fa-home"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="passengerbooking.html" class="nav-link">
                         <i class="fas fa-car"></i> Book a Ride
                     </a>
                 </li>
@@ -142,6 +163,10 @@
                 card.style.transform = 'translateY(0)';
             });
         });
+        
+        
+        
+        
 
        
     </script>

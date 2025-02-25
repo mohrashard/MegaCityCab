@@ -43,6 +43,7 @@
             flex-direction: column;
             transform: translateX(0);
             transition: transform 0.3s ease;
+            
         }
 
         .sidebar.collapsed {
@@ -88,8 +89,8 @@
             font-weight: bolder;
         }
         .nav-links a.active {
-            background-color: var(--primary-color);
-             
+        background: #faefb5;
+            
             color: #d4a700;
             font-weight: bolder;
         }
