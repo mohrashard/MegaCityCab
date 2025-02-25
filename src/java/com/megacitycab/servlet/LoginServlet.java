@@ -24,6 +24,7 @@ public class LoginServlet extends HttpServlet {
         String userType = request.getParameter("user-type");
 
         String tableName = userType.equals("driver") ? "Drivers" : "Passengers";
+        String idColumn = userType.equals("driver") ? "driver_id" : "passenger_id"; 
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -37,21 +38,22 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-  
-            String query = "SELECT password, salt FROM " + tableName + " WHERE email = ?";
+           
+            String query = "SELECT " + idColumn + ", password, salt FROM " + tableName + " WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                int userId = rs.getInt(idColumn);
                 String storedHashedPassword = rs.getString("password");
                 String storedSalt = rs.getString("salt");
 
-       
                 if (PasswordUtil.verifyPassword(password, storedHashedPassword, storedSalt)) {
                     HttpSession session = request.getSession();
                     session.setAttribute("user", email);
                     session.setAttribute("userType", userType);
+                    session.setAttribute("userId", userId); 
 
                     jsonResponse.put("success", true);
                     jsonResponse.put("userType", userType);
