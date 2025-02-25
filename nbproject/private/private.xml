@@ -3,10 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/PassengerDAO.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/PassengerSignupServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/passenger_signup.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/PassengerService.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/IBookingDAO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Booking.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/BookingServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/BookingService.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/controller/BookingController.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/passengerbooking.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/model/Driver.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/BookingDAO.java</file>
         </group>
     </open-files>
 </project-private>
