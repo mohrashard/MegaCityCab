@@ -3,16 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Management</title>
     <link rel="stylesheet" href="css/bookingmanagement.css"/>
     <link rel="website icon" href="images/megacitycablogo.png" type="png">
-    <title> Booking Management</title>
-  
+    <style>
+        .booking-filter {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .filter-btn {
+        background-color: #f3f4f694;
+        color: #443229;
+        border: 2px solid #282a2c;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filter-btn:hover {
+        background-color: #e9d691;
+        transform: translateY(-2px);
+      }
+
+      .filter-btn.active {
+        background-color: #282a2c;
+        color: #f8d161;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+    </style>
   </head>
   <body>
     <aside class="sidebar">
       <div class="logo">Mega City Cab</div>
       <ul class="nav-links">
-        <li><a href="adminDashboard.html" data-page="dashboard">Dashboard</a></li>
+        <li><a href="#" data-page="dashboard">Dashboard</a></li>
         <li><a href="#" class="active" data-page="bookings">Bookings</a></li>
         <li><a href="#" data-page="customers">Customers</a></li>
         <li><a href="#" data-page="drivers">Drivers</a></li>
@@ -27,6 +56,16 @@
           <h1>Booking Management</h1>
         </div>
 
+        <!-- Booking Filter Buttons -->
+        <div class="booking-filter">
+          <button class="filter-btn active" data-filter="all">
+            All Bookings
+          </button>
+          <button class="filter-btn" data-filter="pending">Pending</button>
+          <button class="filter-btn" data-filter="assigned">Assigned</button>
+          <button class="filter-btn" data-filter="ended">Ended Bookings</button>
+        </div>
+
         <table class="bookings-table">
           <thead>
             <tr>
@@ -36,6 +75,7 @@
               <th>Date & Time</th>
               <th>Vehicle Type</th>
               <th>Status</th>
+              <th>Hire Fee</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -43,6 +83,62 @@
             <!-- Bookings will be inserted here -->
           </tbody>
         </table>
+
+        <!-- Hire Fee Calculator -->
+        <div class="fee-calculator">
+          <h2>Hire Fee Calculator</h2>
+          <div class="fee-calculator-grid">
+            <div class="form-group">
+              <label for="perKmRate">Rate per Kilometer (LKR)</label>
+              <input
+                type="number"
+                id="perKmRate"
+                class="form-control"
+                value="90"
+                min="1"
+              />
+            </div>
+            <div class="form-group">
+              <label for="distance">Distance (Kilometers)</label>
+              <input
+                type="number"
+                id="distance"
+                class="form-control"
+                min="0.1"
+                step="0.1"
+              />
+            </div>
+            <div class="form-group">
+              <label for="bookingSelection">Select Booking</label>
+              <select id="bookingSelection" class="form-control">
+                <option value="">-- Select a booking --</option>
+                <!-- Bookings will be inserted here -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label>&nbsp;</label>
+              <button
+                id="calculateFeeBtn"
+                class="btn btn-primary"
+                style="width: 100%; margin-top: 1px"
+              >
+                Calculate Fee
+              </button>
+            </div>
+          </div>
+          <div class="calculator-result" id="feeResult" style="display: none">
+            <h3>Total Hire Fee</h3>
+            <div class="total-fee" id="totalFeeDisplay">LKR 0.00</div>
+            <p class="fee-breakdown" id="feeBreakdown">0.0 km × LKR 0 per km</p>
+            <button
+              id="applyFeeBtn"
+              class="btn btn-primary"
+              style="margin-top: 1rem"
+            >
+              Apply Fee to Booking
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -101,6 +197,7 @@
           datetime: "2025-02-22 14:30",
           vehicleType: "Car",
           status: "pending",
+          hireFee: null,
         },
         {
           id: 2,
@@ -110,6 +207,43 @@
           datetime: "2025-02-22 15:45",
           vehicleType: "Van",
           status: "pending",
+          hireFee: null,
+        },
+        {
+          id: 3,
+          passenger: "Carol Smith",
+          pickup: "555 Elm St",
+          dropoff: "777 Maple Ave",
+          datetime: "2025-02-21 09:15",
+          vehicleType: "Car",
+          status: "ended",
+          hireFee: 1200,
+          driver: "John Doe",
+          vehicleNumber: "CAB-1234",
+        },
+        {
+          id: 4,
+          passenger: "David Johnson",
+          pickup: "888 Cherry Ln",
+          dropoff: "999 Orange Blvd",
+          datetime: "2025-02-21 13:45",
+          vehicleType: "Three-Wheeler",
+          status: "ended",
+          hireFee: 850,
+          driver: "Mike Johnson",
+          vehicleNumber: "TWL-7890",
+        },
+        {
+          id: 5,
+          passenger: "Emma Davis",
+          pickup: "123 Beach Rd",
+          dropoff: "456 Harbor Dr",
+          datetime: "2025-02-22 10:30",
+          vehicleType: "Van",
+          status: "assigned",
+          hireFee: 1800,
+          driver: "Jane Smith",
+          vehicleNumber: "VAN-9012",
         },
       ];
 
@@ -146,10 +280,49 @@
 
       let currentBookingId = null;
       let selectedDriver = null;
+      let currentFilter = "all";
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        renderBookings();
+        updateBookingSelection();
+
+        // Event listeners
+        document
+          .getElementById("calculateFeeBtn")
+          .addEventListener("click", calculateFee);
+        document
+          .getElementById("applyFeeBtn")
+          .addEventListener("click", applyFeeToBooking);
+        document
+          .getElementById("bookingSelection")
+          .addEventListener("change", function () {
+            currentBookingId = parseInt(this.value) || null;
+          });
+
+        // Filter buttons
+        document.querySelectorAll(".filter-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            document
+              .querySelectorAll(".filter-btn")
+              .forEach((btn) => btn.classList.remove("active"));
+            this.classList.add("active");
+            currentFilter = this.dataset.filter;
+            renderBookings();
+          });
+        });
+      });
 
       function renderBookings() {
         const tableBody = document.getElementById("bookingsTableBody");
-        tableBody.innerHTML = bookings
+
+        // Filter bookings based on current filter
+        const filteredBookings = bookings.filter((booking) => {
+          if (currentFilter === "all") return true;
+          return booking.status === currentFilter;
+        });
+
+        tableBody.innerHTML = filteredBookings
           .map(
             (booking) => `
       <tr>
@@ -168,10 +341,21 @@
           </td>
           <td>
               ${
+                booking.hireFee
+                  ? `LKR ${booking.hireFee.toLocaleString()}`
+                  : "Not set"
+              }
+          </td>
+          <td>
+              ${
                 booking.status === "pending"
-                  ? `<button class="btn btn-assign" onclick="openAssignmentModal(${booking.id})">
+                  ? `<button class="btn btn-assign" onclick="openAssignmentModal(${
+                      booking.id
+                    })" ${!booking.hireFee ? "disabled" : ""}>
                     Assign
                 </button>`
+                  : booking.status === "ended"
+                  ? "Completed"
                   : `Assigned to ${booking.driver} (${booking.vehicleNumber})`
               }
           </td>
@@ -179,6 +363,74 @@
   `
           )
           .join("");
+      }
+
+      function updateBookingSelection() {
+        const select = document.getElementById("bookingSelection");
+        select.innerHTML = '<option value="">-- Select a booking --</option>';
+
+        bookings
+          .filter((b) => b.status === "pending")
+          .forEach((booking) => {
+            const option = document.createElement("option");
+            option.value = booking.id;
+            option.textContent = `${booking.passenger} - ${booking.vehicleType}`;
+            select.appendChild(option);
+          });
+      }
+
+      function calculateFee() {
+        const perKmRate =
+          parseFloat(document.getElementById("perKmRate").value) || 60;
+        const distance = parseFloat(document.getElementById("distance").value);
+
+        if (!distance || distance <= 0) {
+          alert("Please enter a valid distance");
+          return;
+        }
+
+        const totalFee = perKmRate * distance;
+        document.getElementById(
+          "totalFeeDisplay"
+        ).textContent = `LKR ${totalFee.toLocaleString()}`;
+        document.getElementById(
+          "feeBreakdown"
+        ).textContent = `${distance} km × LKR ${perKmRate} per km`;
+        document.getElementById("feeResult").style.display = "block";
+      }
+
+      function applyFeeToBooking() {
+        if (!currentBookingId) {
+          alert("Please select a booking to apply the fee");
+          return;
+        }
+
+        const totalFeeText =
+          document.getElementById("totalFeeDisplay").textContent;
+        const totalFee = parseFloat(
+          totalFeeText.replace("LKR ", "").replace(/,/g, "")
+        );
+
+        if (isNaN(totalFee) || totalFee <= 0) {
+          alert("Please calculate a valid fee first");
+          return;
+        }
+
+        const bookingIndex = bookings.findIndex(
+          (b) => b.id === currentBookingId
+        );
+        if (bookingIndex !== -1) {
+          bookings[bookingIndex].hireFee = totalFee;
+          renderBookings();
+          alert(
+            `Hire fee of LKR ${totalFee.toLocaleString()} has been applied to the booking`
+          );
+
+          document.getElementById("feeResult").style.display = "none";
+          document.getElementById("distance").value = "";
+          document.getElementById("bookingSelection").value = "";
+          currentBookingId = null;
+        }
       }
 
       function renderDriversTable(vehicleType) {
@@ -232,6 +484,13 @@
         currentBookingId = bookingId;
         const booking = bookings.find((b) => b.id === bookingId);
 
+        if (!booking.hireFee) {
+          alert(
+            "Please set a hire fee for this booking before assigning a driver"
+          );
+          return;
+        }
+
         selectedDriver = null;
         document
           .getElementById("selectedDriverInfo")
@@ -268,11 +527,10 @@
           }
 
           renderBookings();
+          updateBookingSelection();
           closeModal();
           alert("Booking assigned successfully!");
         });
-
-      renderBookings();
     </script>
   </body>
 </html>
