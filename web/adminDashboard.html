@@ -16,7 +16,7 @@
             <div class="logo">Mega City Cab</div>
             <ul class="nav-links">
                 <li><a href="#" class="active" data-page="dashboard">Dashboard</a></li>
-                <li><a href="#" data-page="bookings">Bookings</a></li>
+                <li><a href="bookingmanagement.html" data-page="bookings">Bookings</a></li>
                 <li><a href="#" data-page="customers">Customers</a></li>
                 <li><a href="#" data-page="drivers">Drivers</a></li>
                 <li><a href="#" data-page="vehicles">Vehicles</a></li>
@@ -102,18 +102,7 @@
 
 
         
-        const navLinks = document.querySelectorAll('.nav-links a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                
-                if (link.dataset.page === 'logout') {
-                    alert('Logged out successfully!');
-                }
-            });
-        });
+
 
         
        const ctx = document.getElementById('bookingsChart').getContext('2d');

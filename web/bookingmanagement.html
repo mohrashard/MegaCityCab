@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/bookingmanagement.css"/>
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <title> Booking Management</title>
+  
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="logo">Mega City Cab</div>
+      <ul class="nav-links">
+        <li><a href="adminDashboard.html" data-page="dashboard">Dashboard</a></li>
+        <li><a href="#" class="active" data-page="bookings">Bookings</a></li>
+        <li><a href="#" data-page="customers">Customers</a></li>
+        <li><a href="#" data-page="drivers">Drivers</a></li>
+        <li><a href="#" data-page="vehicles">Vehicles</a></li>
+        <li><a href="#" data-page="logout">Logout</a></li>
+      </ul>
+    </aside>
+
+    <div class="main-content">
+      <div class="container">
+        <div class="header">
+          <h1>Booking Management</h1>
+        </div>
+
+        <table class="bookings-table">
+          <thead>
+            <tr>
+              <th>Passenger</th>
+              <th>Pickup</th>
+              <th>Drop-off</th>
+              <th>Date & Time</th>
+              <th>Vehicle Type</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody">
+            <!-- Bookings will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Assignment Modal -->
+    <div class="modal" id="assignmentModal">
+      <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <div class="modal-header">
+          <h2 style="color: #282a2c">Assign Vehicle & Driver</h2>
+          <p style="color: #443229; margin-top: 0.5rem">
+            Click on a driver to select
+          </p>
+        </div>
+        <form id="assignmentForm">
+          <div class="form-group">
+            <table class="drivers-table">
+              <thead>
+                <tr>
+                  <th>Driver Name</th>
+                  <th>Vehicle Type</th>
+                  <th>Vehicle Number</th>
+                </tr>
+              </thead>
+              <tbody id="driversListBody">
+                <!-- Drivers will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+
+          <div id="selectedDriverInfo" class="selected-driver-info">
+            <h3>Selected Driver</h3>
+            <p id="selectedDriverName">Name: <span></span></p>
+            <p id="selectedVehicleType">Vehicle: <span></span></p>
+            <p id="selectedVehicleNumber">Number: <span></span></p>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="confirmButton"
+            disabled
+          >
+            Confirm Assignment
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const bookings = [
+        {
+          id: 1,
+          passenger: "Alice Brown",
+          pickup: "123 Main St",
+          dropoff: "456 Park Ave",
+          datetime: "2025-02-22 14:30",
+          vehicleType: "Car",
+          status: "pending",
+        },
+        {
+          id: 2,
+          passenger: "Bob Wilson",
+          pickup: "789 Oak Rd",
+          dropoff: "321 Pine St",
+          datetime: "2025-02-22 15:45",
+          vehicleType: "Van",
+          status: "pending",
+        },
+      ];
+
+      const drivers = {
+        car: [
+          { name: "John Doe", vehicleType: "Car", vehicleNumber: "CAB-1234" },
+          {
+            name: "Emily Davis",
+            vehicleType: "Car",
+            vehicleNumber: "CAB-5678",
+          },
+        ],
+        van: [
+          { name: "Jane Smith", vehicleType: "Van", vehicleNumber: "VAN-9012" },
+          {
+            name: "Robert Brown",
+            vehicleType: "Van",
+            vehicleNumber: "VAN-3456",
+          },
+        ],
+        "three-wheeler": [
+          {
+            name: "Mike Johnson",
+            vehicleType: "Three-Wheeler",
+            vehicleNumber: "TWL-7890",
+          },
+          {
+            name: "Sarah Lee",
+            vehicleType: "Three-Wheeler",
+            vehicleNumber: "TWL-1234",
+          },
+        ],
+      };
+
+      let currentBookingId = null;
+      let selectedDriver = null;
+
+      function renderBookings() {
+        const tableBody = document.getElementById("bookingsTableBody");
+        tableBody.innerHTML = bookings
+          .map(
+            (booking) => `
+      <tr>
+          <td>${booking.passenger}</td>
+          <td>${booking.pickup}</td>
+          <td>${booking.dropoff}</td>
+          <td>${booking.datetime}</td>
+          <td>${booking.vehicleType}</td>
+          <td>
+              <span class="status status-${booking.status}">
+                  ${
+                    booking.status.charAt(0).toUpperCase() +
+                    booking.status.slice(1)
+                  }
+              </span>
+          </td>
+          <td>
+              ${
+                booking.status === "pending"
+                  ? `<button class="btn btn-assign" onclick="openAssignmentModal(${booking.id})">
+                    Assign
+                </button>`
+                  : `Assigned to ${booking.driver} (${booking.vehicleNumber})`
+              }
+          </td>
+      </tr>
+  `
+          )
+          .join("");
+      }
+
+      function renderDriversTable(vehicleType) {
+        const filteredDrivers = drivers[vehicleType.toLowerCase()] || [];
+        const tbody = document.getElementById("driversListBody");
+        tbody.innerHTML = filteredDrivers
+          .map(
+            (driver, index) => `
+      <tr data-index="${index}" data-name="${driver.name}" data-vehicle-type="${driver.vehicleType}" data-vehicle-number="${driver.vehicleNumber}">
+        <td>${driver.name}</td>
+        <td>${driver.vehicleType}</td>
+        <td>${driver.vehicleNumber}</td>
+      </tr>
+    `
+          )
+          .join("");
+
+        document.querySelectorAll("#driversListBody tr").forEach((row) => {
+          row.addEventListener("click", function () {
+            selectDriver(this);
+          });
+        });
+      }
+
+      function selectDriver(row) {
+        document.querySelectorAll("#driversListBody tr").forEach((r) => {
+          r.classList.remove("selected");
+        });
+
+        row.classList.add("selected");
+
+        selectedDriver = {
+          name: row.dataset.name,
+          vehicleType: row.dataset.vehicleType,
+          vehicleNumber: row.dataset.vehicleNumber,
+        };
+
+        document.querySelector("#selectedDriverName span").textContent =
+          selectedDriver.name;
+        document.querySelector("#selectedVehicleType span").textContent =
+          selectedDriver.vehicleType;
+        document.querySelector("#selectedVehicleNumber span").textContent =
+          selectedDriver.vehicleNumber;
+
+        document.getElementById("selectedDriverInfo").classList.add("active");
+
+        document.getElementById("confirmButton").disabled = false;
+      }
+
+      function openAssignmentModal(bookingId) {
+        currentBookingId = bookingId;
+        const booking = bookings.find((b) => b.id === bookingId);
+
+        selectedDriver = null;
+        document
+          .getElementById("selectedDriverInfo")
+          .classList.remove("active");
+        document.getElementById("confirmButton").disabled = true;
+
+        if (booking) {
+          renderDriversTable(booking.vehicleType);
+        }
+        document.getElementById("assignmentModal").classList.add("active");
+      }
+
+      function closeModal() {
+        document.getElementById("assignmentModal").classList.remove("active");
+      }
+
+      document
+        .getElementById("assignmentForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          if (!selectedDriver) {
+            alert("Please select a driver.");
+            return;
+          }
+
+          const bookingIndex = bookings.findIndex(
+            (b) => b.id === currentBookingId
+          );
+          if (bookingIndex !== -1) {
+            bookings[bookingIndex].status = "assigned";
+            bookings[bookingIndex].driver = selectedDriver.name;
+            bookings[bookingIndex].vehicleNumber = selectedDriver.vehicleNumber;
+          }
+
+          renderBookings();
+          closeModal();
+          alert("Booking assigned successfully!");
+        });
+
+      renderBookings();
+    </script>
+  </body>
+</html>
