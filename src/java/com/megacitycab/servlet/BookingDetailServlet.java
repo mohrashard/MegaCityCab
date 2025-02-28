@@ -53,7 +53,7 @@ public class BookingDetailServlet extends HttpServlet {
                 return;
             }
             
-            // Convert booking to JSON
+
             StringBuilder json = new StringBuilder("{");
             json.append("\"bookingId\":").append(booking.getBookingId()).append(",")
                 .append("\"passengerId\":").append(booking.getPassengerId()).append(",")
@@ -65,14 +65,14 @@ public class BookingDetailServlet extends HttpServlet {
                 .append("\"paymentMethod\":\"").append(escapeJson(booking.getPaymentMethod())).append("\",")
                 .append("\"status\":\"").append(booking.getStatus() != null ? escapeJson(booking.getStatus()) : "PENDING").append("\"");
                 
-            // Handle nullable hireFee
+ 
             if (booking.getHireFee() != null) {
                 json.append(",\"hireFee\":").append(booking.getHireFee());
             } else {
                 json.append(",\"hireFee\":null");
             }
             
-            // Add driver information if available
+
             if (booking.getDriverId() != null) {
                 json.append(",\"driverId\":").append(booking.getDriverId());
             }

@@ -201,8 +201,7 @@ String sql = "SELECT b.*, p.full_name as passenger_name FROM [megacitycab].[dbo]
             booking.setVehicleType(rs.getString("vehicle_type"));
             booking.setPickupLocation(rs.getString("pickup_location"));
             booking.setDropoffLocation(rs.getString("dropoff_location"));
-            
-            // Convert Timestamp to formatted string
+
             Timestamp timestamp = rs.getTimestamp("booking_datetime");
             if (timestamp != null) {
                 LocalDateTime dateTime = timestamp.toLocalDateTime();
@@ -219,11 +218,11 @@ String sql = "SELECT b.*, p.full_name as passenger_name FROM [megacitycab].[dbo]
             
             booking.setStatus(rs.getString("status"));
             
-            // Add passenger name property if it exists in your Booking model, otherwise you'll need to extend the model
+          
             try {
                 booking.setPassengerName(rs.getString("passenger_name"));
             } catch (SQLException e) {
-                // Column doesn't exist, so we'll ignore this
+                
             }
             
             bookings.add(booking);
@@ -256,7 +255,7 @@ public List<Booking> getBookingsByStatus(String status) {
                 booking.setPickupLocation(rs.getString("pickup_location"));
                 booking.setDropoffLocation(rs.getString("dropoff_location"));
                 
-                // Convert Timestamp to formatted string
+          
                 Timestamp timestamp = rs.getTimestamp("booking_datetime");
                 if (timestamp != null) {
                     LocalDateTime dateTime = timestamp.toLocalDateTime();
@@ -273,11 +272,11 @@ public List<Booking> getBookingsByStatus(String status) {
                 
                 booking.setStatus(rs.getString("status"));
                 
-                // Add passenger name property if it exists in your Booking model
+         
                 try {
                     booking.setPassengerName(rs.getString("passenger_name"));
                 } catch (SQLException e) {
-                    // Column doesn't exist, so we'll ignore this
+    
                 }
                 
                 bookings.add(booking);
@@ -290,7 +289,7 @@ public List<Booking> getBookingsByStatus(String status) {
     return bookings;
 }
 
-// Add this method to your BookingRepositoryImpl
+
 public Booking getBooking(int bookingId) {
     Booking booking = null;
     String sql = "SELECT b.*, p.full_name as passenger_name, d.full_name as driver_name " +
@@ -311,9 +310,7 @@ public Booking getBooking(int bookingId) {
                 booking.setVehicleType(rs.getString("vehicle_type"));
                 booking.setPickupLocation(rs.getString("pickup_location"));
                 booking.setDropoffLocation(rs.getString("dropoff_location"));
-                // ... set other fields
-                
-                // Add driver info if exists
+
                 if (rs.getObject("driver_id") != null) {
                     booking.setDriverId(rs.getInt("driver_id"));
                     booking.setDriverName(rs.getString("driver_name"));
@@ -330,7 +327,7 @@ public Booking getBooking(int bookingId) {
 public boolean updateBookingFee(int bookingId, double hireFee) {
     String sql = "UPDATE [megacitycab].[dbo].[Bookings] SET " +
                  "hire_fee = ?, " +
-                 "status = 'pending' " +  // Optional: Ensure status remains pending
+                 "status = 'pending' " +  
                  "WHERE booking_id = ?";
     
     try (Connection conn = DBConnection.getConnection();
@@ -348,16 +345,17 @@ public boolean updateBookingFee(int bookingId, double hireFee) {
     }
 }
 
-// Modified BookingRepositoryImpl
+@Override
 public boolean assignDriver(int bookingId, int driverId) throws SQLException {
     Connection conn = null;
     try {
         conn = DBConnection.getConnection();
-        conn.setAutoCommit(false); // Start transaction
+        conn.setAutoCommit(false);
         
-        String sql = "UPDATE Bookings SET driver_id = ?, status = 'assigned' " +
-                     "WHERE booking_id = ? AND status = 'pending'";
-        
+String sql = "UPDATE [megacitycab].[dbo].[Bookings] " +
+             "SET driver_id = ?, status = 'assigned' " +
+             "WHERE booking_id = ? AND UPPER(status) = 'PENDING'";
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, driverId);
             stmt.setInt(2, bookingId);
@@ -368,19 +366,18 @@ public boolean assignDriver(int bookingId, int driverId) throws SQLException {
                 return false;
             }
             
-
-            
             conn.commit();
             return true;
         }
+    } catch(SQLException e) {
+        if(conn != null) conn.rollback();
+        throw e;
     } finally {
         if (conn != null) {
             conn.setAutoCommit(true);
             conn.close();
         }
     }
-    
-    
 }
     
 }

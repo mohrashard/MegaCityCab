@@ -39,7 +39,7 @@ public class BookingsApiServlet extends HttpServlet {
                 bookings = bookingService.getBookingsByStatus(filter.toUpperCase());
             }
             
-            // Debug log
+
             System.out.println("Retrieved " + bookings.size() + " bookings with filter: " + filter);
             
             if (bookings.isEmpty()) {
@@ -48,7 +48,7 @@ public class BookingsApiServlet extends HttpServlet {
             }
             
             String json = convertBookingsToJson(bookings);
-            // Debug log
+
             System.out.println("JSON response: " + json);
             
             response.getWriter().write(json);
@@ -73,14 +73,14 @@ public class BookingsApiServlet extends HttpServlet {
                 .append("\"vehicleType\":\"").append(escapeJson(b.getVehicleType())).append("\",")
                 .append("\"status\":\"").append(b.getStatus() != null ? escapeJson(b.getStatus()) : "PENDING").append("\"");
             
-            // Only include hireFee if it's not null
+
             if (b.getHireFee() != null) {
                 json.append(",\"hireFee\":").append(b.getHireFee());
             } else {
                 json.append(",\"hireFee\":null");
             }
             
-            // Add driver name if available
+
             if (b.getDriverName() != null && !b.getDriverName().isEmpty()) {
                 json.append(",\"driverName\":\"").append(escapeJson(b.getDriverName())).append("\"");
             }

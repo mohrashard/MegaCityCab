@@ -1,8 +1,8 @@
 package com.megacitycab.repository;
 
 import com.megacitycab.model.Booking;
+import java.sql.SQLException;
 import java.util.List;
-
 
 public interface BookingRepository {
     boolean saveBooking(Booking booking);
@@ -11,13 +11,9 @@ public interface BookingRepository {
     boolean updateBooking(Booking booking);
     boolean deleteBooking(int bookingId);
     
-    
-        // New method
     List<Booking> getAllBookings();
-    
-    // If you want filtering capability
     List<Booking> getBookingsByStatus(String status);
     
     boolean updateBookingFee(int bookingId, double hireFee);
-
+    boolean assignDriver(int bookingId, int driverId) throws SQLException;
 }

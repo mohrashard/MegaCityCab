@@ -15,10 +15,10 @@ public class Booking {
     private Integer driverId;
 
     public Booking() {
-        // Default constructor
+  
     }
 
-    // Getters and Setters
+ 
     public int getBookingId() {
         return bookingId;
     }

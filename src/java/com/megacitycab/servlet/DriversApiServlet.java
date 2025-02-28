@@ -22,9 +22,9 @@ public class DriversApiServlet extends HttpServlet {
         String vehicleType = request.getParameter("type");
         
         try {
-           // Change the SQL query to use status column instead of available
+        
 String sql;
-// Change from 'offline' to 'available'
+
 if (vehicleType != null && !vehicleType.isEmpty()) {
     sql = "SELECT * FROM [megacitycab].[dbo].[Drivers] WHERE [vehicle_type] = ? AND [status] = 'offline'";
 } else {
@@ -48,7 +48,7 @@ if (vehicleType != null && !vehicleType.isEmpty()) {
                             jsonResponse.append(",");
                         }
                         
-// Update the JSON construction
+
 jsonResponse.append("{")
     .append("\"driverId\":").append(rs.getInt("driver_id")).append(",")
     .append("\"fullName\":\"").append(escapeJson(rs.getString("full_name"))).append("\",")

@@ -326,29 +326,28 @@ async function initializeApp() {
 }
 
 function setupEventListeners() {
-  // Filter buttons
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", handleFilterClick);
   });
 
-  // Calculate fee button
+
   document.getElementById("calculateFeeBtn").addEventListener("click", calculateFee);
   
-  // Apply fee button
+
   document.getElementById("applyFeeBtn").addEventListener("click", applyFeeToBooking);
 
-  // Booking selection
+
   document.getElementById("bookingSelection").addEventListener("change", function(e) {
     currentBookingId = this.value ? parseInt(this.value) : null;
   });
 
-  // Assignment form
+
   document.getElementById("assignmentForm").addEventListener("submit", function(e) {
     e.preventDefault();
     assignBooking();
   });
 
-  // Modal close
+
   document.querySelector(".close-modal").addEventListener("click", closeModal);
 }
 
@@ -376,7 +375,7 @@ async function loadBookings() {
     }
     
     const bookings = await response.json();
-    console.log("Loaded bookings:", bookings); // Debug log
+    console.log("Loaded bookings:", bookings); 
     renderBookings(bookings);
     updateBookingSelection(bookings);
   } catch (error) {
@@ -413,13 +412,13 @@ function renderBookings(bookings) {
 <td>${booking.hireFee ? `LKR ${parseFloat(booking.hireFee).toFixed(2)}` : 'Not Set'}</td>
       <td>
 
-${(booking.status || 'PENDING').toUpperCase() === 'PENDING' ? `
+${(booking.status || 'pending').toLowerCase() === 'pending' ? `
   <button class="btn btn-assign" 
           onclick="openAssignmentModal(${booking.bookingId})" 
           ${!booking.hireFee ? 'disabled' : ''}>
     Assign
   </button>
-` : (booking.status || 'PENDING').toUpperCase() === 'ENDED' ? 
+` : (booking.status || 'pending').toLowerCase() === 'ended' ? 
   'Completed' : 
   `Assigned to ${booking.driverName || 'Driver'}`
 }
@@ -433,7 +432,7 @@ function formatDateTime(isoString) {
   
   try {
     const date = new Date(isoString);
-    if (isNaN(date.getTime())) return isoString; // Return original if parsing fails
+    if (isNaN(date.getTime())) return isoString;
     
     return date.toLocaleString('en-US', {
       year: 'numeric',
@@ -444,31 +443,29 @@ function formatDateTime(isoString) {
     });
   } catch (e) {
     console.error("Date parsing error:", e);
-    return isoString; // Return original on error
+    return isoString; 
   }
 }
 
+function updateBookingSelection(bookings) {
+  const select = document.getElementById("bookingSelection");
+  if (!select) return;
 
-    function updateBookingSelection(bookings) {
-      const select = document.getElementById("bookingSelection");
-      if (!select) {
-        console.error("Booking selection element not found!");
-        return;
-      }
-  
   select.innerHTML = '<option value="">-- Select booking --</option>';
-  
-// In updateBookingSelection function
-      bookings
-        .filter(b => (b.status || 'PENDING').toUpperCase() === 'PENDING')
-        .forEach(booking => {
-          const option = document.createElement("option");
-          option.value = booking.bookingId;
-          // Ensure these fields match your JSON response structure
-          option.textContent = `${booking.passengerName || 'Passenger'} - ${booking.vehicleType || 'Vehicle'}`;
-          select.appendChild(option);
-        });
-    }
+
+
+  bookings
+    .filter(b => 
+      (b.status || 'pending').toLowerCase() === 'pending' && 
+      (b.hireFee === null || b.hireFee === undefined)
+    )
+    .forEach(booking => {
+      const option = document.createElement("option");
+      option.value = booking.bookingId;
+      option.textContent = `${booking.passengerName || 'Passenger'} - ${booking.vehicleType || 'Vehicle'}`;
+      select.appendChild(option);
+    });
+}
 
 function calculateFee() {
   const perKmRate = parseFloat(document.getElementById("perKmRate").value) || 90;
@@ -540,7 +537,7 @@ async function openAssignmentModal(bookingId) {
       return;
     }
     
-    // Load drivers - ensure this endpoint exists
+
     const driversResponse = await fetch(`${contextPath}/api/drivers?type=${booking.vehicleType}`);
     if (!driversResponse.ok) {
       throw new Error(`HTTP error! Status: ${driversResponse.status}`);
@@ -550,8 +547,7 @@ async function openAssignmentModal(bookingId) {
     
     renderDriversList(drivers);
     document.getElementById("assignmentModal").classList.add("active");
-    
-    // Reset the selected driver
+
     selectedDriver = null;
     document.getElementById("confirmButton").disabled = true;
     document.getElementById("selectedDriverInfo").style.display = "none";
@@ -598,7 +594,7 @@ function selectDriver(row) {
     vehicleNumber: row.dataset.vehicle
   };
   
-  // Update the selected driver info display
+
   document.getElementById("selectedDriverName").querySelector("span").textContent = selectedDriver.name;
   document.getElementById("selectedVehicleType").querySelector("span").textContent = selectedDriver.vehicleType;
   document.getElementById("selectedVehicleNumber").querySelector("span").textContent = selectedDriver.vehicleNumber;

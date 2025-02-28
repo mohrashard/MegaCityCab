@@ -11,8 +11,6 @@ public interface BookingService {
     boolean cancelBooking(int bookingId);
     List<Booking> getAllBookings();
     List<Booking> getBookingsByStatus(String status);
-    
-    // New method to assign a driver to a booking
     boolean assignDriver(int bookingId, int driverId);
  boolean updateBookingFee(int bookingId, double hireFee);
 }
