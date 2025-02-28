@@ -206,106 +206,135 @@
         font-weight: bold;
       }
 
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
-      .modal.active {
-        display: flex;
-      }
+.modal.active {
+  display: flex;
+}
 
-      .modal-content {
-        background: #dfcd83;
-        padding: 1.5rem;
-        border-radius: 10px;
-        width: 95%;
-        max-width: 550px;
-        text-align: center;
-        color: white;
-        box-shadow: 0 0 15px rgba(40, 42, 44, 0.8);
-        border: 2px solid rgba(40, 42, 44, 0.8);
-        position: relative;
-      }
+.modal-content {
+  background: #dfcd83;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 95%;
+  max-width: 550px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 15px rgba(40, 42, 44, 0.8);
+  border: 2px solid rgba(40, 42, 44, 0.8);
+  position: relative;
+  max-height: 80vh; 
+  overflow-y: auto; 
+}
 
-      .close-modal {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: none;
-        border: none;
-        font-size: 2rem;
-        cursor: pointer;
-        color: #282a2c;
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
-        text-align: center;
-        border-radius: 5px;
-        transition: all 0.2s ease-in-out;
-      }
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #282a2c;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+}
 
-      .close-modal:hover {
-        background-color: #282a2c;
-        color: #ffcc00;
-        transform: scale(1.1);
-      }
+.close-modal:hover {
+  background-color: #282a2c;
+  color: #ffcc00;
+  transform: scale(1.1);
+}
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-      .drivers-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 1.5rem 0;
-        font-size: 1rem;
-      }
+.drivers-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 1rem;
+}
 
-      .drivers-table th,
-      .drivers-table td {
-        padding: 14px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-      }
+.drivers-table th,
+.drivers-table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
 
-      .drivers-table th {
-        background-color: #282a2c;
-        color: white;
-      }
+.drivers-table th {
+  background-color: #282a2c;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
-      .drivers-table tr {
-        color: #282a2c;
-        font-weight: bolder;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
+.drivers-table tbody {
+  display: block;
+  max-height: 250px; 
+  overflow-y: auto;
+}
 
-      .drivers-table tr.selected {
-        background-color: #f8d161;
-        box-shadow: 0 0 8px rgba(40, 42, 44, 0.4);
-        transform: scale(1.01);
-      }
+.drivers-table thead,
+.drivers-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
 
-      .drivers-table tr:hover:not(.selected) {
-        background-color: #e9d691;
-      }
+.drivers-table tr {
+  color: #282a2c;
+  font-weight: bolder;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drivers-table tr.selected {
+  background-color: #f8d161;
+  box-shadow: 0 0 8px rgba(40, 42, 44, 0.4);
+  transform: scale(1.01);
+}
+
+.drivers-table tr:hover:not(.selected) {
+  background-color: #e9d691;
+}
+
+
+.selected-driver-info {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  color: #282a2c;
+  overflow-y: auto;
+}
+
 
       .form-group {
         margin-bottom: 1.5rem;

@@ -114,4 +114,20 @@ public class DriverDAO {
 
         return driver;
     }
+    public boolean updateDriverStatus(int driverId, String status) {
+    String sql = "UPDATE [megacitycab].[dbo].[Drivers] SET status = ? WHERE driver_id = ?";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setString(1, status);
+        stmt.setInt(2, driverId);
+        
+        return stmt.executeUpdate() > 0;
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 }

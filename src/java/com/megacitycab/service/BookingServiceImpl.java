@@ -102,4 +102,29 @@ public class BookingServiceImpl implements BookingService {
         
         return true;
     }
+    
+    @Override
+public List<Booking> getAllBookings() {
+    return bookingRepository.getAllBookings();
+}
+
+@Override
+public List<Booking> getBookingsByStatus(String status) {
+    return bookingRepository.getBookingsByStatus(status);
+}
+
+@Override
+public boolean assignDriver(int bookingId, int driverId) {
+    Booking booking = getBooking(bookingId);
+    if (booking == null) return false;
+    
+    booking.setDriverId(driverId);
+    booking.setStatus("ASSIGNED");
+    return bookingRepository.updateBooking(booking);
+}
+
+@Override
+public boolean updateBookingFee(int bookingId, double hireFee) {
+    return bookingRepository.updateBookingFee(bookingId, hireFee);
+}
 }

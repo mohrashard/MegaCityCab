@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.util.Types;
 
 public class BookingRepositoryImpl implements BookingRepository {
     
@@ -141,44 +142,29 @@ public boolean saveBooking(Booking booking) {
         return bookings;
     }
     
-    @Override
     public boolean updateBooking(Booking booking) {
-        String sql = "UPDATE [megacitycab].[dbo].[Bookings] SET "
-                   + "[passenger_id] = ?, "
-                   + "[vehicle_type] = ?, "
-                   + "[pickup_location] = ?, "
-                   + "[dropoff_location] = ?, "
-                   + "[booking_datetime] = ?, "
-                   + "[payment_method] = ?, "
-                   + "[hire_fee] = ? "
-                   + "WHERE [booking_id] = ?";
+    String sql = "UPDATE [megacitycab].[dbo].[Bookings] SET " +
+                 "driver_id = ?, " + 
+                 "status = 'assigned' " +
+                 "WHERE booking_id = ?";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
         
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, booking.getPassengerId());
-            stmt.setString(2, booking.getVehicleType());
-            stmt.setString(3, booking.getPickupLocation());
-            stmt.setString(4, booking.getDropoffLocation());
-            stmt.setString(5, booking.getBookingDateTime());
-            stmt.setString(6, booking.getPaymentMethod());
-            
-            if (booking.getHireFee() != null) {
-                stmt.setDouble(7, booking.getHireFee());
-            } else {
-                stmt.setNull(7, java.sql.Types.DOUBLE);
-            }
-            
-            stmt.setInt(8, booking.getBookingId());
-            
-            int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0;
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+
+        
+        stmt.setInt(2, booking.getBookingId());
+        
+        int affectedRows = stmt.executeUpdate();
+        return affectedRows > 0;
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
     }
+}
+
+
     
     @Override
     public boolean deleteBooking(int bookingId) {
@@ -197,4 +183,205 @@ public boolean saveBooking(Booking booking) {
             return false;
         }
     }
+    
+    @Override
+public List<Booking> getAllBookings() {
+    List<Booking> bookings = new ArrayList<>();
+String sql = "SELECT b.*, p.full_name as passenger_name FROM [megacitycab].[dbo].[Bookings] b " +
+             "LEFT JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id";
+    
+    try (Connection conn = DBConnection.getConnection();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql)) {
+        
+        while (rs.next()) {
+            Booking booking = new Booking();
+            booking.setBookingId(rs.getInt("booking_id"));
+            booking.setPassengerId(rs.getInt("passenger_id"));
+            booking.setVehicleType(rs.getString("vehicle_type"));
+            booking.setPickupLocation(rs.getString("pickup_location"));
+            booking.setDropoffLocation(rs.getString("dropoff_location"));
+            
+            // Convert Timestamp to formatted string
+            Timestamp timestamp = rs.getTimestamp("booking_datetime");
+            if (timestamp != null) {
+                LocalDateTime dateTime = timestamp.toLocalDateTime();
+                booking.setBookingDateTime(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            } else {
+                booking.setBookingDateTime(rs.getString("booking_datetime"));
+            }
+            
+            booking.setPaymentMethod(rs.getString("payment_method"));
+            
+            if (rs.getObject("hire_fee") != null) {
+                booking.setHireFee(rs.getDouble("hire_fee"));
+            }
+            
+            booking.setStatus(rs.getString("status"));
+            
+            // Add passenger name property if it exists in your Booking model, otherwise you'll need to extend the model
+            try {
+                booking.setPassengerName(rs.getString("passenger_name"));
+            } catch (SQLException e) {
+                // Column doesn't exist, so we'll ignore this
+            }
+            
+            bookings.add(booking);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return bookings;
 }
+
+@Override
+public List<Booking> getBookingsByStatus(String status) {
+    List<Booking> bookings = new ArrayList<>();
+    String sql = "SELECT b.*, p.full_name as passenger_name FROM [megacitycab].[dbo].[Bookings] b " +
+                 "LEFT JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id " +
+                 "WHERE UPPER(b.status) = ?";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setString(1, status);
+        
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Booking booking = new Booking();
+                booking.setBookingId(rs.getInt("booking_id"));
+                booking.setPassengerId(rs.getInt("passenger_id"));
+                booking.setVehicleType(rs.getString("vehicle_type"));
+                booking.setPickupLocation(rs.getString("pickup_location"));
+                booking.setDropoffLocation(rs.getString("dropoff_location"));
+                
+                // Convert Timestamp to formatted string
+                Timestamp timestamp = rs.getTimestamp("booking_datetime");
+                if (timestamp != null) {
+                    LocalDateTime dateTime = timestamp.toLocalDateTime();
+                    booking.setBookingDateTime(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                } else {
+                    booking.setBookingDateTime(rs.getString("booking_datetime"));
+                }
+                
+                booking.setPaymentMethod(rs.getString("payment_method"));
+                
+                if (rs.getObject("hire_fee") != null) {
+                    booking.setHireFee(rs.getDouble("hire_fee"));
+                }
+                
+                booking.setStatus(rs.getString("status"));
+                
+                // Add passenger name property if it exists in your Booking model
+                try {
+                    booking.setPassengerName(rs.getString("passenger_name"));
+                } catch (SQLException e) {
+                    // Column doesn't exist, so we'll ignore this
+                }
+                
+                bookings.add(booking);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return bookings;
+}
+
+// Add this method to your BookingRepositoryImpl
+public Booking getBooking(int bookingId) {
+    Booking booking = null;
+    String sql = "SELECT b.*, p.full_name as passenger_name, d.full_name as driver_name " +
+                 "FROM [megacitycab].[dbo].[Bookings] b " +
+                 "LEFT JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id " +
+                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d ON b.driver_id = d.driver_id " +
+                 "WHERE b.booking_id = ?";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setInt(1, bookingId);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                booking = new Booking();
+                booking.setBookingId(rs.getInt("booking_id"));
+                booking.setPassengerId(rs.getInt("passenger_id"));
+                booking.setVehicleType(rs.getString("vehicle_type"));
+                booking.setPickupLocation(rs.getString("pickup_location"));
+                booking.setDropoffLocation(rs.getString("dropoff_location"));
+                // ... set other fields
+                
+                // Add driver info if exists
+                if (rs.getObject("driver_id") != null) {
+                    booking.setDriverId(rs.getInt("driver_id"));
+                    booking.setDriverName(rs.getString("driver_name"));
+                }
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return booking;
+}
+    
+@Override
+public boolean updateBookingFee(int bookingId, double hireFee) {
+    String sql = "UPDATE [megacitycab].[dbo].[Bookings] SET " +
+                 "hire_fee = ?, " +
+                 "status = 'pending' " +  // Optional: Ensure status remains pending
+                 "WHERE booking_id = ?";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setDouble(1, hireFee);
+        stmt.setInt(2, bookingId);
+        
+        int affectedRows = stmt.executeUpdate();
+        return affectedRows > 0;
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+// Modified BookingRepositoryImpl
+public boolean assignDriver(int bookingId, int driverId) throws SQLException {
+    Connection conn = null;
+    try {
+        conn = DBConnection.getConnection();
+        conn.setAutoCommit(false); // Start transaction
+        
+        String sql = "UPDATE Bookings SET driver_id = ?, status = 'assigned' " +
+                     "WHERE booking_id = ? AND status = 'pending'";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, driverId);
+            stmt.setInt(2, bookingId);
+            int affectedRows = stmt.executeUpdate();
+            
+            if (affectedRows == 0) {
+                conn.rollback();
+                return false;
+            }
+            
+
+            
+            conn.commit();
+            return true;
+        }
+    } finally {
+        if (conn != null) {
+            conn.setAutoCommit(true);
+            conn.close();
+        }
+    }
+    
+    
+}
+    
+}
+

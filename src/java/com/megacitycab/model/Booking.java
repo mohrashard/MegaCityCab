@@ -9,21 +9,16 @@ public class Booking {
     private String bookingDateTime;
     private String paymentMethod;
     private Double hireFee;
+    private String status;
+    private String passengerName;
+    private String driverName;
+    private Integer driverId;
 
     public Booking() {
+        // Default constructor
     }
 
-
-    public Booking(int passengerId, String vehicleType, String pickupLocation, 
-                   String dropoffLocation, String bookingDateTime, String paymentMethod) {
-        this.passengerId = passengerId;
-        this.vehicleType = vehicleType;
-        this.pickupLocation = pickupLocation;
-        this.dropoffLocation = dropoffLocation;
-        this.bookingDateTime = bookingDateTime;
-        this.paymentMethod = paymentMethod;
-    }
-
+    // Getters and Setters
     public int getBookingId() {
         return bookingId;
     }
@@ -88,10 +83,52 @@ public class Booking {
         this.hireFee = hireFee;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPassengerName() {
+        return passengerName;
+    }
+
+    public void setPassengerName(String passengerName) {
+        this.passengerName = passengerName;
+    }
+
+    public String getDriverName() {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
+    }
+
+    public Integer getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(Integer driverId) {
+        this.driverId = driverId;
+    }
+
     @Override
     public String toString() {
-        return "Booking [bookingId=" + bookingId + ", passengerId=" + passengerId + ", vehicleType=" + vehicleType
-                + ", pickupLocation=" + pickupLocation + ", dropoffLocation=" + dropoffLocation + ", bookingDateTime="
-                + bookingDateTime + ", paymentMethod=" + paymentMethod + ", hireFee=" + hireFee + "]";
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", passengerId=" + passengerId +
+                ", vehicleType='" + vehicleType + '\'' +
+                ", pickupLocation='" + pickupLocation + '\'' +
+                ", dropoffLocation='" + dropoffLocation + '\'' +
+                ", bookingDateTime='" + bookingDateTime + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", hireFee=" + hireFee +
+                ", status='" + status + '\'' +
+                ", passengerName='" + passengerName + '\'' +
+                ", driverName='" + driverName + '\'' +
+                '}';
     }
 }

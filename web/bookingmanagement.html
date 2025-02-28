@@ -35,13 +35,135 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #dfcd83;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 95%;
+  max-width: 550px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 15px rgba(40, 42, 44, 0.8);
+  border: 2px solid rgba(40, 42, 44, 0.8);
+  position: relative;
+  max-height: 80vh; /* Limit modal height */
+  overflow-y: auto; /* Make the modal scrollable */
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #282a2c;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+}
+
+.close-modal:hover {
+  background-color: #282a2c;
+  color: #ffcc00;
+  transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.drivers-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 1rem;
+}
+
+.drivers-table th,
+.drivers-table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.drivers-table th {
+  background-color: #282a2c;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.drivers-table tbody {
+  display: block;
+  max-height: 250px; /* Makes the driver list scrollable */
+  overflow-y: auto;
+}
+
+.drivers-table thead,
+.drivers-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.drivers-table tr {
+  color: #282a2c;
+  font-weight: bolder;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drivers-table tr.selected {
+  background-color: #f8d161;
+  box-shadow: 0 0 8px rgba(40, 42, 44, 0.4);
+  transform: scale(1.01);
+}
+
+.drivers-table tr:hover:not(.selected) {
+  background-color: #e9d691;
+}
+
+
+
+      
     </style>
   </head>
   <body>
     <aside class="sidebar">
       <div class="logo">Mega City Cab</div>
       <ul class="nav-links">
-        <li><a href="#" data-page="dashboard">Dashboard</a></li>
+        <li><a href="adminDashboard.html" data-page="dashboard">Dashboard</a></li>
         <li><a href="#" class="active" data-page="bookings">Bookings</a></li>
         <li><a href="#" data-page="customers">Customers</a></li>
         <li><a href="#" data-page="drivers">Drivers</a></li>
@@ -187,350 +309,340 @@
       </div>
     </div>
 
+    
     <script>
-      const bookings = [
-        {
-          id: 1,
-          passenger: "Alice Brown",
-          pickup: "123 Main St",
-          dropoff: "456 Park Ave",
-          datetime: "2025-02-22 14:30",
-          vehicleType: "Car",
-          status: "pending",
-          hireFee: null,
-        },
-        {
-          id: 2,
-          passenger: "Bob Wilson",
-          pickup: "789 Oak Rd",
-          dropoff: "321 Pine St",
-          datetime: "2025-02-22 15:45",
-          vehicleType: "Van",
-          status: "pending",
-          hireFee: null,
-        },
-        {
-          id: 3,
-          passenger: "Carol Smith",
-          pickup: "555 Elm St",
-          dropoff: "777 Maple Ave",
-          datetime: "2025-02-21 09:15",
-          vehicleType: "Car",
-          status: "ended",
-          hireFee: 1200,
-          driver: "John Doe",
-          vehicleNumber: "CAB-1234",
-        },
-        {
-          id: 4,
-          passenger: "David Johnson",
-          pickup: "888 Cherry Ln",
-          dropoff: "999 Orange Blvd",
-          datetime: "2025-02-21 13:45",
-          vehicleType: "Three-Wheeler",
-          status: "ended",
-          hireFee: 850,
-          driver: "Mike Johnson",
-          vehicleNumber: "TWL-7890",
-        },
-        {
-          id: 5,
-          passenger: "Emma Davis",
-          pickup: "123 Beach Rd",
-          dropoff: "456 Harbor Dr",
-          datetime: "2025-02-22 10:30",
-          vehicleType: "Van",
-          status: "assigned",
-          hireFee: 1800,
-          driver: "Jane Smith",
-          vehicleNumber: "VAN-9012",
-        },
-      ];
 
-      const drivers = {
-        car: [
-          { name: "John Doe", vehicleType: "Car", vehicleNumber: "CAB-1234" },
-          {
-            name: "Emily Davis",
-            vehicleType: "Car",
-            vehicleNumber: "CAB-5678",
-          },
-        ],
-        van: [
-          { name: "Jane Smith", vehicleType: "Van", vehicleNumber: "VAN-9012" },
-          {
-            name: "Robert Brown",
-            vehicleType: "Van",
-            vehicleNumber: "VAN-3456",
-          },
-        ],
-        "three-wheeler": [
-          {
-            name: "Mike Johnson",
-            vehicleType: "Three-Wheeler",
-            vehicleNumber: "TWL-7890",
-          },
-          {
-            name: "Sarah Lee",
-            vehicleType: "Three-Wheeler",
-            vehicleNumber: "TWL-1234",
-          },
-        ],
-      };
+document.addEventListener("DOMContentLoaded", function () {
+  initializeApp();
+});
 
-      let currentBookingId = null;
-      let selectedDriver = null;
-      let currentFilter = "all";
+let currentFilter = "all";
+let currentBookingId = null;
+let selectedDriver = null;
 
-      // Initialize
-      document.addEventListener("DOMContentLoaded", function () {
-        renderBookings();
-        updateBookingSelection();
+async function initializeApp() {
+  await loadBookings();
+  setupEventListeners();
+}
 
-        // Event listeners
-        document
-          .getElementById("calculateFeeBtn")
-          .addEventListener("click", calculateFee);
-        document
-          .getElementById("applyFeeBtn")
-          .addEventListener("click", applyFeeToBooking);
-        document
-          .getElementById("bookingSelection")
-          .addEventListener("change", function () {
-            currentBookingId = parseInt(this.value) || null;
-          });
+function setupEventListeners() {
+  // Filter buttons
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.addEventListener("click", handleFilterClick);
+  });
 
-        // Filter buttons
-        document.querySelectorAll(".filter-btn").forEach((button) => {
-          button.addEventListener("click", function () {
-            document
-              .querySelectorAll(".filter-btn")
-              .forEach((btn) => btn.classList.remove("active"));
-            this.classList.add("active");
-            currentFilter = this.dataset.filter;
-            renderBookings();
-          });
+  // Calculate fee button
+  document.getElementById("calculateFeeBtn").addEventListener("click", calculateFee);
+  
+  // Apply fee button
+  document.getElementById("applyFeeBtn").addEventListener("click", applyFeeToBooking);
+
+  // Booking selection
+  document.getElementById("bookingSelection").addEventListener("change", function(e) {
+    currentBookingId = this.value ? parseInt(this.value) : null;
+  });
+
+  // Assignment form
+  document.getElementById("assignmentForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    assignBooking();
+  });
+
+  // Modal close
+  document.querySelector(".close-modal").addEventListener("click", closeModal);
+}
+
+async function handleFilterClick(e) {
+  const filter = e.target.dataset.filter;
+  document.querySelectorAll(".filter-btn").forEach(btn => 
+    btn.classList.remove("active"));
+  e.target.classList.add("active");
+  currentFilter = filter;
+  await loadBookings();
+}
+
+function getContextPath() {
+  return window.location.pathname.split('/')[1] ? '/' + window.location.pathname.split('/')[1] : '';
+}
+
+async function loadBookings() {
+  try {
+    const timestamp = new Date().getTime();
+    const contextPath = getContextPath();
+    const response = await fetch(`${contextPath}/api/bookings?filter=${currentFilter}&_=${timestamp}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    const bookings = await response.json();
+    console.log("Loaded bookings:", bookings); // Debug log
+    renderBookings(bookings);
+    updateBookingSelection(bookings);
+  } catch (error) {
+    console.error("Error loading bookings:", error);
+    alert("Failed to load bookings: " + error.message);
+  }
+}
+
+function renderBookings(bookings) {
+  const tbody = document.getElementById("bookingsTableBody");
+  if (!tbody) {
+    console.error("Bookings table body element not found!");
+    return;
+  }
+  
+  if (bookings.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" class="text-center">No bookings found</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = bookings.map(booking => `
+    <tr>
+      <td>${booking.passengerName || 'N/A'}</td>
+      <td>${booking.pickupLocation || 'N/A'}</td>
+      <td>${booking.dropoffLocation || 'N/A'}</td>
+      <td>${formatDateTime(booking.bookingDateTime)}</td>
+      <td>${booking.vehicleType || 'N/A'}</td>
+      <td>
+        <span class="status status-${(booking.status || 'pending').toLowerCase()}">
+          ${(booking.status || 'PENDING').charAt(0).toUpperCase() + (booking.status || 'PENDING').slice(1).toLowerCase()}
+        </span>
+      </td>
+
+<td>${booking.hireFee ? `LKR ${parseFloat(booking.hireFee).toFixed(2)}` : 'Not Set'}</td>
+      <td>
+
+${(booking.status || 'PENDING').toUpperCase() === 'PENDING' ? `
+  <button class="btn btn-assign" 
+          onclick="openAssignmentModal(${booking.bookingId})" 
+          ${!booking.hireFee ? 'disabled' : ''}>
+    Assign
+  </button>
+` : (booking.status || 'PENDING').toUpperCase() === 'ENDED' ? 
+  'Completed' : 
+  `Assigned to ${booking.driverName || 'Driver'}`
+}
+      </td>
+    </tr>
+  `).join("");
+}
+
+function formatDateTime(isoString) {
+  if (!isoString) return 'N/A';
+  
+  try {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return isoString; // Return original if parsing fails
+    
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (e) {
+    console.error("Date parsing error:", e);
+    return isoString; // Return original on error
+  }
+}
+
+
+    function updateBookingSelection(bookings) {
+      const select = document.getElementById("bookingSelection");
+      if (!select) {
+        console.error("Booking selection element not found!");
+        return;
+      }
+  
+  select.innerHTML = '<option value="">-- Select booking --</option>';
+  
+// In updateBookingSelection function
+      bookings
+        .filter(b => (b.status || 'PENDING').toUpperCase() === 'PENDING')
+        .forEach(booking => {
+          const option = document.createElement("option");
+          option.value = booking.bookingId;
+          // Ensure these fields match your JSON response structure
+          option.textContent = `${booking.passengerName || 'Passenger'} - ${booking.vehicleType || 'Vehicle'}`;
+          select.appendChild(option);
         });
-      });
+    }
 
-      function renderBookings() {
-        const tableBody = document.getElementById("bookingsTableBody");
+function calculateFee() {
+  const perKmRate = parseFloat(document.getElementById("perKmRate").value) || 90;
+  const distance = parseFloat(document.getElementById("distance").value);
+  
+  if (!distance || distance <= 0) {
+    alert("Please enter valid distance");
+    return;
+  }
+  
+  const totalFee = perKmRate * distance;
+  document.getElementById("totalFeeDisplay").textContent = 
+    `LKR ${totalFee.toFixed(2)}`;
+  document.getElementById("feeBreakdown").textContent = 
+    `${distance.toFixed(1)} km × LKR ${perKmRate} per km`;
+  document.getElementById("feeResult").style.display = "block";
+}
 
-        // Filter bookings based on current filter
-        const filteredBookings = bookings.filter((booking) => {
-          if (currentFilter === "all") return true;
-          return booking.status === currentFilter;
-        });
+async function applyFeeToBooking() {
+  if (!currentBookingId) {
+    alert("Please select a booking");
+    return;
+  }
 
-        tableBody.innerHTML = filteredBookings
-          .map(
-            (booking) => `
-      <tr>
-          <td>${booking.passenger}</td>
-          <td>${booking.pickup}</td>
-          <td>${booking.dropoff}</td>
-          <td>${booking.datetime}</td>
-          <td>${booking.vehicleType}</td>
-          <td>
-              <span class="status status-${booking.status}">
-                  ${
-                    booking.status.charAt(0).toUpperCase() +
-                    booking.status.slice(1)
-                  }
-              </span>
-          </td>
-          <td>
-              ${
-                booking.hireFee
-                  ? `LKR ${booking.hireFee.toLocaleString()}`
-                  : "Not set"
-              }
-          </td>
-          <td>
-              ${
-                booking.status === "pending"
-                  ? `<button class="btn btn-assign" onclick="openAssignmentModal(${
-                      booking.id
-                    })" ${!booking.hireFee ? "disabled" : ""}>
-                    Assign
-                </button>`
-                  : booking.status === "ended"
-                  ? "Completed"
-                  : `Assigned to ${booking.driver} (${booking.vehicleNumber})`
-              }
-          </td>
-      </tr>
-  `
-          )
-          .join("");
-      }
+  const totalFee = parseFloat(
+    document.getElementById("totalFeeDisplay").textContent.replace(/[^0-9.]/g, '')
+  );
 
-      function updateBookingSelection() {
-        const select = document.getElementById("bookingSelection");
-        select.innerHTML = '<option value="">-- Select a booking --</option>';
+  try {
+    const contextPath = getContextPath();
+    const response = await fetch(`${contextPath}/api/bookings/update-fee`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `bookingId=${currentBookingId}&hireFee=${totalFee}`
+    });
 
-        bookings
-          .filter((b) => b.status === "pending")
-          .forEach((booking) => {
-            const option = document.createElement("option");
-            option.value = booking.id;
-            option.textContent = `${booking.passenger} - ${booking.vehicleType}`;
-            select.appendChild(option);
-          });
-      }
+    if (response.ok) {
+      alert("Fee updated successfully");
+      document.getElementById("feeResult").style.display = "none";
+      document.getElementById("distance").value = "";
+      document.getElementById("bookingSelection").value = "";
+      currentBookingId = null;
+      await loadBookings();
+    } else {
+      const errorText = await response.text();
+      throw new Error(`Failed to update fee: ${errorText}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert(error.message || "Failed to update booking fee");
+  }
+}
 
-      function calculateFee() {
-        const perKmRate =
-          parseFloat(document.getElementById("perKmRate").value) || 60;
-        const distance = parseFloat(document.getElementById("distance").value);
+async function openAssignmentModal(bookingId) {
+  currentBookingId = bookingId;
+  try {
+    const contextPath = getContextPath();
+    const response = await fetch(`${contextPath}/api/bookings/details/${bookingId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    const booking = await response.json();
+    
+    if (!booking.hireFee) {
+      alert("Please set hire fee first");
+      return;
+    }
+    
+    // Load drivers - ensure this endpoint exists
+    const driversResponse = await fetch(`${contextPath}/api/drivers?type=${booking.vehicleType}`);
+    if (!driversResponse.ok) {
+      throw new Error(`HTTP error! Status: ${driversResponse.status}`);
+    }
+    
+    const drivers = await driversResponse.json();
+    
+    renderDriversList(drivers);
+    document.getElementById("assignmentModal").classList.add("active");
+    
+    // Reset the selected driver
+    selectedDriver = null;
+    document.getElementById("confirmButton").disabled = true;
+    document.getElementById("selectedDriverInfo").style.display = "none";
+  } catch (error) {
+    console.error("Error:", error);
+    alert(error.message || "Failed to load assignment data");
+  }
+}
 
-        if (!distance || distance <= 0) {
-          alert("Please enter a valid distance");
-          return;
-        }
+function renderDriversList(drivers) {
+  const tbody = document.getElementById("driversListBody");
+  if (!tbody) {
+    console.error("Drivers list body element not found!");
+    return;
+  }
+  
+  if (drivers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" class="text-center">No available drivers found</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = drivers.map(driver => `
+    <tr onclick="selectDriver(this)" 
+        data-id="${driver.driverId}"
+        data-name="${driver.fullName || driver.name}"
+        data-vehicle="${driver.vehicleNumber}"
+        data-vehicle-type="${driver.vehicleType}">
+      <td>${driver.fullName || driver.name}</td>
+      <td>${driver.vehicleType}</td>
+      <td>${driver.vehicleNumber}</td>
+    </tr>
+  `).join("");
+}
 
-        const totalFee = perKmRate * distance;
-        document.getElementById(
-          "totalFeeDisplay"
-        ).textContent = `LKR ${totalFee.toLocaleString()}`;
-        document.getElementById(
-          "feeBreakdown"
-        ).textContent = `${distance} km × LKR ${perKmRate} per km`;
-        document.getElementById("feeResult").style.display = "block";
-      }
+function selectDriver(row) {
+  document.querySelectorAll("#driversListBody tr").forEach(r => 
+    r.classList.remove("selected"));
+  row.classList.add("selected");
+  
+  selectedDriver = {
+    id: row.dataset.id,
+    name: row.dataset.name,
+    vehicleType: row.dataset.vehicleType,
+    vehicleNumber: row.dataset.vehicle
+  };
+  
+  // Update the selected driver info display
+  document.getElementById("selectedDriverName").querySelector("span").textContent = selectedDriver.name;
+  document.getElementById("selectedVehicleType").querySelector("span").textContent = selectedDriver.vehicleType;
+  document.getElementById("selectedVehicleNumber").querySelector("span").textContent = selectedDriver.vehicleNumber;
+  document.getElementById("selectedDriverInfo").style.display = "block";
+  
+  document.getElementById("confirmButton").disabled = false;
+}
 
-      function applyFeeToBooking() {
-        if (!currentBookingId) {
-          alert("Please select a booking to apply the fee");
-          return;
-        }
+async function assignBooking() {
+  if (!currentBookingId || !selectedDriver) {
+    alert("Please select a driver");
+    return;
+  }
+  
+  try {
+    const contextPath = getContextPath();
+    const response = await fetch(`${contextPath}/api/bookings/assign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `bookingId=${currentBookingId}&driverId=${selectedDriver.id}`
+    });
+    
+    if (response.ok) {
+      alert("Booking assigned successfully");
+      closeModal();
+      await loadBookings();
+    } else {
+      const errorText = await response.text();
+      throw new Error(`Failed to assign booking: ${errorText}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert(error.message || "Failed to assign booking");
+  }
+}
 
-        const totalFeeText =
-          document.getElementById("totalFeeDisplay").textContent;
-        const totalFee = parseFloat(
-          totalFeeText.replace("LKR ", "").replace(/,/g, "")
-        );
-
-        if (isNaN(totalFee) || totalFee <= 0) {
-          alert("Please calculate a valid fee first");
-          return;
-        }
-
-        const bookingIndex = bookings.findIndex(
-          (b) => b.id === currentBookingId
-        );
-        if (bookingIndex !== -1) {
-          bookings[bookingIndex].hireFee = totalFee;
-          renderBookings();
-          alert(
-            `Hire fee of LKR ${totalFee.toLocaleString()} has been applied to the booking`
-          );
-
-          document.getElementById("feeResult").style.display = "none";
-          document.getElementById("distance").value = "";
-          document.getElementById("bookingSelection").value = "";
-          currentBookingId = null;
-        }
-      }
-
-      function renderDriversTable(vehicleType) {
-        const filteredDrivers = drivers[vehicleType.toLowerCase()] || [];
-        const tbody = document.getElementById("driversListBody");
-        tbody.innerHTML = filteredDrivers
-          .map(
-            (driver, index) => `
-      <tr data-index="${index}" data-name="${driver.name}" data-vehicle-type="${driver.vehicleType}" data-vehicle-number="${driver.vehicleNumber}">
-        <td>${driver.name}</td>
-        <td>${driver.vehicleType}</td>
-        <td>${driver.vehicleNumber}</td>
-      </tr>
-    `
-          )
-          .join("");
-
-        document.querySelectorAll("#driversListBody tr").forEach((row) => {
-          row.addEventListener("click", function () {
-            selectDriver(this);
-          });
-        });
-      }
-
-      function selectDriver(row) {
-        document.querySelectorAll("#driversListBody tr").forEach((r) => {
-          r.classList.remove("selected");
-        });
-
-        row.classList.add("selected");
-
-        selectedDriver = {
-          name: row.dataset.name,
-          vehicleType: row.dataset.vehicleType,
-          vehicleNumber: row.dataset.vehicleNumber,
-        };
-
-        document.querySelector("#selectedDriverName span").textContent =
-          selectedDriver.name;
-        document.querySelector("#selectedVehicleType span").textContent =
-          selectedDriver.vehicleType;
-        document.querySelector("#selectedVehicleNumber span").textContent =
-          selectedDriver.vehicleNumber;
-
-        document.getElementById("selectedDriverInfo").classList.add("active");
-
-        document.getElementById("confirmButton").disabled = false;
-      }
-
-      function openAssignmentModal(bookingId) {
-        currentBookingId = bookingId;
-        const booking = bookings.find((b) => b.id === bookingId);
-
-        if (!booking.hireFee) {
-          alert(
-            "Please set a hire fee for this booking before assigning a driver"
-          );
-          return;
-        }
-
-        selectedDriver = null;
-        document
-          .getElementById("selectedDriverInfo")
-          .classList.remove("active");
-        document.getElementById("confirmButton").disabled = true;
-
-        if (booking) {
-          renderDriversTable(booking.vehicleType);
-        }
-        document.getElementById("assignmentModal").classList.add("active");
-      }
-
-      function closeModal() {
-        document.getElementById("assignmentModal").classList.remove("active");
-      }
-
-      document
-        .getElementById("assignmentForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-
-          if (!selectedDriver) {
-            alert("Please select a driver.");
-            return;
-          }
-
-          const bookingIndex = bookings.findIndex(
-            (b) => b.id === currentBookingId
-          );
-          if (bookingIndex !== -1) {
-            bookings[bookingIndex].status = "assigned";
-            bookings[bookingIndex].driver = selectedDriver.name;
-            bookings[bookingIndex].vehicleNumber = selectedDriver.vehicleNumber;
-          }
-
-          renderBookings();
-          updateBookingSelection();
-          closeModal();
-          alert("Booking assigned successfully!");
-        });
+function closeModal() {
+  document.getElementById("assignmentModal").classList.remove("active");
+  selectedDriver = null;
+}
+    
     </script>
+    
   </body>
 </html>

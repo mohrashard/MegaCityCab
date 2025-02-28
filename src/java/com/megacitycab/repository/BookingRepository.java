@@ -10,4 +10,14 @@ public interface BookingRepository {
     List<Booking> getBookingsByPassengerId(int passengerId);
     boolean updateBooking(Booking booking);
     boolean deleteBooking(int bookingId);
+    
+    
+        // New method
+    List<Booking> getAllBookings();
+    
+    // If you want filtering capability
+    List<Booking> getBookingsByStatus(String status);
+    
+    boolean updateBookingFee(int bookingId, double hireFee);
+
 }
