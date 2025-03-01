@@ -184,118 +184,59 @@ public boolean saveBooking(Booking booking) {
         }
     }
     
-    @Override
+  @Override
 public List<Booking> getAllBookings() {
     List<Booking> bookings = new ArrayList<>();
-String sql = "SELECT b.*, p.full_name as passenger_name FROM [megacitycab].[dbo].[Bookings] b " +
-             "LEFT JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id";
+    String sql = "SELECT b.*, d.full_name AS driver_name " +
+                 "FROM [megacitycab].[dbo].[Bookings] b " +
+                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d " +
+                 "ON b.driver_id = d.driver_id";
     
     try (Connection conn = DBConnection.getConnection();
-         Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery(sql)) {
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
         
         while (rs.next()) {
-            Booking booking = new Booking();
-            booking.setBookingId(rs.getInt("booking_id"));
-            booking.setPassengerId(rs.getInt("passenger_id"));
-            booking.setVehicleType(rs.getString("vehicle_type"));
-            booking.setPickupLocation(rs.getString("pickup_location"));
-            booking.setDropoffLocation(rs.getString("dropoff_location"));
-
-            Timestamp timestamp = rs.getTimestamp("booking_datetime");
-            if (timestamp != null) {
-                LocalDateTime dateTime = timestamp.toLocalDateTime();
-                booking.setBookingDateTime(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-            } else {
-                booking.setBookingDateTime(rs.getString("booking_datetime"));
-            }
-            
-            booking.setPaymentMethod(rs.getString("payment_method"));
-            
-            if (rs.getObject("hire_fee") != null) {
-                booking.setHireFee(rs.getDouble("hire_fee"));
-            }
-            
-            booking.setStatus(rs.getString("status"));
-            
-          
-            try {
-                booking.setPassengerName(rs.getString("passenger_name"));
-            } catch (SQLException e) {
-                
-            }
-            
+            Booking booking = mapRowToBooking(rs);
             bookings.add(booking);
         }
     } catch (SQLException e) {
         e.printStackTrace();
     }
-    
     return bookings;
 }
 
 @Override
 public List<Booking> getBookingsByStatus(String status) {
     List<Booking> bookings = new ArrayList<>();
-    String sql = "SELECT b.*, p.full_name as passenger_name FROM [megacitycab].[dbo].[Bookings] b " +
-                 "LEFT JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id " +
-                 "WHERE UPPER(b.status) = ?";
+    String sql = "SELECT b.*, d.full_name AS driver_name " +
+                 "FROM [megacitycab].[dbo].[Bookings] b " +
+                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d " +
+                 "ON b.driver_id = d.driver_id " +
+                 "WHERE UPPER(b.status) = UPPER(?)";
     
     try (Connection conn = DBConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
         
         stmt.setString(1, status);
-        
         try (ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                Booking booking = new Booking();
-                booking.setBookingId(rs.getInt("booking_id"));
-                booking.setPassengerId(rs.getInt("passenger_id"));
-                booking.setVehicleType(rs.getString("vehicle_type"));
-                booking.setPickupLocation(rs.getString("pickup_location"));
-                booking.setDropoffLocation(rs.getString("dropoff_location"));
-                
-          
-                Timestamp timestamp = rs.getTimestamp("booking_datetime");
-                if (timestamp != null) {
-                    LocalDateTime dateTime = timestamp.toLocalDateTime();
-                    booking.setBookingDateTime(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-                } else {
-                    booking.setBookingDateTime(rs.getString("booking_datetime"));
-                }
-                
-                booking.setPaymentMethod(rs.getString("payment_method"));
-                
-                if (rs.getObject("hire_fee") != null) {
-                    booking.setHireFee(rs.getDouble("hire_fee"));
-                }
-                
-                booking.setStatus(rs.getString("status"));
-                
-         
-                try {
-                    booking.setPassengerName(rs.getString("passenger_name"));
-                } catch (SQLException e) {
-    
-                }
-                
+                Booking booking = mapRowToBooking(rs);
                 bookings.add(booking);
             }
         }
     } catch (SQLException e) {
         e.printStackTrace();
     }
-    
     return bookings;
 }
 
-
 public Booking getBooking(int bookingId) {
     Booking booking = null;
-    String sql = "SELECT b.*, p.full_name as passenger_name, d.full_name as driver_name " +
+    String sql = "SELECT b.*, d.full_name AS driver_name " +
                  "FROM [megacitycab].[dbo].[Bookings] b " +
-                 "LEFT JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id " +
-                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d ON b.driver_id = d.driver_id " +
+                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d " +
+                 "ON b.driver_id = d.driver_id " +
                  "WHERE b.booking_id = ?";
     
     try (Connection conn = DBConnection.getConnection();
@@ -303,18 +244,23 @@ public Booking getBooking(int bookingId) {
         
         stmt.setInt(1, bookingId);
         try (ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                booking = new Booking();
-                booking.setBookingId(rs.getInt("booking_id"));
-                booking.setPassengerId(rs.getInt("passenger_id"));
-                booking.setVehicleType(rs.getString("vehicle_type"));
-                booking.setPickupLocation(rs.getString("pickup_location"));
-                booking.setDropoffLocation(rs.getString("dropoff_location"));
+    if (rs.next()) {
+        booking = new Booking();
+        booking.setBookingId(rs.getInt("booking_id"));
+        booking.setPassengerId(rs.getInt("passenger_id"));
+        booking.setVehicleType(rs.getString("vehicle_type"));
+        booking.setPickupLocation(rs.getString("pickup_location"));
+        booking.setDropoffLocation(rs.getString("dropoff_location"));
+        booking.setBookingDateTime(rs.getString("booking_datetime"));
+        booking.setPaymentMethod(rs.getString("payment_method"));
+        booking.setHireFee(rs.getDouble("hire_fee"));
+        booking.setStatus(rs.getString("status"));
 
-                if (rs.getObject("driver_id") != null) {
-                    booking.setDriverId(rs.getInt("driver_id"));
-                    booking.setDriverName(rs.getString("driver_name"));
-                }
+        if (rs.getObject("driver_id") != null) {
+            booking.setDriverId(rs.getInt("driver_id"));
+            booking.setDriverName(rs.getString("driver_name"));
+        }
+                
             }
         }
     } catch (SQLException e) {
@@ -379,6 +325,29 @@ String sql = "UPDATE [megacitycab].[dbo].[Bookings] " +
         }
     }
 }
-    
+
+
+private Booking mapRowToBooking(ResultSet rs) throws SQLException {
+    Booking booking = new Booking();
+    booking.setBookingId(rs.getInt("booking_id"));
+    booking.setPassengerId(rs.getInt("passenger_id"));
+    booking.setVehicleType(rs.getString("vehicle_type"));
+    booking.setPickupLocation(rs.getString("pickup_location"));
+    booking.setDropoffLocation(rs.getString("dropoff_location"));
+    booking.setBookingDateTime(rs.getString("booking_datetime"));
+    booking.setPaymentMethod(rs.getString("payment_method"));
+
+  
+    Double hireFee = rs.getObject("hire_fee", Double.class);
+    booking.setHireFee(hireFee);
+
+    booking.setStatus(rs.getString("status"));
+    booking.setDriverId(rs.getInt("driver_id"));
+    booking.setDriverName(rs.getString("driver_name")); 
+
+    return booking;
+}
+
+
 }
 

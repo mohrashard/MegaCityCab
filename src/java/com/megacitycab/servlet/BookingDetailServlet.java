@@ -76,9 +76,9 @@ public class BookingDetailServlet extends HttpServlet {
             if (booking.getDriverId() != null) {
                 json.append(",\"driverId\":").append(booking.getDriverId());
             }
-            if (booking.getDriverName() != null) {
-                json.append(",\"driverName\":\"").append(escapeJson(booking.getDriverName())).append("\"");
-            }
+if (booking.getDriverName() != null) {
+    json.append(",\"driverName\":\"").append(escapeJson(booking.getDriverName())).append("\"");
+}
             
             json.append("}");
             

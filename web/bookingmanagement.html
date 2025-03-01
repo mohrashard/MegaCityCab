@@ -420,7 +420,7 @@ ${(booking.status || 'pending').toLowerCase() === 'pending' ? `
   </button>
 ` : (booking.status || 'pending').toLowerCase() === 'ended' ? 
   'Completed' : 
-  `Assigned to ${booking.driverName || 'Driver'}`
+`Assigned to ${booking.driverName}`
 }
       </td>
     </tr>
