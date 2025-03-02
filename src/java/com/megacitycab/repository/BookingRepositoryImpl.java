@@ -187,10 +187,10 @@ public boolean saveBooking(Booking booking) {
   @Override
 public List<Booking> getAllBookings() {
     List<Booking> bookings = new ArrayList<>();
-    String sql = "SELECT b.*, d.full_name AS driver_name " +
+    String sql = "SELECT b.*, d.full_name AS driver_name, p.full_name AS passenger_name " +
                  "FROM [megacitycab].[dbo].[Bookings] b " +
-                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d " +
-                 "ON b.driver_id = d.driver_id";
+                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d ON b.driver_id = d.driver_id " +
+                 "JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id";
     
     try (Connection conn = DBConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql);
@@ -209,10 +209,10 @@ public List<Booking> getAllBookings() {
 @Override
 public List<Booking> getBookingsByStatus(String status) {
     List<Booking> bookings = new ArrayList<>();
-    String sql = "SELECT b.*, d.full_name AS driver_name " +
+    String sql = "SELECT b.*, d.full_name AS driver_name, p.full_name AS passenger_name " +
                  "FROM [megacitycab].[dbo].[Bookings] b " +
-                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d " +
-                 "ON b.driver_id = d.driver_id " +
+                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d ON b.driver_id = d.driver_id " +
+                 "JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id " +
                  "WHERE UPPER(b.status) = UPPER(?)";
     
     try (Connection conn = DBConnection.getConnection();
@@ -233,11 +233,12 @@ public List<Booking> getBookingsByStatus(String status) {
 
 public Booking getBooking(int bookingId) {
     Booking booking = null;
-    String sql = "SELECT b.*, d.full_name AS driver_name " +
+    String sql = "SELECT b.*, d.full_name AS driver_name, p.full_name AS passenger_name " +
                  "FROM [megacitycab].[dbo].[Bookings] b " +
-                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d " +
-                 "ON b.driver_id = d.driver_id " +
+                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d ON b.driver_id = d.driver_id " +
+                 "JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id " +
                  "WHERE b.booking_id = ?";
+
     
     try (Connection conn = DBConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -340,7 +341,7 @@ private Booking mapRowToBooking(ResultSet rs) throws SQLException {
   
     Double hireFee = rs.getObject("hire_fee", Double.class);
     booking.setHireFee(hireFee);
-
+    booking.setPassengerName(rs.getString("passenger_name"));
     booking.setStatus(rs.getString("status"));
     booking.setDriverId(rs.getInt("driver_id"));
     booking.setDriverName(rs.getString("driver_name")); 

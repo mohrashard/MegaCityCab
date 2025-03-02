@@ -46,7 +46,7 @@
          
             <div class="top-bar glass">
                 <div class="menu-toggle">
-                    <h1>Hello, John! 👋</h1>
+                    <h1 id="driverGreeting">Hello, Driver! 👋</h1>
                     <p>Ready for your next ride?</p>
                 </div>
                 <div class="driver-status">
@@ -119,141 +119,173 @@
     </div>
 
     <script>
+document.addEventListener('DOMContentLoaded', function() {
 
-        document.querySelector('.menu-toggle').addEventListener('click', () => {
-            document.querySelector('.sidebar').classList.toggle('collapsed');
-        });
+    document.querySelector('.menu-toggle').addEventListener('click', () => {
+        document.querySelector('.sidebar').classList.toggle('collapsed');
+    });
 
- 
-        const statusToggle = document.getElementById('statusToggle');
-        const statusText = document.getElementById('statusText');
-        const rideStatus = document.getElementById('rideStatus');
+    const statusToggle = document.getElementById('statusToggle');
+    const statusText = document.getElementById('statusText');
 
-        statusToggle.addEventListener('change', () => {
-            if (statusToggle.checked) {
-                statusText.textContent = 'Online';
-                rideStatus.textContent = 'Looking for rides...';
-                simulateRideRequests();
-            } else {
-                statusText.textContent = 'Offline';
-                rideStatus.textContent = 'You are offline';
-            }
-        });
+    const contextPath = window.location.pathname.split('/')[1] || '';
+    const baseUrl = `/${contextPath}`;
 
-      
-        function simulateRideRequests() {
-            if (statusToggle.checked) {
-                setTimeout(() => {
-                    rideStatus.textContent = 'New ride request!';
-               
-                    rideStatus.classList.add('fade-in');
-                    
-                    
-                    setTimeout(() => {
-                        rideStatus.classList.remove('fade-in');
-                    }, 500);
-                }, 3000);
-            }
+    async function initializeDriverStatus() {
+        try {
+            const sessionResponse = await fetch(`${baseUrl}/getDriverSession`, {
+                credentials: 'include' 
+            });
+            if (!sessionResponse.ok) throw new Error('Session error');
+            
+            const sessionData = await sessionResponse.json();
+            if (!sessionData.success) throw new Error('Not logged in');
+
+            const greetingElement = document.getElementById('driverGreeting');
+            greetingElement.textContent = `Hello, ${sessionData.fullName} 👋`;
+
+            const statusResponse = await fetch(`${baseUrl}/getDriverStatus?driverId=${sessionData.driverId}`, {
+                credentials: 'include'
+            });
+            if (!statusResponse.ok) throw new Error('Status fetch error');
+            
+            const statusData = await statusResponse.json();
+            if (!statusData.success) throw new Error(statusData.message);
+
+            statusToggle.checked = statusData.status.toLowerCase() === 'online';
+            statusText.textContent = statusData.status;
+        } catch (error) {
+            console.error('Initialization error:', error);
+            statusText.textContent = 'Error: ' + error.message;
         }
+    }
 
-      
+    async function handleStatusChange() {
+        const newStatus = statusToggle.checked ? 'online' : 'offline';
+        const originalState = statusToggle.checked;
+
+        try {
+            const sessionResponse = await fetch(`${baseUrl}/getDriverSession`, {
+                credentials: 'include'  // Add this line
+            });
+            if (!sessionResponse.ok) throw new Error('Session error');
+            
+            const sessionData = await sessionResponse.json();
+            if (!sessionData.success) throw new Error('Not logged in');
+
+            const updateResponse = await fetch(`${baseUrl}/updateStatus`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',  // Add this line
+                body: JSON.stringify({
+                    driverId: sessionData.driverId,
+                    status: newStatus
+                })
+            });
+            
+            if (!updateResponse.ok) throw new Error('Update failed');
+            const updateData = await updateResponse.json();
+            if (!updateData.success) throw new Error(updateData.message);
+
+            statusText.textContent = newStatus;
+        } catch (error) {
+            console.error('Toggle error:', error);
+            statusToggle.checked = !originalState;
+            statusText.textContent = originalState ? 'offline' : 'online';
+            alert('Error: ' + error.message);
+        }
+    }
+
+    statusToggle.addEventListener('change', handleStatusChange);
+
+    async function initializePage() {
+        await initializeDriverStatus();
+        initializeEarningsChart();
+        
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
-                document.querySelectorAll('.nav-item').forEach(nav => {
-                    nav.classList.remove('active');
-                });
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 item.classList.add('active');
             });
         });
-
-        function generateEarningsData() {
-    const data = [];
-    let date = new Date();
-    date.setDate(date.getDate() - 27);
-    
-    for (let i = 0; i < 28; i++) {
-        data.push({
-            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            earnings: Math.floor(Math.random() * (200 - 80) + 80)
-        });
-        date.setDate(date.getDate() + 1);
     }
-    return data;
-}
-
-
-function initializeEarningsChart() {
-    const ctx = document.getElementById('earningsChart').getContext('2d');
-    const earningsData = generateEarningsData();
     
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: earningsData.map(d => d.date),
-            datasets: [{
-                label: 'Daily Earnings ($)',
-                data: earningsData.map(d => d.earnings),
-                borderColor: '#d4a700',  
-                backgroundColor: 'rgba(212, 167, 0, 0.2)', 
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                pointBackgroundColor: '#d4a700', 
-                pointBorderColor: '#d4a700'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: '#d4a700',  
-                    titleColor: '#ffffff',
-                    bodyColor: '#ffffff',
-                    borderColor: '#282a2c', 
-                    borderWidth: 1,
-                    padding: 10,
-                    displayColors: false,
-                    callbacks: {
-                        label: function(context) {
-                            return `$${context.parsed.y.toFixed(2)}`;
+    function generateEarningsData() {
+        const data = [];
+        let date = new Date();
+        date.setDate(date.getDate() - 27);
+        
+        for (let i = 0; i < 28; i++) {
+            data.push({
+                date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                earnings: Math.floor(Math.random() * (200 - 80) + 80)
+            });
+            date.setDate(date.getDate() + 1);
+        }
+        return data;
+    }
+
+    function initializeEarningsChart() {
+        const ctx = document.getElementById('earningsChart').getContext('2d');
+        const earningsData = generateEarningsData();
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: earningsData.map(d => d.date),
+                datasets: [{
+                    label: 'Daily Earnings ($)',
+                    data: earningsData.map(d => d.earnings),
+                    borderColor: '#d4a700',
+                    backgroundColor: 'rgba(212, 167, 0, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#d4a700',
+                    pointBorderColor: '#d4a700'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: '#d4a700',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#282a2c',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return `$${context.parsed.y.toFixed(2)}`;
+                            }
                         }
                     }
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    }
                 },
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(212, 167, 0, 0.1)' 
-                    },
-                    ticks: {
-                        color: '#000', 
-                        callback: function(value) {
-                            return '$' + value;
+                scales: {
+                    x: { grid: { display: false } },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(212, 167, 0, 0.1)' },
+                        ticks: {
+                            color: '#000',
+                            callback: function(value) { return '$' + value; }
                         }
                     }
                 }
             }
-        }
-    });
-}
+        });
+    }
 
-
-
-        window.addEventListener('load', initializeEarningsChart);
-    </script>
+    initializePage();
+});
+</script>
 </body>
 </html>

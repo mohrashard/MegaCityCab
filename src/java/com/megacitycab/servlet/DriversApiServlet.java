@@ -26,9 +26,9 @@ public class DriversApiServlet extends HttpServlet {
 String sql;
 
 if (vehicleType != null && !vehicleType.isEmpty()) {
-    sql = "SELECT * FROM [megacitycab].[dbo].[Drivers] WHERE [vehicle_type] = ? AND [status] = 'offline'";
+    sql = "SELECT * FROM [megacitycab].[dbo].[Drivers] WHERE [vehicle_type] = ? AND [status] = 'online'";
 } else {
-    sql = "SELECT * FROM [megacitycab].[dbo].[Drivers] WHERE [status] = 'offline'";
+    sql = "SELECT * FROM [megacitycab].[dbo].[Drivers] WHERE [status] = 'online'";
 }
             
             StringBuilder jsonResponse = new StringBuilder("[");

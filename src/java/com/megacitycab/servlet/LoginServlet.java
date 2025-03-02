@@ -38,8 +38,7 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-           
-            String query = "SELECT " + idColumn + ", password, salt FROM " + tableName + " WHERE email = ?";
+            String query = "SELECT " + idColumn + ", password, salt, full_name FROM " + tableName + " WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -54,6 +53,10 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("user", email);
                     session.setAttribute("userType", userType);
                     session.setAttribute("userId", userId); 
+
+                 
+                    String fullName = rs.getString("full_name");
+                    session.setAttribute("fullName", fullName);
 
                     jsonResponse.put("success", true);
                     jsonResponse.put("userType", userType);
