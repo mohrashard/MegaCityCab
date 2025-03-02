@@ -37,7 +37,7 @@ public void init() throws ServletException {
         HttpSession session = request.getSession(false);
 
         try {
-            // Validate session
+      
             if (session == null || session.getAttribute("userId") == null) {
                 responseJson.put("success", false)
                            .put("message", "Session expired. Please login again.");
@@ -46,7 +46,7 @@ public void init() throws ServletException {
                 return;
             }
 
-            // Verify driver authentication
+          
             Object userIdObj = session.getAttribute("userId");
             String userType = (String) session.getAttribute("userType");
             
@@ -68,7 +68,7 @@ public void init() throws ServletException {
                 return;
             }
 
-            // Get rides from service
+       
             List<RideDTO> rides = rideService.getCurrentRides(driverId);
             JSONArray jsonRides = new JSONArray();
 
@@ -106,6 +106,6 @@ public void init() throws ServletException {
     }
 
     private String sanitize(String input) {
-        return input != null ? input.replace("\"", "'") : ""; // Simple sanitization
+        return input != null ? input.replace("\"", "'") : ""; 
     }
 }

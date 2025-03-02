@@ -11,12 +11,12 @@ public class RideDTO {
     private String bookingDatetime;
     private String paymentMethod;
     private double hireFee;
-    private double adminCharge; // Add this field for admin charge
-    private double driverEarnings; // Add this field for driver earnings
+    private double adminCharge;
+    private double driverEarnings; 
     private String status;
     private int driverId;
 
-    // Getter and setter methods for each field
+
 
     public int getBookingId() { return bookingId; }
     public void setBookingId(int bookingId) { this.bookingId = bookingId; }
@@ -60,7 +60,7 @@ public class RideDTO {
     public int getDriverId() { return driverId; }
     public void setDriverId(int driverId) { this.driverId = driverId; }
 
-    // The method for calculating admin charge and driver earnings should be updated
+
     public void calculateAdminChargeAndEarnings() {
         this.adminCharge = Math.round(this.hireFee * 0.3 * 100.0) / 100.0;
         this.driverEarnings = Math.round(this.hireFee * 0.7 * 100.0) / 100.0;

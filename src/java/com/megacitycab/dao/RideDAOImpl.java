@@ -91,12 +91,12 @@ public List<RideDTO> getEndedRides(int driverId) throws SQLException {
                 ride.setBookingDatetime(rs.getString("booking_datetime"));
                 ride.setPaymentMethod(rs.getString("payment_method"));
                 
-                // Get the hire fee
+             
                 double hireFee = rs.getDouble("hire_fee");
                 ride.setHireFee(hireFee);
                 
-                // Calculate admin charge and driver earnings
-                double adminCharge = hireFee * 0.3; // 30% admin charge
+              
+                double adminCharge = hireFee * 0.3; 
                 double driverEarnings = hireFee - adminCharge;
                 
                 ride.setAdminCharge(adminCharge);
