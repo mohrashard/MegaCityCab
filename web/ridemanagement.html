@@ -7,524 +7,311 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
         <link rel="website icon" href="images/megacitycablogo.png" type="png">
     <link rel="stylesheet" href="css/ridemanager.css">
+    
     <style>
-      :root {
-        --primary-color: #d4a700;
-        --secondary-color: #282a2c;
-        --transition: all 0.3s ease;
-        --accept-btn: #28a745;
-        --end-btn: #0275d8;
-        --cancel-btn: #dc3545;
-        --card-bg: #faf7e8;
-        --text-color: #333333;
-        --light-bg:  #faefb5;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
-
-      body {
-        background-color: var(--light-bg);
-        margin: 0;
-        padding: 0;
-        display: flex;
-        min-height: 100vh;
-      }
-
-             .sidebar {
-            width: 250px;
-            background: #282a2c;
-            padding: 20px;
-            color:  #d4a700;
-            transform: translateX(0);
-            transition: var(--transition);
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-250px);
-        }
-
-      .sidebar-header {
+        /***********************
+ * NOTIFICATION STYLES *
+ ***********************/
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 10px; 
-    padding: 15px;
-    background-color: #282a2c; 
-    border-bottom: 2px solid #d4a700; 
-}
-.sidebar-header h2 {
-    color: #d4a700;
-    font-size: 18px;
-    font-weight: bold;
-}
-        .logo-img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain; 
+    gap: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transform: translateX(120%);
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
+    border-left: 4px solid transparent;
+    z-index: 1000;
+    max-width: 320px;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
 }
 
-        .nav-item {
-            margin-top: 30px;
-            padding: 15px;
-            margin: 5px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-              .nav-item a {
-    color: inherit; 
-    text-decoration: none; 
+.notification::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 16px;
+    min-width: 20px;
 }
 
-      .main-content {
-        margin-left: 5px;
-        flex-grow: 1;
-        padding: 20px;
-        transition: var(--transition);
-      }
+/* Notification Types */
+.notification.success {
+    background: #e8f6ef;
+    border-color: #4CAF50;
+    color: #2e7d32;
+}
 
-      .main-content.expanded {
-        margin-left: 0;
-      }
+.notification.success::before {
+    content: "\f058";
+}
 
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        background-color:  #fffae5;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        color:  #d4a700;
-      }
+.notification.error {
+    background: #feebee;
+    border-color: #f44336;
+    color: #c62828;
+}
 
-      .header h1 {
-        color: var(--primary-color);
-        font-size: 24px;
-        font-weight: bold;
-      }
+.notification.error::before {
+    content: "\f06a";
+}
 
-      .toggle-btn {
-        background: transparent;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-        color: var(--secondary-color);
-      }
+.notification.warning {
+    background: #fff8e5;
+    border-color: #ffc107;
+    color: #d4a307;
+}
 
-      .mode-toggle {
-        background: var(--secondary-color);
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
+.notification.warning::before {
+    content: "\f071";
+}
 
-      .user-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
+.notification.info {
+    background: #e3f2fd;
+    border-color: #2196F3;
+    color: #1565c0;
+}
 
-      .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: var(--secondary-color);
-      }
+.notification.info::before {
+    content: "\f05a";
+}
 
-      .tabs {
-        display: flex;
-        margin-bottom: 20px;
-        background-color: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
+/* Notification Animation */
+@keyframes slideIn {
+    0% {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
 
-      .tab {
-        flex: 1;
-        padding: 15px;
-        text-align: center;
-        cursor: pointer;
-        font-weight: 500;
-        transition: var(--transition);
-        border-bottom: 3px solid transparent;
-      }
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(120%);
+    }
+}
 
-      .tab.active {
-        border-bottom: 3px solid var(--primary-color);
-        color: var(--primary-color);
-        background-color: rgba(212, 167, 0, 0.1);
-      }
+/* Close Button */
+.notification .close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 12px;
+    padding: 2px;
+    transition: opacity 0.2s ease;
+}
 
-      .tab-content {
-        display: none;
-      }
+.notification .close:hover {
+    opacity: 1;
+}
 
-      .tab-content.active {
-        display: block;
-      }
-
-      .ride-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-      }
-
-      .ride-card {
-        background-color: var(--card-bg);
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        transition: var(--transition);
-        position: relative;
-      }
-
-      .ride-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      }
-
-      .passenger-name {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #282a2c;
-      }
-
-      .phone-number {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 10px;
-      }
-
-      .phone-number a {
-        color: #282a2c;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .location-info {
-        margin-bottom: 10px;
-      }
-
-      .location-label {
-        font-weight: 500;
-        margin-bottom: 5px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .location-address {
-        padding-left: 20px;
-        margin-bottom: 5px;
-      }
-
-
-
-      .ride-datetime {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 15px;
-        font-size: 14px;
-        color: #838282;
-        font-weight: bold;
-      }
-
-      .fee-breakdown {
-        background-color: #e0e0e0;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-      }
-
-      .fee-item {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
-        font-size: 14px;
-      }
-
-      .fee-item.total {
-        font-weight: bold;
-        margin-bottom: 8px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .fee-item.earnings {
-        color: var(--accept-btn);
-        font-weight: 500;
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-      }
-
-      .btn {
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        flex: 1;
-        transition: var(--transition);
-      }
-
-      .btn-accept {
-        background-color: var(--accept-btn);
-        color: white;
-      }
-
-      .btn-accept:hover {
-        background-color: #218838;
-      }
-
-      .btn-end {
-        background-color: var(--end-btn);
-        color: white;
-      }
-
-      .btn-end:hover {
-        background-color: #0269c2;
-      }
-
-      .btn-cancel {
-        background-color: var(--cancel-btn);
-        color: white;
-      }
-
-      .btn-cancel:hover {
-        background-color: #c82333;
-      }
-
-      .ride-status {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        padding: 5px 10px;
-        border-radius: 15px;
-        font-size: 12px;
-        font-weight: 500;
-      }
-
-      .status-completed {
-        background-color: rgba(40, 167, 69, 0.2);
-        color: var(--accept-btn);
-      }
-
-      .status-pending {
-        background-color: rgba(255, 193, 7, 0.2);
-        color: #ffc107;
-      }
-
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-
-      .modal-content {
-        background-color: white;
-        border-radius: 8px;
-        padding: 20px;
+/* Responsive Design */
+@media (max-width: 480px) {
+    .notification {
         width: 90%;
-        max-width: 500px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      }
+        right: 50%;
+        transform: translateX(50%);
+        top: 10px;
+        animation: mobileSlideIn 0.3s ease-out forwards;
+    }
+    
+    @keyframes mobileSlideIn {
+        0% {
+            transform: translateY(-100%) translateX(50%);
+        }
+        100% {
+            transform: translateY(0) translateX(50%);
+        }
+    }
+ /* Modal Background */
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
 
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
+/* Modal Show */
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Content */
+.modal-content {
+    background: linear-gradient(145deg, #ffffff, #eef1f5);
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    transform: translateY(-50px);
+    opacity: 0;
+    animation: modalSlideIn 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* Slide & Fade Animation */
+@keyframes modalSlideIn {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Modal Header */
+.modal-content h2 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    text-align: center;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Modal Text */
+.modal-content p {
+    color: #7f8c8d;
+    font-size: 1rem;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Close Button */
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: #e74c3c;
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.modal-close:hover {
+    transform: scale(1.2);
+    color: #c0392b;
+}
+
+/* Textarea */
+#cancel-reason {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #bdc3c7;
+    border-radius: 8px;
+    margin: 1rem 0;
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.6);
+    color: #333;
+    transition: all 0.3s ease-in-out;
+}
+
+#cancel-reason:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+/* Buttons Container */
+.modal-action-btns {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Cancel Button */
+.modal-cancel-btn {
+    background: linear-gradient(145deg, #f6f6f6, #e0e0e0);
+    color: #333;
+    border: 2px solid #dcdde1;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Submit Button */
+.modal-submit-btn {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+/* Hover Effects */
+.modal-cancel-btn:hover {
+    background: #dcdde1;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+    background: linear-gradient(135deg, #2980b9, #3498db);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+    
+    .modal-action-btns {
+        flex-direction: column;
         align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .modal-header h3 {
-        color: var(--secondary-color);
-      }
-
-      .close-modal {
-        background: transparent;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-        color: #666;
-      }
-
-      .modal-body {
-        margin-bottom: 20px;
-      }
-
-      .modal-body select,
-      .modal-body textarea {
+    }
+    
+    .modal-cancel-btn,
+    .modal-submit-btn {
         width: 100%;
-        padding: 10px;
-        margin-top: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 14px;
-      }
-
-      .modal-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-      }
-
-      .fab {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        background-color: var(--primary-color);
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        font-size: 24px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        cursor: pointer;
-        transition: var(--transition);
-      }
-
-      .fab:hover {
-        transform: scale(1.1);
-      }
-
-      .filters {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-
-      .filter-input {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        flex: 1;
-      }
-
-      .no-rides {
         text-align: center;
-        padding: 40px;
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
+    }
+}
 
-      .no-rides i {
-        font-size: 40px;
-        color: #ddd;
-        margin-bottom: 10px;
-      }
-
-      
-      @media (max-width: 768px) {
-        .sidebar {
-          transform: translateX(-250px);
-          position: fixed;
-          z-index: 100;
-          height: 100vh;
-        }
-
-        .sidebar.mobile-active {
-          transform: translateX(0);
-        }
-
-        .main-content {
-          margin-left: 0;
-          width: 100%;
-        }
-
-        .overlay {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(0, 0, 0, 0.5);
-          z-index: 99;
-        }
-
-        .overlay.active {
-          display: block;
-        }
-
-        .ride-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .ride-card {
-          max-width: none;
-        }
-
-        .header {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .user-info {
-          margin-top: 10px;
-        }
-
-        .action-buttons {
-          flex-direction: column;
-        }
-
-        .header h1 {
-          font-size: 20px;
-          margin-bottom: 10px;
-        }
-      }
     </style>
+  
   </head>
   <body>
+
+
     <nav class="sidebar">
       <div class="sidebar-header">
         <img src="images/megacitycablogo.png" alt="Mega City Cab Logo" class="logo-img">  
@@ -688,5 +475,939 @@
         </div>
       </div>
     </div>
+    
+    
+    
+    
+    <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            this.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            
+            if (tabId === 'current-rides') {
+                loadCurrentRides();
+            } else if (tabId === 'ended-rides') {
+                loadEndedRides();
+            }
+        });
+    });
+    
+    loadCurrentRides();
+
+    const dateFilter = document.querySelector('.filter-input[type="date"]');
+    const nameFilter = document.querySelector('.filter-input[placeholder="Search by name"]');
+    const sortSelect = document.querySelector('.filter-input[placeholder="Sort by earnings"]');
+    
+    if (dateFilter) {
+        dateFilter.addEventListener('change', function() {
+            filterEndedRides();
+        });
+    }
+    
+    if (nameFilter) {
+        nameFilter.addEventListener('input', function() {
+            filterEndedRides();
+        });
+    }
+    
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            filterEndedRides();
+        });
+    }
+});
+
+function loadCurrentRides() {
+    showLoading();
+    
+    fetch('/CabSystem/currentRides', { 
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`HTTP ${response.status}: ${text}`);
+            });
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error(`Invalid content type: ${contentType}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            displayCurrentRides(data.rides);
+        } else {
+            showNotification(data.message || 'Failed to load rides', 'error');
+            showEmptyState();
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        if (error.message.includes('Failed to fetch')) {
+            showNotification('Server unavailable. Please try again later.', 'error');
+        } else if (error.message.includes('HTTP 401')) {
+            showNotification('Session expired. Please login again.', 'error');
+            setTimeout(() => window.location.href = '/megacitycab/login.html', 2000);
+        } else {
+            showNotification('Error loading rides: ' + error.message, 'error');
+        }
+        showEmptyState();
+    });
+}
+
+function showEmptyState() {
+    const container = document.querySelector('#current-rides .ride-grid');
+    container.innerHTML = '<div class="no-rides">No rides available</div>';
+}
+
+function displayCurrentRides(rides) {
+    const container = document.querySelector('#current-rides .ride-grid');
+    container.innerHTML = '';
+    
+     const acceptedRides = JSON.parse(localStorage.getItem('acceptedRides') || '[]');
+    
+    if (!rides || rides.length === 0) {
+        container.innerHTML = '<div class="no-rides">No current rides available</div>';
+        return;
+    }
+    
+    rides.forEach(ride => {
+                if (acceptedRides.includes(ride.bookingId)) {
+            ride.driverAccepted = true;
+        }
+        ride.hireFee = Number(ride.hireFee || 0);
+        ride.adminCharge = Number(ride.adminCharge || 0);
+        ride.driverEarnings = Number(ride.driverEarnings || 0);
+        
+        const statusClass = getStatusClass(ride.status);
+        const statusText = getStatusText(ride.status);
+        
+  
+        const isPending = ride.status.toLowerCase() === 'pending';
+        const isAssigned = ride.status.toLowerCase() === 'assigned';
+        const isAccepted = ride.driverAccepted === true || ride.driverAccepted === "true"; 
+        
+        const rideCard = document.createElement('div');
+        rideCard.className = 'ride-card';
+        rideCard.setAttribute('data-booking-id', ride.bookingId);
+        
+        const formattedDate = formatDate(ride.bookingDatetime);
+        
+        rideCard.innerHTML = `
+            <div class="ride-status ${statusClass}">${statusText}</div>
+            <div class="passenger-name">${ride.passengerName || 'Unknown'}</div>
+            <div class="phone-number">
+                <a href="tel:${ride.passengerPhone}">
+                    <i class="fas fa-phone"></i> ${ride.passengerPhone || 'N/A'}
+                </a>
+            </div>
+            <div class="location-info">
+                <div class="location-label">
+                    <i class="fas fa-map-marker-alt" style="color: green"></i>
+                    Pickup Location
+                </div>
+                <div class="location-address">${ride.pickupLocation || 'N/A'}</div>
+            </div>
+            <div class="location-info">
+                <div class="location-label">
+                    <i class="fas fa-map-marker-alt" style="color: red"></i>
+                    Drop-off Location
+                </div>
+                <div class="location-address">${ride.dropoffLocation || 'N/A'}</div>
+            </div>
+            
+            <div class="ride-datetime">
+                <i class="far fa-calendar-alt"></i> ${formattedDate}
+            </div>
+                            <div class="payment-method">
+                    <i class="fas fa-credit-card"></i> ${ride.paymentMethod || 'Cash'}
+                </div>
+            <div class="fee-breakdown">
+                <div class="fee-item total">
+                    <span>Total Fee:</span>
+                    <span>₹${ride.hireFee.toFixed(2)}</span>
+                </div>
+                <div class="fee-item">
+                    <span>Admin Charge (30%):</span>
+                    <span>₹${ride.adminCharge.toFixed(2)}</span>
+                </div>
+                <div class="fee-item earnings">
+                    <span>Driver Earnings:</span>
+                    <span>₹${ride.driverEarnings.toFixed(2)}</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                ${isAssigned && !isAccepted ? 
+                    `<button class="btn btn-accept" onclick="acceptRide(${ride.bookingId})">
+                        <i class="fas fa-check"></i> Accept Ride
+                    </button>` : ''}
+                <button class="btn btn-cancel" onclick="showCancelModal(${ride.bookingId})">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                ${isAssigned && isAccepted ? 
+                    `<button class="btn btn-end" onclick="showEndRideModal(${ride.bookingId})">
+                        <i class="fas fa-flag-checkered"></i> End Ride
+                    </button>` : ''}
+            </div>
+        `;
+        
+        container.appendChild(rideCard);
+    });
+}
+
+function loadEndedRides() {
+    fetch('/CabSystem/driver/ended-rides', {  
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(rides => {
+        displayEndedRides(rides);
+    })
+    .catch(error => {
+        console.error('Error loading ended rides:', error);
+        showNotification('Failed to load ended rides. Please try again.', 'error');
+    });
+}
+
+function displayEndedRides(rides) {
+    const container = document.querySelector('#ended-rides .ride-grid');
+    container.innerHTML = '';
+    
+    if (!rides || rides.length === 0) {
+        container.innerHTML = '<div class="no-rides">No ended rides available</div>';
+        return;
+    }
+    
+    rides.forEach(ride => {
+        ride.hireFee = Number(ride.hireFee || 0);
+        ride.adminCharge = Number(ride.adminCharge || 0);
+        ride.driverEarnings = Number(ride.driverEarnings || 0);
+        
+        const rideCard = document.createElement('div');
+        rideCard.className = 'ride-card';
+
+        const formattedDate = formatDate(ride.bookingDatetime);
+        
+        rideCard.innerHTML = `
+            <div class="ride-status status-completed">Completed</div>
+            <div class="passenger-name">${ride.passengerName || 'Unknown'}</div>
+            <div class="phone-number">
+                <a href="tel:${ride.passengerPhone}">
+                    <i class="fas fa-phone"></i> ${ride.passengerPhone || 'N/A'}
+                </a>
+            </div>
+            <div class="location-info">
+                <div class="location-label">
+                    <i class="fas fa-map-marker-alt" style="color: green"></i>
+                    Pickup Location
+                </div>
+                <div class="location-address">${ride.pickupLocation || 'N/A'}</div>
+            </div>
+            <div class="location-info">
+                <div class="location-label">
+                    <i class="fas fa-map-marker-alt" style="color: red"></i>
+                    Drop-off Location
+                </div>
+                <div class="location-address">${ride.dropoffLocation || 'N/A'}</div>
+            </div>
+            <div class="ride-info">
+                <div class="ride-datetime">
+                    <i class="far fa-calendar-alt"></i> ${formattedDate}
+                </div>
+                <div class="payment-method">
+                    <i class="fas fa-credit-card"></i> ${ride.paymentMethod || 'Cash'}
+                </div>
+            </div>
+            <div class="fee-breakdown">
+                <div class="fee-item total">
+                    <span>Total Fee:</span>
+                    <span>₹${ride.hireFee.toFixed(2)}</span>
+                </div>
+                <div class="fee-item">
+                    <span>Admin Charge (30%):</span>
+                    <span>₹${ride.adminCharge.toFixed(2)}</span>
+                </div>
+                <div class="fee-item earnings">
+                    <span>Driver Earnings:</span>
+                    <span>₹${ride.driverEarnings.toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(rideCard);
+    });
+}
+
+
+function acceptRide(bookingId) {
+
+    showNotification('Ride accepted successfully!', 'success');
+    
+
+    const rideCard = document.querySelector(`.ride-card[data-booking-id="${bookingId}"]`);
+    if (rideCard) {
+
+        const acceptButton = rideCard.querySelector('.btn-accept');
+        if (acceptButton) {
+            acceptButton.remove();
+        }
+        
+
+        const actionButtons = rideCard.querySelector('.action-buttons');
+        if (actionButtons) {
+            const endRideButton = document.createElement('button');
+            endRideButton.className = 'btn btn-end';
+            endRideButton.innerHTML = '<i class="fas fa-flag-checkered"></i> End Ride';
+            endRideButton.onclick = function() { showEndRideModal(bookingId); };
+            actionButtons.appendChild(endRideButton);
+        }
+    }
+    
+
+    const acceptedRides = JSON.parse(localStorage.getItem('acceptedRides') || '[]');
+    if (!acceptedRides.includes(bookingId)) {
+        acceptedRides.push(bookingId);
+        localStorage.setItem('acceptedRides', JSON.stringify(acceptedRides));
+    }
+}
+
+
+function cancelRide(bookingId, reason) {
+    fetch('/CabSystem/driver/cancel-ride', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `bookingId=${bookingId}&reason=${encodeURIComponent(reason)}`
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showNotification('Ride cancelled successfully!', 'success');
+            loadCurrentRides();
+        } else {
+            showNotification('Failed to cancel ride. Please try again.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error cancelling ride:', error);
+        showNotification('An error occurred. Please try again.', 'error');
+    });
+}
+
+
+function endRide(bookingId) {
+    fetch('/CabSystem/driver/end-ride', {  
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `bookingId=${bookingId}`
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showNotification('Ride ended successfully!', 'success');
+            loadCurrentRides();
+            loadEndedRides();
+        } else {
+            showNotification('Failed to end ride. Please try again.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error ending ride:', error);
+        showNotification('An error occurred. Please try again.', 'error');
+    });
+}
+
+
+function filterEndedRides() {
+    const dateFilter = document.querySelector('.filter-input[type="date"]').value;
+    const nameFilter = document.querySelector('.filter-input[placeholder="Search by name"]').value.toLowerCase();
+    const sortOption = document.querySelector('.filter-input[placeholder="Sort by earnings"]').value;
+    
+    fetch('/driver/ended-rides', {  
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(rides => {
+        if (dateFilter) {
+            const filterDate = new Date(dateFilter);
+            rides = rides.filter(ride => {
+                const rideDate = new Date(ride.bookingDatetime);
+                return rideDate.toDateString() === filterDate.toDateString();
+            });
+        }
+        
+ 
+        if (nameFilter) {
+            rides = rides.filter(ride => 
+                ride.passengerName.toLowerCase().includes(nameFilter)
+            );
+        }
+        
+
+        if (sortOption === 'high') {
+            rides.sort((a, b) => b.driverEarnings - a.driverEarnings);
+        } else if (sortOption === 'low') {
+            rides.sort((a, b) => a.driverEarnings - b.driverEarnings);
+        }
+        
+        displayEndedRides(rides);
+    })
+    .catch(error => {
+        console.error('Error filtering ended rides:', error);
+    });
+}
+
+
+function showCancelModal(bookingId) {
+    const existingModal = document.querySelector('.modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+   const modal = document.createElement('div');
+modal.className = 'modal';
+modal.innerHTML = `
+    <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <h2>Cancel Ride</h2>
+        <p>Please provide a reason for cancellation:</p>
+        <textarea id="cancel-reason" rows="4" placeholder="Reason for cancellation..."></textarea>
+        <div class="modal-action-btns">
+            <button class="modal-cancel-btn" onclick="closeModal()">Cancel</button>
+            <button class="modal-submit-btn" onclick="submitCancellation(${bookingId})">Submit Request</button>
+        </div>
+    </div>
+`;
+
+
+const style = document.createElement('style');
+style.id = 'dynamic-modal-styles';
+style.textContent = `
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    }
+    
+    .modal.active {
+        display: flex;
+        animation: modalFadeIn 0.3s ease-out;
+    }
+    
+.modal-content {
+    background: linear-gradient(145deg, rgba(250, 247, 232, 0.15), rgba(250, 239, 181, 0.15));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transform: translateY(-50px);
+    opacity: 0;
+    animation: modalSlideIn 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+
+    
+    @keyframes modalSlideIn {
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .modal-content h2 {
+        color: #d4a700;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        border-bottom: 2px solid #d4a700;
+        padding-bottom: 0.5rem;
+    }
+    
+    .modal-content p {
+        color: #d4a700;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+        color: #e74c3c;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+    
+    .modal-close:hover {
+        transform: scale(1.2);
+        color: #c0392b;
+    }
+    
+#cancel-reason {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #d4a700;
+    border-radius: 8px;
+    margin: 1rem 0;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: rgba(250, 247, 232, 0.15);
+    box-shadow: 0 0 10px rgba(212, 167, 0, 0.4);
+}
+
+#cancel-reason:focus {
+    outline: none;
+    border-color: #d4a700;
+    box-shadow: 0 0 15px rgba(212, 167, 0, 0.7), 
+                0 0 30px rgba(212, 167, 0, 0.5); 
+}
+
+#cancel-reason::placeholder {
+    color: #d4a700;
+    opacity: 1; 
+    transition: var(--transition);
+}
+
+#cancel-reason:focus::placeholder {
+    color: rgba(212, 167, 0, 0.7);
+}
+
+
+    
+    .modal-action-btns {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        justify-content: flex-end;
+    }
+    
+
+
+.modal-cancel-btn {
+    background: #faf7e8;
+    color: #333333;
+    border: 2px solid #d4a700;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(212, 167, 0, 0.3);
+}
+
+
+.modal-submit-btn {
+    background: linear-gradient(135deg, #d4a700, #b78a00);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 167, 0, 0.3);
+}
+
+
+
+.modal-cancel-btn:hover {
+    background: #dcdde1;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.modal-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(212, 167, 0, 0.4);
+    background: linear-gradient(135deg, #b78a00, #d4a700);
+}
+
+
+
+.modal-cancel-btn:focus {
+    border-color: #d4a700;
+    box-shadow: 0 0 10px #d4a700;
+}
+
+
+.modal-submit-btn:focus {
+    box-shadow: 0 0 10px #3498db;
+}
+
+
+    
+    @media (max-width: 480px) {
+        .modal-content {
+            width: 95%;
+            padding: 1.5rem;
+        }
+        .modal-action-btns {
+            flex-direction: column;
+        }
+        .modal-cancel-btn,
+        .modal-submit-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+`;
+
+
+document.head.appendChild(style);
+document.body.appendChild(modal);
+
+
+setTimeout(() => modal.classList.add('active'), 10);
+
+
+modal.querySelector('.modal-close').addEventListener('click', closeModal);    
+    document.body.appendChild(modal);
+    
+
+    setTimeout(() => {
+        modal.style.display = 'flex';
+    }, 10);
+    
+
+    const closeBtn = modal.querySelector('.close');
+    closeBtn.addEventListener('click', closeModal);
+    
+  
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+function submitCancellation(bookingId) {
+    const reason = document.getElementById('cancel-reason').value;
+    
+    if (!reason.trim()) {
+        showNotification('Please provide a reason for cancellation.', 'warning');
+        return;
+    }
+    
+    cancelRide(bookingId, reason);
+    closeModal();
+}
+
+
+function showEndRideModal(bookingId) {
+
+    const existingModal = document.querySelector('.modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+const modal = document.createElement('div');
+modal.className = 'modal';
+modal.innerHTML = `
+    <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <h2>End Ride</h2>
+        <p>Are you sure you want to end this ride?</p>
+        <div class="modal-action-btns">
+            <button class="modal-cancel-btn" onclick="closeModal()">Cancel</button>
+            <button class="modal-confirm-btn" onclick="confirmEndRide(${bookingId})">Confirm</button>
+        </div>
+    </div>
+`;
+
+
+if (!document.getElementById('dynamic-modal-styles')) {
+    const style = document.createElement('style');
+    style.id = 'dynamic-modal-styles';
+    style.textContent = `
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+.modal-content {
+    background: linear-gradient(145deg, rgba(250, 247, 232, 0.15), rgba(250, 239, 181, 0.15));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transform: translateY(-50px);
+    opacity: 0;
+    animation: modalSlideIn 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+        
+        @keyframes modalSlideIn {
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+    .modal-content h2 {
+        color: #d4a700;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        border-bottom: 2px solid #d4a700;
+        padding-bottom: 0.5rem;
+    }
+    
+    .modal-content p {
+        color: #d4a700;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: #e74c3c;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        
+        .modal-close:hover {
+            transform: scale(1.2);
+            color: #c0392b;
+        }
+        
+        .modal-action-btns {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+        }
+        
+    .modal-cancel-btn {
+    background: #f1f2f6;
+    color: #2d3436;
+    border: 2px solid #dcdde1;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(220, 221, 225, 0.3);
+}
+
+.modal-confirm-btn {
+    background: linear-gradient(135deg, #d4a700, #b78a00);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 167, 0, 0.3);
+}
+
+.modal-cancel-btn:hover {
+    background: #dcdde1;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-confirm-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(212, 167, 0, 0.4);
+    background: linear-gradient(135deg, #b78a00, #d4a700);
+}
+
+        @media (max-width: 480px) {
+            .modal-content { width: 95%; padding: 1.5rem; }
+            .modal-action-btns { flex-direction: column; }
+            .modal-cancel-btn, .modal-confirm-btn { width: 100%; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+document.body.appendChild(modal);
+setTimeout(() => modal.classList.add('active'), 10);
+
+
+modal.querySelector('.modal-close').addEventListener('click', closeModal);
+    
+    document.body.appendChild(modal);
+    
+
+    setTimeout(() => {
+        modal.style.display = 'flex';
+    }, 10);
+    
+
+    const closeBtn = modal.querySelector('.close');
+    closeBtn.addEventListener('click', closeModal);
+    
+
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+
+function confirmEndRide(bookingId) {
+    endRide(bookingId);
+    closeModal();
+}
+
+
+function closeModal() {
+    const modal = document.querySelector('.modal');
+    if (modal) {
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+}
+
+
+function showNotification(message, type) {
+
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = message;
+    
+    document.body.appendChild(notification);
+    
+
+    setTimeout(() => {
+        notification.style.opacity = '1';
+    }, 10);
+    
+
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+
+function getStatusClass(status) {
+    switch (status.toLowerCase()) {
+        case 'pending':
+            return 'status-pending';
+        case 'assigned':
+            return 'status-active';
+        case 'ended':
+            return 'status-completed';
+        default:
+            return '';
+    }
+}
+
+
+function getStatusText(status) {
+    switch (status.toLowerCase()) {
+        case 'pending':
+            return 'Pending';
+        case 'assigned':
+            return 'Active';
+        case 'ended':
+            return 'Completed';
+        default:
+            return status;
+    }
+}
+
+
+function formatDate(dateTimeStr) {
+    const date = new Date(dateTimeStr);
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+    
+    
+    return `${date.toLocaleDateString('en-IN', options)} • ${date.toLocaleTimeString('en-IN', timeOptions)}`;
+}
+
+
+function showLoading() {
+    const container = document.querySelector('#current-rides .ride-grid');
+    container.innerHTML = '<div class="loading">Loading rides...</div>';
+}
+    </script>
+    
+    
+    
   </body>
 </html>

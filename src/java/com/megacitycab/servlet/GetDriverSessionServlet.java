@@ -32,7 +32,7 @@ public class GetDriverSessionServlet extends HttpServlet {
             Integer userId = (Integer) session.getAttribute("userId");
             String fullName = (String) session.getAttribute("fullName"); 
             
-            // Debugging: Log the session attributes
+       
             System.out.println("User  ID: " + userId);
             System.out.println("Full Name: " + fullName);
             
