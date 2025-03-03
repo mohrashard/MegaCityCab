@@ -3,13 +3,20 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/LoginServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/CurrentRidesServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/CancelRideServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dto/RideDTO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/RideService.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/service/RideServiceImpl.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/EndedRidesServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/AcceptRideServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/EndRideServlet.java</file>
             <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/GetDriverSessionServlet.java</file>
             <file>file:/C:/Netbeans24/CabSystem/web/driver_dashboard.html</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/GetDriverStatusServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/web/css/driverdashboard.css</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/DriversApiServlet.java</file>
-            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/servlet/UpdateStatusServlet.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/RideDAO.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/ridemanagement.html</file>
+            <file>file:/C:/Netbeans24/CabSystem/src/java/com/megacitycab/dao/RideDAOImpl.java</file>
+            <file>file:/C:/Netbeans24/CabSystem/web/css/ridemanager.css</file>
         </group>
     </open-files>
 </project-private>

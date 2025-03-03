@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/vehiclemanage.css"/>
+    <title>Vehicle Management</title>
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    
+  </head>
+  <body id="vehicles-page">
+    <aside class="sidebar">
+      <div class="logo">Mega City Cab</div>
+      <ul class="nav-links">
+        <li><a href="adminDashboard.html" data-page="dashboard">Dashboard</a></li>
+        <li><a href="bookingmanagement.html" data-page="bookings">Bookings</a></li>
+        <li><a href="#" data-page="customers">Customers</a></li>
+        <li><a href="#" data-page="drivers">Drivers</a></li>
+        <li><a href="#" class="active" data-page="vehicles">Vehicles</a></li>
+        <li><a href="#" data-page="logout">Logout</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="header">
+        <h1 class="title" style="color: #282a2c;">Vehicle Management</h1>
+        <div>
+          <button class="btn btn-primary" id="toggle-add-form">
+            Add New Vehicle
+          </button>
+        </div>
+      </div>
+
+      <!-- Add Vehicle Section -->
+      <section id="add-vehicle-section" class="card">
+        <h2 class="section-title">Add New Vehicle</h2>
+        <form id="add-vehicle-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="vehicle-type">Vehicle Type</label>
+              <select id="vehicle-type" required>
+                <option value="">Select vehicle type</option>
+                <option value="Car">Car</option>
+                <option value="Van">Van</option>
+                <option value="Three-Wheeler">Three-Wheeler</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="plate-number">Plate Number</label>
+              <input
+                type="text"
+                id="plate-number"
+                placeholder="e.g. ABC-1234"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="model">Model</label>
+              <input
+                type="text"
+                id="model"
+                placeholder="e.g. Corolla"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="brand">Brand</label>
+              <input
+                type="text"
+                id="brand"
+                placeholder="e.g. Toyota"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="capacity">Capacity</label>
+            <input
+              type="number"
+              id="capacity"
+              min="1"
+              placeholder="Number of passengers"
+              required
+            />
+          </div>
+          <div class="form-group" style="text-align: right">
+            <button type="submit" class="btn btn-primary">Add Vehicle</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Manage Vehicles Section -->
+      <section id="manage-vehicles-section" class="card">
+        <h2 class="section-title">Manage Vehicles</h2>
+        <div class="search-filter">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              id="search-vehicle"
+              placeholder="Search vehicles..."
+            />
+          </div>
+          <div class="filter-group">
+            <select id="filter-vehicle-type">
+              <option value="">All Vehicle Types</option>
+              <option value="Car">Car</option>
+              <option value="Van">Van</option>
+              <option value="Three-Wheeler">Three-Wheeler</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Vehicle Type</th>
+                <th>Plate Number</th>
+                <th>Model</th>
+                <th>Brand</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vehicles-table-body">
+              <!-- Vehicle rows will be added here dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Assign Driver Modal -->
+    <div class="modal" id="assign-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Assign Vehicle to Driver</h2>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="vehicle-details" id="modal-vehicle-details">
+            <!-- Vehicle details will be populated here -->
+          </div>
+          <h3 class="section-title">Available Drivers</h3>
+          <div class="driver-cards" id="available-drivers">
+            <!-- Driver cards will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div class="notification" id="notification">
+      <div class="notification-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="notification-message">Vehicle added successfully!</div>
+    </div>
+
+    <script>
+      // Sample data
+      let vehicles = [
+        {
+          id: 1,
+          type: "Car",
+          plateNumber: "ABC-1234",
+          model: "Camry",
+          brand: "Toyota",
+          capacity: 4,
+          status: "Unassigned",
+        },
+        {
+          id: 2,
+          type: "Van",
+          plateNumber: "XYZ-5678",
+          model: "Hiace",
+          brand: "Toyota",
+          capacity: 8,
+          status: "Assigned",
+        },
+        {
+          id: 3,
+          type: "Three-Wheeler",
+          plateNumber: "DEF-9012",
+          model: "RE",
+          brand: "Bajaj",
+          capacity: 3,
+          status: "Unassigned",
+        },
+        {
+          id: 4,
+          type: "Car",
+          plateNumber: "GHI-3456",
+          model: "Civic",
+          brand: "Honda",
+          capacity: 5,
+          status: "Assigned",
+        },
+      ];
+
+      const drivers = [
+        {
+          id: 1,
+          name: "John Doe",
+          email: "john@example.com",
+          license: "DL12345",
+          phone: "+1 234-567-8901",
+          vehicleType: "Car",
+        },
+        {
+          id: 2,
+          name: "Jane Smith",
+          email: "jane@example.com",
+          license: "DL67890",
+          phone: "+1 234-567-8902",
+          vehicleType: "Car",
+        },
+        {
+          id: 3,
+          name: "Robert Johnson",
+          email: "robert@example.com",
+          license: "DL54321",
+          phone: "+1 234-567-8903",
+          vehicleType: "Van",
+        },
+        {
+          id: 4,
+          name: "Mary Williams",
+          email: "mary@example.com",
+          license: "DL09876",
+          phone: "+1 234-567-8904",
+          vehicleType: "Three-Wheeler",
+        },
+        {
+          id: 5,
+          name: "David Brown",
+          email: "david@example.com",
+          license: "DL13579",
+          phone: "+1 234-567-8905",
+          vehicleType: "Car",
+        },
+      ];
+
+      // DOM Elements
+      const vehiclesTableBody = document.getElementById("vehicles-table-body");
+      const addVehicleForm = document.getElementById("add-vehicle-form");
+      const addVehicleSection = document.getElementById("add-vehicle-section");
+      const toggleAddFormBtn = document.getElementById("toggle-add-form");
+      const searchVehicleInput = document.getElementById("search-vehicle");
+      const filterVehicleType = document.getElementById("filter-vehicle-type");
+      const assignModal = document.getElementById("assign-modal");
+      const modalClose = document.querySelector(".modal-close");
+      const availableDrivers = document.getElementById("available-drivers");
+      const modalVehicleDetails = document.getElementById(
+        "modal-vehicle-details"
+      );
+      const notification = document.getElementById("notification");
+
+      const vehicleImageInput = document.getElementById("vehicle-image");
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        renderVehicles();
+        setupEventListeners();
+        addVehicleSection.style.display = "none";
+      });
+
+      // Setup Event Listeners
+      function setupEventListeners() {
+        // Toggle Add Vehicle Form
+        toggleAddFormBtn.addEventListener("click", function () {
+          if (addVehicleSection.style.display === "none") {
+            addVehicleSection.style.display = "block";
+            toggleAddFormBtn.textContent = "Hide Add Form";
+          } else {
+            addVehicleSection.style.display = "none";
+            toggleAddFormBtn.textContent = "Add New Vehicle";
+          }
+        });
+
+        // Add Vehicle Form Submit
+        addVehicleForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          addVehicle();
+        });
+
+        // Search and Filter
+        searchVehicleInput.addEventListener("input", renderVehicles);
+        filterVehicleType.addEventListener("change", renderVehicles);
+
+        // Modal Close
+        modalClose.addEventListener("click", function () {
+          assignModal.classList.remove("show");
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener("click", function (e) {
+          if (e.target === assignModal) {
+            assignModal.classList.remove("show");
+          }
+        });
+
+        // Navigation
+
+      }
+
+      // Render Vehicles Table
+      function renderVehicles() {
+        const searchTerm = searchVehicleInput.value.toLowerCase();
+        const filterType = filterVehicleType.value;
+
+        const filteredVehicles = vehicles.filter((vehicle) => {
+          const matchesSearch =
+            vehicle.plateNumber.toLowerCase().includes(searchTerm) ||
+            vehicle.model.toLowerCase().includes(searchTerm) ||
+            vehicle.brand.toLowerCase().includes(searchTerm);
+          const matchesType = filterType === "" || vehicle.type === filterType;
+          return matchesSearch && matchesType;
+        });
+
+        vehiclesTableBody.innerHTML = "";
+
+        filteredVehicles.forEach((vehicle) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${vehicle.type}</td>
+                    <td>${vehicle.plateNumber}</td>
+                    <td>${vehicle.model}</td>
+                    <td>${vehicle.brand}</td>
+                    <td>${vehicle.capacity}</td>
+                    <td><span class="status ${vehicle.status.toLowerCase()}">${
+            vehicle.status
+          }</span></td>
+                    <td class="action-buttons">
+                        <button class="btn-icon btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button class="btn-icon btn-assign" title="Assign" data-id="${
+                          vehicle.id
+                        }"><i class="fas fa-user-plus"></i></button>
+                    </td>
+                `;
+          vehiclesTableBody.appendChild(row);
+        });
+
+        // Add event listeners for action buttons
+        document.querySelectorAll(".btn-assign").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const vehicleId = parseInt(this.getAttribute("data-id"));
+            openAssignModal(vehicleId);
+          });
+        });
+
+        document.querySelectorAll(".btn-edit").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            alert("Edit functionality would be implemented here");
+          });
+        });
+
+        document.querySelectorAll(".btn-delete").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const row = this.closest("tr");
+            const plateNumber = row.cells[1].textContent;
+            if (
+              confirm(`Are you sure you want to delete vehicle ${plateNumber}?`)
+            ) {
+              row.classList.add("pulse");
+              setTimeout(() => {
+                row.remove();
+                // In a real app, you'd also remove it from the data
+              }, 500);
+            }
+          });
+        });
+      }
+
+      // Add Vehicle
+      function addVehicle() {
+        const vehicleType = document.getElementById("vehicle-type").value;
+        const plateNumber = document.getElementById("plate-number").value;
+        const model = document.getElementById("model").value;
+        const brand = document.getElementById("brand").value;
+        const capacity = document.getElementById("capacity").value;
+
+        const newVehicle = {
+          id: vehicles.length + 1,
+          type: vehicleType,
+          plateNumber: plateNumber,
+          model: model,
+          brand: brand,
+          capacity: parseInt(capacity),
+          status: "Unassigned",
+        };
+
+        vehicles.push(newVehicle);
+        renderVehicles();
+        addVehicleForm.reset();
+
+        // Show success notification
+        showNotification("Vehicle added successfully!");
+
+        // Hide form after adding
+        addVehicleSection.style.display = "none";
+        toggleAddFormBtn.textContent = "Add New Vehicle";
+      }
+
+      // Open Assign Modal
+      function openAssignModal(vehicleId) {
+        const vehicle = vehicles.find((v) => v.id === vehicleId);
+
+        modalVehicleDetails.innerHTML = `
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: #282a2c;">${vehicle.brand} ${vehicle.model}</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <p><strong>Type:</strong> ${vehicle.type}</p>
+                        <p><strong>Plate Number:</strong> ${vehicle.plateNumber}</p>
+                        <p><strong>Capacity:</strong> ${vehicle.capacity} passengers</p>
+                        <p><strong>Status:</strong> ${vehicle.status}</p>
+                    </div>
+                </div>
+            `;
+
+        // Filter drivers based on vehicle type
+        const filteredDrivers = drivers.filter(
+          (driver) => driver.vehicleType === vehicle.type
+        );
+
+        availableDrivers.innerHTML = "";
+
+        if (filteredDrivers.length === 0) {
+          availableDrivers.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #6b7280;">
+                        <i class="fas fa-user-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>No available drivers found for ${vehicle.type} vehicles.</p>
+                    </div>
+                `;
+        } else {
+          filteredDrivers.forEach((driver) => {
+            const driverCard = document.createElement("div");
+            driverCard.className = "driver-card";
+            driverCard.innerHTML = `
+                        <div class="driver-name">${driver.name}</div>
+                        <div class="driver-info">
+                            <p><i class="fas fa-id-card"></i> ${driver.license}</p>
+                            <p><i class="fas fa-envelope"></i> ${driver.email}</p>
+                            <p><i class="fas fa-phone"></i> ${driver.phone}</p>
+                        </div>
+                        <button class="btn btn-accent" data-driver-id="${driver.id}" data-vehicle-id="${vehicleId}">
+                            Assign Driver
+                        </button>
+                    `;
+            availableDrivers.appendChild(driverCard);
+          });
+
+          // Add event listeners for assign buttons
+          document.querySelectorAll(".driver-card .btn").forEach((btn) => {
+            btn.addEventListener("click", function () {
+              const driverId = parseInt(this.getAttribute("data-driver-id"));
+              const vehicleId = parseInt(this.getAttribute("data-vehicle-id"));
+              assignDriver(vehicleId, driverId);
+            });
+          });
+        }
+
+        assignModal.classList.add("show");
+      }
+
+      // Assign Driver to Vehicle
+      function assignDriver(vehicleId, driverId) {
+        const vehicle = vehicles.find((v) => v.id === vehicleId);
+        const driver = drivers.find((d) => d.id === driverId);
+
+        if (vehicle && driver) {
+          vehicle.status = "Assigned";
+          vehicle.assignedTo = driver.id;
+
+          renderVehicles();
+          assignModal.classList.remove("show");
+          showNotification(
+            `Vehicle ${vehicle.plateNumber} assigned to ${driver.name} successfully!`
+          );
+        }
+      }
+
+      // Show Notification
+      function showNotification(message) {
+        const notificationMessage = document.querySelector(
+          ".notification-message"
+        );
+        notificationMessage.textContent = message;
+        notification.classList.add("show");
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
+      // Additional functionality for dashboard
+      function initDashboard() {
+        // Sample dashboard statistics
+        const stats = {
+          totalVehicles: vehicles.length,
+          assignedVehicles: vehicles.filter((v) => v.status === "Assigned")
+            .length,
+          unassignedVehicles: vehicles.filter((v) => v.status === "Unassigned")
+            .length,
+          totalDrivers: drivers.length,
+          activeBookings: 15,
+          completedBookings: 127,
+          cancelledBookings: 4,
+          totalRevenue: 12500,
+        };
+
+        // This would render dashboard widgets in a real application
+        console.log("Dashboard stats:", stats);
+      }
+
+      // Search and filter functionality for other pages
+      function setupGlobalSearch() {
+        const globalSearch = document.createElement("input");
+        globalSearch.type = "text";
+        globalSearch.placeholder = "Global search...";
+        globalSearch.className = "global-search";
+        globalSearch.style.position = "absolute";
+        globalSearch.style.top = "1rem";
+        globalSearch.style.right = "1rem";
+
+        document.body.appendChild(globalSearch);
+
+        globalSearch.addEventListener("input", function () {
+          console.log("Global search:", this.value);
+          // Would implement actual search functionality in a real app
+        });
+      }
+
+      // Initialize extra features if needed
+      // setupGlobalSearch();
+      // initDashboard();
+    </script>
+  </body>
+</html>
