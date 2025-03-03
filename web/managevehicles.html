@@ -11,6 +11,75 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     
+    
+<style>
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(120%);
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    z-index: 1000;
+    max-width: 320px;
+    width: auto;
+    gap: 10px;
+    font-size: 14px;
+    opacity: 0;
+    margin: 0;
+    line-height: 1.5;
+    font-family: 'Arial', sans-serif;
+    font-weight: 500;
+}
+
+.success-notification {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border-left: 4px solid #1B5E20;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+}
+
+.error-notification {
+    background: linear-gradient(135deg, #F44336, #C62828);
+    color: white;
+    border-left: 4px solid #B71C1C;
+    box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
+}
+
+.notification-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.notification-message {
+    flex: 1;
+    word-break: break-word;
+    max-width: 280px;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.1);
+}
+
+</style>
+    
   </head>
   <body id="vehicles-page">
     <aside class="sidebar">
@@ -29,9 +98,7 @@
       <div class="header">
         <h1 class="title" style="color: #282a2c;">Vehicle Management</h1>
         <div>
-          <button class="btn btn-primary" id="toggle-add-form">
-            Add New Vehicle
-          </button>
+
         </div>
       </div>
 
@@ -156,392 +223,370 @@
       </div>
     </div>
 
-    <!-- Success Notification -->
-    <div class="notification" id="notification">
-      <div class="notification-icon">
-        <i class="fas fa-check"></i>
-      </div>
-      <div class="notification-message">Vehicle added successfully!</div>
-    </div>
 
-    <script>
-      // Sample data
-      let vehicles = [
-        {
-          id: 1,
-          type: "Car",
-          plateNumber: "ABC-1234",
-          model: "Camry",
-          brand: "Toyota",
-          capacity: 4,
-          status: "Unassigned",
-        },
-        {
-          id: 2,
-          type: "Van",
-          plateNumber: "XYZ-5678",
-          model: "Hiace",
-          brand: "Toyota",
-          capacity: 8,
-          status: "Assigned",
-        },
-        {
-          id: 3,
-          type: "Three-Wheeler",
-          plateNumber: "DEF-9012",
-          model: "RE",
-          brand: "Bajaj",
-          capacity: 3,
-          status: "Unassigned",
-        },
-        {
-          id: 4,
-          type: "Car",
-          plateNumber: "GHI-3456",
-          model: "Civic",
-          brand: "Honda",
-          capacity: 5,
-          status: "Assigned",
-        },
-      ];
+<div class="notification success-notification" id="success-notification">
+  <div class="notification-icon">
+    <i class="fas fa-check"></i>
+  </div>
+  <div class="notification-message"></div>
+</div>
 
-      const drivers = [
-        {
-          id: 1,
-          name: "John Doe",
-          email: "john@example.com",
-          license: "DL12345",
-          phone: "+1 234-567-8901",
-          vehicleType: "Car",
-        },
-        {
-          id: 2,
-          name: "Jane Smith",
-          email: "jane@example.com",
-          license: "DL67890",
-          phone: "+1 234-567-8902",
-          vehicleType: "Car",
-        },
-        {
-          id: 3,
-          name: "Robert Johnson",
-          email: "robert@example.com",
-          license: "DL54321",
-          phone: "+1 234-567-8903",
-          vehicleType: "Van",
-        },
-        {
-          id: 4,
-          name: "Mary Williams",
-          email: "mary@example.com",
-          license: "DL09876",
-          phone: "+1 234-567-8904",
-          vehicleType: "Three-Wheeler",
-        },
-        {
-          id: 5,
-          name: "David Brown",
-          email: "david@example.com",
-          license: "DL13579",
-          phone: "+1 234-567-8905",
-          vehicleType: "Car",
-        },
-      ];
+<div class="notification error-notification" id="error-notification">
+  <div class="notification-icon">
+    <i class="fas fa-exclamation-circle"></i>
+  </div>
+  <div class="notification-message"></div>
+</div>
 
-      // DOM Elements
-      const vehiclesTableBody = document.getElementById("vehicles-table-body");
-      const addVehicleForm = document.getElementById("add-vehicle-form");
-      const addVehicleSection = document.getElementById("add-vehicle-section");
-      const toggleAddFormBtn = document.getElementById("toggle-add-form");
-      const searchVehicleInput = document.getElementById("search-vehicle");
-      const filterVehicleType = document.getElementById("filter-vehicle-type");
-      const assignModal = document.getElementById("assign-modal");
-      const modalClose = document.querySelector(".modal-close");
-      const availableDrivers = document.getElementById("available-drivers");
-      const modalVehicleDetails = document.getElementById(
-        "modal-vehicle-details"
-      );
-      const notification = document.getElementById("notification");
 
-      const vehicleImageInput = document.getElementById("vehicle-image");
 
-      // Initialize
-      document.addEventListener("DOMContentLoaded", function () {
-        renderVehicles();
-        setupEventListeners();
-        addVehicleSection.style.display = "none";
-      });
+<script>
+const API = {
+    VEHICLES: '/CabSystem/admin/vehicles',
+    DRIVERS: '/CabSystem/admin/drivers',
+    ADD_VEHICLE: '/CabSystem/admin/vehicle/add',
+    ASSIGN: '/CabSystem/admin/vehicle/assign',
+    UNASSIGN: '/CabSystem/admin/vehicle/unassign',
+    DELETE: '/CabSystem/admin/vehicle/delete'
+};
 
-      // Setup Event Listeners
-      function setupEventListeners() {
-        // Toggle Add Vehicle Form
-        toggleAddFormBtn.addEventListener("click", function () {
-          if (addVehicleSection.style.display === "none") {
-            addVehicleSection.style.display = "block";
-            toggleAddFormBtn.textContent = "Hide Add Form";
-          } else {
-            addVehicleSection.style.display = "none";
-            toggleAddFormBtn.textContent = "Add New Vehicle";
-          }
-        });
+function handleError(error, defaultMessage = 'An error occurred') {
+    console.error('Error:', error);
+    showNotification(error.message || defaultMessage, 'error');
+}
 
-        // Add Vehicle Form Submit
-        addVehicleForm.addEventListener("submit", function (e) {
-          e.preventDefault();
-          addVehicle();
-        });
 
-        // Search and Filter
-        searchVehicleInput.addEventListener("input", renderVehicles);
-        filterVehicleType.addEventListener("change", renderVehicles);
+function showNotification(message, type = 'success') {
 
-        // Modal Close
-        modalClose.addEventListener("click", function () {
-          assignModal.classList.remove("show");
-        });
+    const notificationElement = type === 'success' 
+        ? document.getElementById('success-notification')
+        : document.getElementById('error-notification');
+    
+   
+    const messageElement = notificationElement.querySelector('.notification-message');
+    if (messageElement) {
+        messageElement.textContent = message;
+    }
+    
+ 
+    notificationElement.style.width = 'auto';
+    notificationElement.style.maxWidth = '320px';
+    
 
-        // Close modal when clicking outside
-        window.addEventListener("click", function (e) {
-          if (e.target === assignModal) {
-            assignModal.classList.remove("show");
-          }
-        });
+    notificationElement.style.left = '';
+    notificationElement.style.right = '20px';
+    notificationElement.style.top = '20px';
+    
 
-        // Navigation
+    notificationElement.classList.remove('show');
+    clearTimeout(notificationElement.timeoutId);
+    
+   
+    void notificationElement.offsetWidth;
+    
 
-      }
+    notificationElement.classList.add('show');
+    
+    notificationElement.timeoutId = setTimeout(() => {
+        notificationElement.classList.remove('show');
+    }, 3000);
+}
 
-      // Render Vehicles Table
-      function renderVehicles() {
-        const searchTerm = searchVehicleInput.value.toLowerCase();
-        const filterType = filterVehicleType.value;
 
-        const filteredVehicles = vehicles.filter((vehicle) => {
-          const matchesSearch =
-            vehicle.plateNumber.toLowerCase().includes(searchTerm) ||
-            vehicle.model.toLowerCase().includes(searchTerm) ||
-            vehicle.brand.toLowerCase().includes(searchTerm);
-          const matchesType = filterType === "" || vehicle.type === filterType;
-          return matchesSearch && matchesType;
-        });
 
-        vehiclesTableBody.innerHTML = "";
 
-        filteredVehicles.forEach((vehicle) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-                    <td>${vehicle.type}</td>
-                    <td>${vehicle.plateNumber}</td>
-                    <td>${vehicle.model}</td>
-                    <td>${vehicle.brand}</td>
-                    <td>${vehicle.capacity}</td>
-                    <td><span class="status ${vehicle.status.toLowerCase()}">${
-            vehicle.status
-          }</span></td>
-                    <td class="action-buttons">
-                        <button class="btn-icon btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="btn-icon btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
-                        <button class="btn-icon btn-assign" title="Assign" data-id="${
-                          vehicle.id
-                        }"><i class="fas fa-user-plus"></i></button>
-                    </td>
-                `;
-          vehiclesTableBody.appendChild(row);
-        });
+async function fetchData(url, options = {}) {
+    try {
+        const response = await fetch(url, options);
+        const text = await response.text();
 
-        // Add event listeners for action buttons
-        document.querySelectorAll(".btn-assign").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const vehicleId = parseInt(this.getAttribute("data-id"));
-            openAssignModal(vehicleId);
-          });
-        });
-
-        document.querySelectorAll(".btn-edit").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            alert("Edit functionality would be implemented here");
-          });
-        });
-
-        document.querySelectorAll(".btn-delete").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const row = this.closest("tr");
-            const plateNumber = row.cells[1].textContent;
-            if (
-              confirm(`Are you sure you want to delete vehicle ${plateNumber}?`)
-            ) {
-              row.classList.add("pulse");
-              setTimeout(() => {
-                row.remove();
-                // In a real app, you'd also remove it from the data
-              }, 500);
+        if (!response.ok) {
+            let errorMessage = 'Request failed';
+            try {
+                const errorObj = text ? JSON.parse(text) : {};
+                errorMessage = errorObj.error || errorObj.message || errorMessage;
+            } catch (e) {
+                errorMessage = text || errorMessage;
             }
-          });
+            throw new Error(`${errorMessage} (Status: ${response.status})`);
+        }
+
+        return text ? JSON.parse(text) : {};
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+}
+
+async function renderVehicles() {
+    try {
+        const data = await fetchData(API.VEHICLES);
+        vehicles = data;
+        
+        const searchTerm = document.getElementById('search-vehicle').value.toLowerCase();
+        const filterType = document.getElementById('filter-vehicle-type').value;
+
+        const filteredVehicles = vehicles.filter(vehicle => {
+            const matchesSearch = vehicle.plateNumber.toLowerCase().includes(searchTerm) ||
+                vehicle.model.toLowerCase().includes(searchTerm) ||
+                vehicle.brand.toLowerCase().includes(searchTerm);
+            const matchesType = filterType === '' || vehicle.vehicleType === filterType;
+            return matchesSearch && matchesType;
         });
-      }
 
-      // Add Vehicle
-      function addVehicle() {
-        const vehicleType = document.getElementById("vehicle-type").value;
-        const plateNumber = document.getElementById("plate-number").value;
-        const model = document.getElementById("model").value;
-        const brand = document.getElementById("brand").value;
-        const capacity = document.getElementById("capacity").value;
+        const vehiclesTableBody = document.getElementById('vehicles-table-body');
+        vehiclesTableBody.innerHTML = '';
 
-        const newVehicle = {
-          id: vehicles.length + 1,
-          type: vehicleType,
-          plateNumber: plateNumber,
-          model: model,
-          brand: brand,
-          capacity: parseInt(capacity),
-          status: "Unassigned",
-        };
-
-        vehicles.push(newVehicle);
-        renderVehicles();
-        addVehicleForm.reset();
-
-        // Show success notification
-        showNotification("Vehicle added successfully!");
-
-        // Hide form after adding
-        addVehicleSection.style.display = "none";
-        toggleAddFormBtn.textContent = "Add New Vehicle";
-      }
-
-      // Open Assign Modal
-      function openAssignModal(vehicleId) {
-        const vehicle = vehicles.find((v) => v.id === vehicleId);
-
-        modalVehicleDetails.innerHTML = `
-                <div class="card" style="margin-bottom: 2rem;">
-                    <h3 style="margin-bottom: 1rem; color: #282a2c;">${vehicle.brand} ${vehicle.model}</h3>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                        <p><strong>Type:</strong> ${vehicle.type}</p>
-                        <p><strong>Plate Number:</strong> ${vehicle.plateNumber}</p>
-                        <p><strong>Capacity:</strong> ${vehicle.capacity} passengers</p>
-                        <p><strong>Status:</strong> ${vehicle.status}</p>
-                    </div>
-                </div>
+        filteredVehicles.forEach(vehicle => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${vehicle.vehicleType}</td>
+                <td>${vehicle.plateNumber}</td>
+                <td>${vehicle.model}</td>
+                <td>${vehicle.brand}</td>
+                <td>${vehicle.passengerCapacity}</td>
+                <td><span class="status ${vehicle.status.toLowerCase()}">${vehicle.status}</span></td>
+                <td class="action-buttons">
+                    
+                    <button class="btn-icon btn-delete" title="Delete" data-id="${vehicle.id}"><i class="fas fa-trash"></i></button>
+                    ${vehicle.status === 'Unassigned' ? 
+                        `<button class="btn-icon btn-assign" title="Assign" data-id="${vehicle.id}"><i class="fas fa-user-plus"></i></button>` :
+                        `<button class="btn-icon btn-unassign" title="Unassign" data-id="${vehicle.id}"><i class="fas fa-user-minus"></i></button>`}
+                </td>
             `;
-
-        // Filter drivers based on vehicle type
-        const filteredDrivers = drivers.filter(
-          (driver) => driver.vehicleType === vehicle.type
-        );
-
-        availableDrivers.innerHTML = "";
-
-        if (filteredDrivers.length === 0) {
-          availableDrivers.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: #6b7280;">
-                        <i class="fas fa-user-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                        <p>No available drivers found for ${vehicle.type} vehicles.</p>
-                    </div>
-                `;
-        } else {
-          filteredDrivers.forEach((driver) => {
-            const driverCard = document.createElement("div");
-            driverCard.className = "driver-card";
-            driverCard.innerHTML = `
-                        <div class="driver-name">${driver.name}</div>
-                        <div class="driver-info">
-                            <p><i class="fas fa-id-card"></i> ${driver.license}</p>
-                            <p><i class="fas fa-envelope"></i> ${driver.email}</p>
-                            <p><i class="fas fa-phone"></i> ${driver.phone}</p>
-                        </div>
-                        <button class="btn btn-accent" data-driver-id="${driver.id}" data-vehicle-id="${vehicleId}">
-                            Assign Driver
-                        </button>
-                    `;
-            availableDrivers.appendChild(driverCard);
-          });
-
-          // Add event listeners for assign buttons
-          document.querySelectorAll(".driver-card .btn").forEach((btn) => {
-            btn.addEventListener("click", function () {
-              const driverId = parseInt(this.getAttribute("data-driver-id"));
-              const vehicleId = parseInt(this.getAttribute("data-vehicle-id"));
-              assignDriver(vehicleId, driverId);
-            });
-          });
-        }
-
-        assignModal.classList.add("show");
-      }
-
-      // Assign Driver to Vehicle
-      function assignDriver(vehicleId, driverId) {
-        const vehicle = vehicles.find((v) => v.id === vehicleId);
-        const driver = drivers.find((d) => d.id === driverId);
-
-        if (vehicle && driver) {
-          vehicle.status = "Assigned";
-          vehicle.assignedTo = driver.id;
-
-          renderVehicles();
-          assignModal.classList.remove("show");
-          showNotification(
-            `Vehicle ${vehicle.plateNumber} assigned to ${driver.name} successfully!`
-          );
-        }
-      }
-
-      // Show Notification
-      function showNotification(message) {
-        const notificationMessage = document.querySelector(
-          ".notification-message"
-        );
-        notificationMessage.textContent = message;
-        notification.classList.add("show");
-
-        setTimeout(() => {
-          notification.classList.remove("show");
-        }, 3000);
-      }
-
-      // Additional functionality for dashboard
-      function initDashboard() {
-        // Sample dashboard statistics
-        const stats = {
-          totalVehicles: vehicles.length,
-          assignedVehicles: vehicles.filter((v) => v.status === "Assigned")
-            .length,
-          unassignedVehicles: vehicles.filter((v) => v.status === "Unassigned")
-            .length,
-          totalDrivers: drivers.length,
-          activeBookings: 15,
-          completedBookings: 127,
-          cancelledBookings: 4,
-          totalRevenue: 12500,
-        };
-
-        // This would render dashboard widgets in a real application
-        console.log("Dashboard stats:", stats);
-      }
-
-      // Search and filter functionality for other pages
-      function setupGlobalSearch() {
-        const globalSearch = document.createElement("input");
-        globalSearch.type = "text";
-        globalSearch.placeholder = "Global search...";
-        globalSearch.className = "global-search";
-        globalSearch.style.position = "absolute";
-        globalSearch.style.top = "1rem";
-        globalSearch.style.right = "1rem";
-
-        document.body.appendChild(globalSearch);
-
-        globalSearch.addEventListener("input", function () {
-          console.log("Global search:", this.value);
-          // Would implement actual search functionality in a real app
+            vehiclesTableBody.appendChild(row);
         });
-      }
 
-      // Initialize extra features if needed
-      // setupGlobalSearch();
-      // initDashboard();
-    </script>
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const vehicleId = this.dataset.id;
+                if (confirm('Are you sure you want to delete this vehicle?')) {
+                    try {
+                        await fetchData(API.DELETE, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: `vehicleId=${vehicleId}`
+                        });
+                        showNotification('Vehicle deleted successfully');
+                        await renderVehicles();
+                    } catch (error) {
+                     
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.btn-assign, .btn-unassign').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const vehicleId = this.dataset.id;
+                if (this.classList.contains('btn-assign')) {
+                    openAssignModal(vehicleId);
+                } else {
+                    unassignVehicle(vehicleId);
+                }
+            });
+        });
+
+    } catch (error) {
+    
+    }
+}
+
+async function addVehicle(event) {
+    event.preventDefault();
+    
+    const plateNumber = document.getElementById('plate-number').value;
+    const vehicleType = document.getElementById('vehicle-type').value;
+    const capacity = document.getElementById('capacity').value;
+    const brand = document.getElementById('brand').value;
+    const model = document.getElementById('model').value;
+
+    const formData = new URLSearchParams();
+    formData.append('plateNumber', plateNumber);
+    formData.append('vehicleType', vehicleType);
+    formData.append('passengerCapacity', capacity);
+    formData.append('brand', brand);
+    formData.append('model', model);
+
+    const plateRegex = /^[A-Za-z]{2,3}-\d{4}$/i;
+    if (!plateRegex.test(plateNumber)) {
+        showNotification('Invalid plate number. Use format: ABC-1234 or AB-1234', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(API.ADD_VEHICLE, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData.toString()
+        });
+
+        const data = await response.json();
+
+        if (response.status === 409) {
+            showNotification('Plate number already exists. Please use a different plate number.', 'error');
+            return;
+        }
+
+        if (data.success) {
+            showNotification('Vehicle added successfully');
+            document.getElementById('add-vehicle-form').reset();
+
+            const addVehicleSection = document.getElementById('add-vehicle-section');
+            const toggleAddFormBtn = document.querySelector('.toggle-add-form-btn');
+
+            if (addVehicleSection && toggleAddFormBtn) {
+                addVehicleSection.style.display = 'none';
+                toggleAddFormBtn.textContent = 'Add New Vehicle';
+            }
+
+            await renderVehicles();
+        } else {
+            showNotification(data.message || 'Failed to add vehicle. Please try again.', 'error');
+        }
+    } catch (error) {
+        showNotification('An error occurred. Please try again later.', 'error');
+    }
+}
+
+async function openAssignModal(vehicleId) {
+    try {
+        const vehicleResponse = await fetchData(`${API.VEHICLES}/${vehicleId}`);
+        const vehicle = vehicleResponse;
+        
+        const driversResponse = await fetchData(`${API.DRIVERS}?vehicleType=${encodeURIComponent(vehicle.vehicleType)}`);
+        const drivers = driversResponse;
+
+        const modalVehicleDetails = document.getElementById('modal-vehicle-details');
+        modalVehicleDetails.innerHTML = `
+            <div class="card">
+                <h3>${vehicle.brand} ${vehicle.model}</h3>
+                <p>Plate: ${vehicle.plateNumber}</p>
+                <p>Type: ${vehicle.vehicleType}</p>
+                <p>Capacity: ${vehicle.passengerCapacity}</p>
+            </div>
+        `;
+
+        const availableDrivers = document.getElementById('available-drivers');
+        availableDrivers.innerHTML = drivers.length ? '' : '<p>No available drivers found</p>';
+        
+        drivers.forEach(driver => {
+            const driverCard = document.createElement('div');
+            driverCard.className = 'driver-card';
+            driverCard.innerHTML = `
+                <div class="driver-name">${driver.fullName}</div> 
+                <div class="driver-info">
+                    <p><i class="fas fa-id-card"></i> ${driver.licenseNo}</div> 
+                    <p><i class="fas fa-phone"></i> ${driver.phone}</p>
+                </div>
+                <button class="btn btn-accent" 
+                    data-driver-id="${driver.driverId}" 
+                    data-vehicle-id="${vehicleId}">
+                    Assign Driver
+                </button>
+            `;
+            availableDrivers.appendChild(driverCard);
+        });
+
+        const assignModal = document.getElementById('assign-modal');
+        assignModal.classList.add('show');
+        
+        document.querySelectorAll('.driver-card .btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const driverId = this.dataset.driverId;
+                const vehicleId = this.dataset.vehicleId;
+                
+                const formData = new URLSearchParams();
+                formData.append('vehicleId', vehicleId);
+                formData.append('driverId', driverId);
+                
+                try {
+                    await fetchData(API.ASSIGN, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: formData.toString()
+                    });
+                    
+                    assignModal.classList.remove('show');
+                    showNotification('Driver assigned successfully');
+                    await renderVehicles();
+                } catch (error) {
+                 
+                }
+            });
+        });
+    } catch (error) {
+        
+    }
+}
+
+async function unassignVehicle(vehicleId) {
+    if (confirm('Are you sure you want to unassign this vehicle?')) {
+        try {
+            const formData = new URLSearchParams();
+            formData.append('vehicleId', vehicleId);
+            
+            await fetchData(API.UNASSIGN, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            });
+            
+            showNotification('Vehicle unassigned successfully');
+            await renderVehicles();
+        } catch (error) {
+      
+        }
+    }
+}
+
+function setupEventListeners() {
+    const addVehicleForm = document.getElementById('add-vehicle-form');
+    if (addVehicleForm) {
+        addVehicleForm.addEventListener('submit', addVehicle);
+    }
+    
+    const searchVehicleInput = document.getElementById('search-vehicle');
+    const filterVehicleType = document.getElementById('filter-vehicle-type');
+    if (searchVehicleInput && filterVehicleType) {
+        searchVehicleInput.addEventListener('input', renderVehicles);
+        filterVehicleType.addEventListener('change', renderVehicles);
+    }
+    
+    const modalCloseBtn = document.querySelector('.modal-close');
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener('click', function() {
+            document.getElementById('assign-modal').classList.remove('show');
+        });
+    }
+    
+    const toggleAddFormBtn = document.querySelector('.toggle-add-form-btn');
+    const addVehicleSection = document.getElementById('add-vehicle-section');
+    if (toggleAddFormBtn && addVehicleSection) {
+        toggleAddFormBtn.addEventListener('click', function() {
+            if (addVehicleSection.style.display === 'none' || !addVehicleSection.style.display) {
+                addVehicleSection.style.display = 'block';
+                this.textContent = 'Hide Form';
+            } else {
+                addVehicleSection.style.display = 'none';
+                this.textContent = 'Add New Vehicle';
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await renderVehicles();
+    setupEventListeners();
+});
+</script>
   </body>
 </html>
