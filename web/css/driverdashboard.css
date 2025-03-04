@@ -8,7 +8,7 @@
         }
 
         body {
-            background: #faefb5;
+                background: #faefb5;
             transition: var(--transition);
         }
 

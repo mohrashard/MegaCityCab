@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Billing</title>
+         <link rel="stylesheet" href="">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #f8d161;
+        --secondary: #d4a700;
+        --background: #faefb5;
+        --border: #e0d9a0;
+        --text: #333;
+        --white: #fff;
+        --gray: #f5f5f5;
+        --light-gray: #eee;
+        --success: #4caf50;
+        --danger: #f44336;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --border-radius: 10px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 250px;
+        background: #282a2c;
+        border-right: 1px solid var(--border);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+            height: 100vh;
+            z-index: 1000;
+      }
+
+      .sidebar.collapsed {
+        transform: translateX(-100%);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #f8d161;
+      }
+
+      .logo-img {
+        width: 50px;
+        height: auto;
+      }
+
+      .nav-links {
+            list-style: none;
+             margin-top: 24px;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #fff9e6;
+            color: #d4a700;
+            font-weight: bolder;
+        }
+
+      .nav-links a.active {
+        background: #fff9e6;
+        color: #d4a700;
+        font-weight: bolder;
+      }
+
+      .nav-link i {
+        margin-right: 0.75rem;
+      }
+
+      .main-content {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+      }
+
+      .page-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: var(--text);
+      }
+
+      .wallet-overview {
+        background-color: #faf7e8;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+      }
+
+      .balance-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .balance-icon {
+        background-color: var(--primary);
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        margin-right: 1.5rem;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .balance-info h2 {
+        font-size: 16px;
+        font-weight: 500;
+        color: #777;
+        margin-bottom: 0.5rem;
+      }
+
+      .balance-amount {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        color: var(--text);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary);
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        border: 2px solid var(--border);
+        color: var(--text);
+      }
+
+      .btn-outline:hover {
+        background-color: var(--gray);
+        transform: translateY(-2px);
+      }
+
+      .transaction-history {
+        background-color: #faf7e8;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .transaction-list {
+        list-style: none;
+      }
+
+      .transaction-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #282a2c;
+      }
+
+      .transaction-item:last-child {
+        border-bottom: none;
+      }
+
+      .transaction-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--light-gray);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 1rem;
+      }
+
+      .transaction-icon.credit {
+        background-color: #e3f2fd;
+        color: #2196f3;
+      }
+
+      .transaction-icon.debit {
+        background-color: #ffebee;
+        color: #f44336;
+      }
+
+      .transaction-info {
+        flex: 1;
+      }
+
+      .transaction-description {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+      }
+
+      .transaction-date {
+        font-size: 14px;
+        color: #777;
+      }
+
+      .transaction-amount {
+        font-weight: 600;
+      }
+
+      .transaction-amount.credit {
+        color: #4caf50;
+      }
+
+      .transaction-amount.debit {
+        color: #f44336;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        width: 500px;
+        max-width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-title {
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .modal-close {
+        background: transparent;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #777;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border);
+        font-size: 16px;
+        transition: border-color 0.2s;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border);
+        font-size: 16px;
+        transition: border-color 0.2s;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23777' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1em;
+      }
+
+      .card-type-selector {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .radio-card {
+        display: none;
+      }
+
+      .radio-card + label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--border);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: all 0.2s;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .radio-card:checked + label {
+        border-color: var(--primary);
+        background-color: #fff9db;
+      }
+
+      .credit-card {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 2px solid var(--border);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .credit-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+      }
+
+      .credit-card.selected {
+        border-color: var(--primary);
+        background-color: #fff9db;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .card-type {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+      }
+
+      .card-number {
+        font-size: 18px;
+        margin-bottom: 1rem;
+        letter-spacing: 2px;
+      }
+
+      .card-footer {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .card-holder,
+      .card-expiry {
+        font-size: 14px;
+        color: #777;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: var(--border-radius);
+        color: white;
+        font-weight: 500;
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s;
+        z-index: 1001;
+      }
+
+      .notification.success {
+        background-color: var(--success);
+      }
+
+      .notification.error {
+        background-color: var(--danger);
+      }
+
+      .notification.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .no-cards-message {
+        text-align: center;
+        padding: 2rem;
+        color: #777;
+      }
+
+      .input-group {
+        position: relative;
+      }
+
+      .input-group .form-input {
+        padding-left: 2.5rem;
+      }
+
+      .input-group-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #777;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: auto;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="images/megacitycablogo.png"
+          alt="Mega City Cab Logo"
+          class="logo-img"
+        />
+        Mega City Cab
+      </div>
+
+      <ul class="nav-links">
+        <li class="nav-item">
+          <a href="passenger_dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="passengerbooking.html" class="nav-link">
+            <i class="fas fa-car"></i> Book a Ride
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-history"></i> My Bookings
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            <i class="fas fa-credit-card"></i> Billing
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link"> <i class="fas fa-user"></i> Profile </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-question-circle"></i> Help
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="main-content">
+      <h1 class="page-title">My Wallet</h1>
+
+      <div class="wallet-overview">
+        <div class="balance-container">
+          <div class="balance-icon">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <div class="balance-info">
+            <h2>Available Balance</h2>
+            <div class="balance-amount">LKR 5,000.00</div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="topUpBtn">
+            <i class="fas fa-plus"></i> Top Up Wallet
+          </button>
+          <button class="btn btn-outline" id="addCardBtn">
+            <i class="fas fa-credit-card"></i> Add New Card
+          </button>
+        </div>
+      </div>
+
+      <div class="transaction-history">
+        <h2 class="section-title">
+          <i class="fas fa-history"></i> Transaction History
+        </h2>
+        <ul class="transaction-list">
+          <li class="transaction-item">
+            <div class="transaction-icon credit">
+              <i class="fas fa-arrow-down"></i>
+            </div>
+            <div class="transaction-info">
+              <div class="transaction-description">Monthly top up</div>
+              <div class="transaction-date">03 Mar, 2025</div>
+            </div>
+            <div class="transaction-amount credit">+LKR 2,000.00</div>
+          </li>
+          <li class="transaction-item">
+            <div class="transaction-icon debit">
+              <i class="fas fa-arrow-up"></i>
+            </div>
+            <div class="transaction-info">
+              <div class="transaction-description">Cab ride to Colombo</div>
+              <div class="transaction-date">28 Feb, 2025</div>
+            </div>
+            <div class="transaction-amount debit">-LKR 450.00</div>
+          </li>
+          <li class="transaction-item">
+            <div class="transaction-icon credit">
+              <i class="fas fa-arrow-down"></i>
+            </div>
+            <div class="transaction-info">
+              <div class="transaction-description">Top up</div>
+              <div class="transaction-date">15 Feb, 2025</div>
+            </div>
+            <div class="transaction-amount credit">+LKR 1,000.00</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Add Card Modal -->
+    <div class="modal" id="addCardModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Add New Card</h2>
+          <button class="modal-close" id="closeAddCardModal">&times;</button>
+        </div>
+        <form id="addCardForm">
+          <div class="card-type-selector">
+            <input
+              type="radio"
+              name="cardType"
+              id="creditCard"
+              value="credit"
+              class="radio-card"
+              checked
+            />
+            <label for="creditCard">
+              <i class="fas fa-credit-card"></i> Credit Card
+            </label>
+            <input
+              type="radio"
+              name="cardType"
+              id="debitCard"
+              value="debit"
+              class="radio-card"
+            />
+            <label for="debitCard">
+              <i class="fas fa-credit-card"></i> Debit Card
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="cardNumber" class="form-label">Card Number</label>
+            <div class="input-group">
+              <span class="input-group-icon">
+                <i class="far fa-credit-card"></i>
+              </span>
+              <input
+                type="text"
+                id="cardNumber"
+                class="form-input"
+                placeholder="0000 0000 0000 0000"
+                maxlength="19"
+                required
+              />
+            </div>
+            <div id="cardNumberError" class="error-message"></div>
+          </div>
+          <div class="form-group">
+            <label for="cardHolder" class="form-label">Card Holder Name</label>
+            <input
+              type="text"
+              id="cardHolder"
+              class="form-input"
+              placeholder="John Doe"
+              required
+            />
+            <div id="cardHolderError" class="error-message"></div>
+          </div>
+          <div class="form-group" style="display: flex; gap: 1rem">
+            <div style="flex: 1">
+              <label for="expiryDate" class="form-label">Expiry Date</label>
+              <input
+                type="text"
+                id="expiryDate"
+                class="form-input"
+                placeholder="MM/YY"
+                maxlength="5"
+                required
+              />
+              <div id="expiryDateError" class="error-message"></div>
+            </div>
+            <div style="flex: 1">
+              <label for="cvv" class="form-label">CVV</label>
+              <input
+                type="password"
+                id="cvv"
+                class="form-input"
+                placeholder="***"
+                maxlength="3"
+                required
+              />
+              <div id="cvvError" class="error-message"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary" style="width: 100%">
+              Save Card
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Top Up Modal -->
+    <div class="modal" id="topUpModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Top Up Wallet</h2>
+          <button class="modal-close" id="closeTopUpModal">&times;</button>
+        </div>
+        <div id="savedCards">
+          <!-- Cards will be added here dynamically -->
+          <div class="no-cards-message" id="noCardsMessage">
+            <i
+              class="fas fa-credit-card"
+              style="font-size: 48px; color: #ddd; margin-bottom: 1rem"
+            ></i>
+            <p>You don't have any saved cards yet.</p>
+            <button
+              class="btn btn-primary"
+              id="addCardBtnFromModal"
+              style="margin-top: 1rem"
+            >
+              <i class="fas fa-plus"></i> Add New Card
+            </button>
+          </div>
+        </div>
+        <form id="topUpForm" style="display: none">
+          <div class="form-group">
+            <label for="topUpAmount" class="form-label">Amount (LKR)</label>
+            <div class="input-group">
+              <span class="input-group-icon">
+                <i class="fas fa-money-bill-wave"></i>
+              </span>
+              <input
+                type="number"
+                id="topUpAmount"
+                class="form-input"
+                placeholder="Enter amount"
+                min="100"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="topUpDescription" class="form-label"
+              >Description (Optional)</label
+            >
+            <input
+              type="text"
+              id="topUpDescription"
+              class="form-input"
+              placeholder="e.g., Monthly top up"
+            />
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary" style="width: 100%">
+              Confirm Top Up
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Confirm Top Up</h2>
+          <button class="modal-close" id="closeConfirmationModal">
+            &times;
+          </button>
+        </div>
+        <p>
+          Are you sure you want to top up
+          <span id="confirmAmount">LKR 0.00</span> to your wallet using the
+          selected card?
+        </p>
+        <div style="display: flex; gap: 1rem; margin-top: 2rem">
+          <button class="btn btn-outline" id="cancelTopUp" style="flex: 1">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="confirmTopUp" style="flex: 1">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+// DOM Elements and Variables
+const domElements = {
+    addCardBtn: document.getElementById("addCardBtn"),
+    topUpBtn: document.getElementById("topUpBtn"),
+    modals: {
+        addCard: document.getElementById("addCardModal"),
+        topUp: document.getElementById("topUpModal"),
+        confirmation: document.getElementById("confirmationModal")
+    },
+    closeButtons: {
+        addCard: document.getElementById("closeAddCardModal"),
+        topUp: document.getElementById("closeTopUpModal"),
+        confirmation: document.getElementById("closeConfirmationModal")
+    },
+    forms: {
+        addCard: document.getElementById("addCardForm"),
+        topUp: document.getElementById("topUpForm")
+    },
+    savedCards: document.getElementById("savedCards"),
+    notification: document.getElementById("notification"),
+    balanceAmount: document.querySelector(".balance-amount"),
+    transactionList: document.querySelector(".transaction-list"),
+    noCardsMessage: document.getElementById("noCardsMessage")
+};
+
+let cards = [];
+let selectedCardId = null;
+let currentBalance = 5000;
+
+// Utility Functions
+const formatCurrency = (amount) => 
+    new Intl.NumberFormat("en-LK", { minimumFractionDigits: 2 }).format(amount);
+
+const showNotification = (message, type = "success") => {
+    domElements.notification.textContent = message;
+    domElements.notification.className = `notification ${type} show`;
+    setTimeout(() => domElements.notification.classList.remove("show"), 3000);
+};
+
+// Card Management
+const createCardElement = (card) => {
+    const element = document.createElement("div");
+    element.className = `credit-card ${selectedCardId === card.id ? "selected" : ""}`;
+    element.innerHTML = `
+        <div class="card-header">
+            <div class="card-type">${card.type} Card</div>
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="card-number">•••• •••• •••• ${card.number.slice(-4)}</div>
+        <div class="card-footer">
+            <div class="card-holder">${card.holder}</div>
+            <div class="card-expiry">${card.expiry}</div>
+        </div>
+    `;
+    element.addEventListener("click", () => {
+        document.querySelectorAll(".credit-card").forEach(c => c.classList.remove("selected"));
+        element.classList.add("selected");
+        selectedCardId = card.id;
+        domElements.forms.topUp.style.display = "block";
+    });
+    return element;
+};
+
+const updateSavedCardsUI = () => {
+    domElements.savedCards.innerHTML = "";
+    cards.forEach(card => domElements.savedCards.appendChild(createCardElement(card)));
+    domElements.noCardsMessage.style.display = cards.length ? "none" : "flex";
+};
+
+// Validation Functions
+const validateCardForm = () => {
+    let isValid = true;
+    const fields = {
+        number: cardNumber.value.replace(/\s/g, ""),
+        holder: cardHolder.value.trim(),
+        expiry: expiryDate.value,
+        cvv: cvv.value
+    };
+
+    // Card Number Validation
+    if (!/^\d{16}$/.test(fields.number)) {
+        cardNumberError.textContent = "Invalid card number (16 digits required)";
+        isValid = false;
+    } else cardNumberError.textContent = "";
+
+    // Card Holder Validation
+    if (!/^[A-Za-z]+(?: [A-Za-z]+){1,}$/.test(fields.holder)) {
+        cardHolderError.textContent = "Please enter full name (first and last)";
+        isValid = false;
+    } else cardHolderError.textContent = "";
+
+    // Expiry Date Validation
+    const [month, year] = fields.expiry.split("/").map(Number);
+    const currentYear = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
+    
+    if (!/^\d{2}\/\d{2}$/.test(fields.expiry) || 
+        month < 1 || month > 12 || 
+        year < currentYear || 
+        (year === currentYear && month < currentMonth)) {
+        expiryDateError.textContent = "Invalid expiry date (MM/YY)";
+        isValid = false;
+    } else expiryDateError.textContent = "";
+
+    // CVV Validation
+    if (!/^\d{3}$/.test(fields.cvv)) {
+        cvvError.textContent = "CVV must be 3 digits";
+        isValid = false;
+    } else cvvError.textContent = "";
+
+    return isValid;
+};
+
+// Event Handlers
+const setupEventListeners = () => {
+    // Modal Interactions
+    domElements.addCardBtn.addEventListener("click", () => domElements.modals.addCard.style.display = "flex");
+    domElements.topUpBtn.addEventListener("click", () => domElements.modals.topUp.style.display = "flex");
+    
+    // Form Submissions
+    domElements.forms.addCard.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (validateCardForm()) {
+            cards.push({
+                id: Date.now(),
+                type: document.querySelector('input[name="cardType"]:checked').value,
+                number: cardNumber.value.replace(/\s/g, ""),
+                holder: cardHolder.value.trim(),
+                expiry: expiryDate.value,
+                cvv: cvv.value
+            });
+            domElements.modals.addCard.style.display = "none";
+            addCardForm.reset();
+            updateSavedCardsUI();
+            showNotification("Card added successfully!");
+        }
+    });
+
+    domElements.forms.topUp.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const amount = parseFloat(topUpAmount.value);
+        const description = topUpDescription.value.trim() || "Topup";
+
+        if (!selectedCardId) return showNotification("Please select a payment method", "error");
+        if (isNaN(amount) || amount < 100) return showNotification("Minimum top-up is LKR 100", "error");
+
+        confirmAmount.textContent = `LKR ${formatCurrency(amount)}`;
+        domElements.modals.confirmation.style.display = "flex";
+    });
+
+    // Top Up Confirmation
+    confirmTopUp.addEventListener("click", () => {
+        const amount = parseFloat(topUpAmount.value);
+        currentBalance += amount;
+        domElements.balanceAmount.textContent = `LKR ${formatCurrency(currentBalance)}`;
+        
+        const transaction = {
+            date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+            amount: amount,
+            description: topUpDescription.value.trim() || "Topup",
+            type: "credit"
+        };
+        
+        const transactionItem = document.createElement("li");
+        transactionItem.className = "transaction-item";
+        transactionItem.innerHTML = `
+            <div class="transaction-icon credit"><i class="fas fa-arrow-down"></i></div>
+            <div class="transaction-info">
+                <div class="transaction-description">${transaction.description}</div>
+                <div class="transaction-date">${transaction.date}</div>
+            </div>
+            <div class="transaction-amount credit">+LKR ${formatCurrency(amount)}</div>
+        `;
+        
+        domElements.transactionList.prepend(transactionItem);
+        domElements.modals.confirmation.style.display = "none";
+        domElements.modals.topUp.style.display = "none";
+        domElements.forms.topUp.reset();
+        showNotification(`Successfully topped up LKR ${formatCurrency(amount)}`);
+    });
+
+    // Input Formatting
+    cardNumber.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/\D/g, "").replace(/(\d{4})(?=\d)/g, "$1 ");
+    });
+
+    expiryDate.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/\D/g, "").replace(/(\d{2})(?=\d)/g, "$1/");
+    });
+};
+
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            if (modal === addCardModal) {
+                resetCardForm();
+            } else if (modal === topUpModal) {
+                resetTopUpForm();
+            }
+        }
+    });
+});
+
+// Initialize Application
+document.addEventListener("DOMContentLoaded", () => {
+    setupEventListeners();
+    updateSavedCardsUI();
+    domElements.balanceAmount.textContent = `LKR ${formatCurrency(currentBalance)}`;
+});
+    </script>
+  </body>
+</html>
