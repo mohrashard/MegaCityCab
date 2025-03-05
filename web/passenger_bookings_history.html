@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History</title>
+         <link rel="stylesheet" href="css/pass_book_history.css">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<body>
+  
+    <nav class="sidebar"> 
+        <div class="logo"> 
+            <img src="images/megacitycablogo.png" alt="" class="logo-img"> 
+            Mega City Cab 
+        </div> 
+ 
+        <ul class="nav-links"> 
+            <li class="nav-item"> 
+                <a href="passenger_dashboard.html" class="nav-link"> 
+                    <i class="fas fa-home"></i> Dashboard 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="passengerbooking.html" class="nav-link"> 
+                    <i class="fas fa-car"></i> Book a Ride 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="#" class="nav-link active"> 
+                    <i class="fas fa-history"></i> My Bookings 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="passengerwallet.html" class="nav-link"> 
+                    <i class="fas fa-credit-card"></i> Billing 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="#" class="nav-link"> 
+                    <i class="fas fa-user"></i> Profile 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="#" class="nav-link"> 
+                    <i class="fas fa-question-circle"></i> Help 
+                </a> 
+            </li> 
+        </ul> 
+    </nav>
+
+    <!-- Mobile menu toggle button (visible only on mobile) -->
+    <button class="toggle-menu" id="toggleMenu" style="display: none;">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <div class="container">
+                <h1>Your Booking History</h1>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Driver</th>
+                            <th>Contact</th>
+                            <th>Pick-Up</th>
+                            <th>Drop-Off</th>
+                            <th>Vehicle</th>
+                            <th>Fee</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="booking-history">
+                        <!-- Booking data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Payment Details</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-form">
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method:</label>
+                        <select id="paymentMethod">
+                            <option value="Card">Card</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Wallet">Wallet</option>
+                        </select>
+                    </div>
+                    <div class="payment-info">
+                        <p><strong>Driver:</strong> <span id="modalDriverName"></span></p>
+                        <p><strong>Pickup:</strong> <span id="modalPickupLocation"></span></p>
+                        <p><strong>Dropoff:</strong> <span id="modalDropoffLocation"></span></p>
+                        <p><strong>Amount:</strong> <span id="modalHireFee"></span></p>
+                        <p><strong>Current Method:</strong> <span id="modalCurrentMethod"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" id="cancelPayment">Cancel</button>
+                <button class="btn btn-confirm" id="confirmPayment">Confirm Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Sample data - this would be fetched from an API in a real application
+        const bookingHistory = [
+            {
+                id: 1,
+                driver_id: 101,
+                driver_name: "John Smith",
+                driver_phone: "(555) 123-4567",
+                pickup_location: "123 Main St",
+                dropoff_location: "456 Oak Ave",
+                vehicle_type: "Sedan",
+                hire_fee: "$35.00",
+                booking_status: "Assigned",
+                payment_method: "Card",
+                wallet_balance: 50.00,
+                hire_fee_amount: 35.00
+            },
+            {
+                id: 2,
+                driver_id: 102,
+                driver_name: "Sarah Johnson",
+                driver_phone: "(555) 234-5678",
+                pickup_location: "789 Pine Rd",
+                dropoff_location: "101 Cedar Ln",
+                vehicle_type: "SUV",
+                hire_fee: "$45.00",
+                booking_status: "Pending",
+                payment_method: "Wallet",
+                wallet_balance: 50.00,
+                hire_fee_amount: 45.00
+            },
+            {
+                id: 3,
+                driver_id: 103,
+                driver_name: "Michael Brown",
+                driver_phone: "(555) 345-6789",
+                pickup_location: "202 Maple Dr",
+                dropoff_location: "303 Elm St",
+                vehicle_type: "Luxury",
+                hire_fee: "$65.00",
+                booking_status: "Ended",
+                payment_method: "Cash",
+                wallet_balance: 50.00,
+                hire_fee_amount: 65.00
+            },
+            {
+                id: 4,
+                driver_id: 104,
+                driver_name: "Emily Wilson",
+                driver_phone: "(555) 456-7890",
+                pickup_location: "404 Birch Ave",
+                dropoff_location: "505 Spruce Blvd",
+                vehicle_type: "Sedan",
+                hire_fee: "$30.00",
+                booking_status: "Assigned",
+                payment_method: "Wallet",
+                wallet_balance: 25.00,
+                hire_fee_amount: 30.00
+            }
+        ];
+
+        // DOM Elements
+        const bookingHistoryElement = document.getElementById('booking-history');
+        const paymentModal = document.getElementById('paymentModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const cancelPaymentBtn = document.getElementById('cancelPayment');
+        const confirmPaymentBtn = document.getElementById('confirmPayment');
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        const modalDriverName = document.getElementById('modalDriverName');
+        const modalPickupLocation = document.getElementById('modalPickupLocation');
+        const modalDropoffLocation = document.getElementById('modalDropoffLocation');
+        const modalHireFee = document.getElementById('modalHireFee');
+        const modalCurrentMethod = document.getElementById('modalCurrentMethod');
+        const toastContainer = document.getElementById('toastContainer');
+        const toggleMenu = document.getElementById('toggleMenu');
+        const sidebar = document.querySelector('.sidebar');
+
+        // Current selected booking for payment
+        let currentBooking = null;
+
+        // Render booking history
+        function renderBookingHistory() {
+            bookingHistoryElement.innerHTML = '';
+
+            bookingHistory.forEach(booking => {
+                const row = document.createElement('tr');
+                
+                // Status class based on booking status
+                let statusClass = '';
+                let actionButton = '';
+                
+                switch(booking.booking_status) {
+                    case 'Pending':
+                        statusClass = 'status-pending';
+                        actionButton = `<button class="btn btn-disabled" disabled>Awaiting Driver</button>`;
+                        break;
+                    case 'Assigned':
+                        statusClass = 'status-assigned';
+                        actionButton = `<button class="btn btn-primary pay-driver-btn" data-id="${booking.id}">Pay Driver</button>`;
+                        break;
+                    case 'Ended':
+                        statusClass = 'status-ended';
+                        actionButton = `<button class="btn btn-disabled" disabled>Completed</button>`;
+                        break;
+                }
+
+                row.innerHTML = `
+                    <td>${booking.driver_name}</td>
+                    <td>${booking.driver_phone}</td>
+                    <td>${booking.pickup_location}</td>
+                    <td>${booking.dropoff_location}</td>
+                    <td>${booking.vehicle_type}</td>
+                    <td>${booking.hire_fee}</td>
+                    <td><span class="status ${statusClass}">${booking.booking_status}</span></td>
+                    <td>${booking.payment_method}</td>
+                    <td>${actionButton}</td>
+                `;
+
+                bookingHistoryElement.appendChild(row);
+            });
+
+            // Add event listeners to the pay driver buttons
+            document.querySelectorAll('.pay-driver-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const bookingId = parseInt(e.target.getAttribute('data-id'));
+                    openPaymentModal(bookingId);
+                });
+            });
+        }
+
+        // Open payment modal
+        function openPaymentModal(bookingId) {
+            currentBooking = bookingHistory.find(booking => booking.id === bookingId);
+            
+            if (currentBooking) {
+                // Set modal content
+                modalDriverName.textContent = currentBooking.driver_name;
+                modalPickupLocation.textContent = currentBooking.pickup_location;
+                modalDropoffLocation.textContent = currentBooking.dropoff_location;
+                modalHireFee.textContent = currentBooking.hire_fee;
+                modalCurrentMethod.textContent = currentBooking.payment_method;
+                
+                // Set the current payment method in the dropdown
+                paymentMethodSelect.value = currentBooking.payment_method;
+                
+                // Show modal
+                paymentModal.classList.add('active');
+            }
+        }
+
+        // Close payment modal
+        function closePaymentModal() {
+            paymentModal.classList.remove('active');
+            currentBooking = null;
+        }
+
+        // Process payment
+        function processPayment() {
+            if (!currentBooking) return;
+            
+            const selectedPaymentMethod = paymentMethodSelect.value;
+            
+            // Check if wallet has sufficient balance
+            if (selectedPaymentMethod === 'Wallet' && 
+                currentBooking.wallet_balance < currentBooking.hire_fee_amount) {
+                showToast('Insufficient Balance. Please choose another payment method.', 'error');
+                return;
+            }
+            
+            // Update booking payment method and status
+            currentBooking.payment_method = selectedPaymentMethod;
+            
+            if (selectedPaymentMethod === 'Cash') {
+                showToast('Payment marked as "Paid in Cash" successfully!', 'success');
+            } else {
+                showToast('Payment processed successfully!', 'success');
+            }
+            
+            // If the booking was successfully paid, update status to Ended
+            currentBooking.booking_status = 'Ended';
+            
+            // Close modal and re-render booking history
+            closePaymentModal();
+            renderBookingHistory();
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${type === 'success' ? '✓' : '✕'}</div>
+                <div class="toast-message">${message}</div>
+                <button class="toast-close">&times;</button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Trigger reflow to enable transition
+            toast.offsetHeight;
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('active');
+            }, 10);
+            
+            // Auto-remove toast after 5 seconds
+            setTimeout(() => {
+                removeToast(toast);
+            }, 5000);
+            
+            // Add close button functionality
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                removeToast(toast);
+            });
+        }
+
+        // Remove toast notification
+        function removeToast(toast) {
+            toast.classList.remove('active');
+            
+            // Remove element after transition
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
+
+        // Check if mobile view and setup menu toggle
+        function setupMobileView() {
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                toggleMenu.style.display = 'block';
+                document.querySelector('.main-content').style.marginLeft = '0';
+                document.querySelector('.main-content').style.width = '100%';
+            } else {
+                toggleMenu.style.display = 'none';
+                document.querySelector('.main-content').style.marginLeft = '250px';
+                document.querySelector('.main-content').style.width = 'calc(100% - 250px)';
+                sidebar.classList.remove('open');
+            }
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+        }
+
+        // Event Listeners
+        closeModalBtn.addEventListener('click', closePaymentModal);
+        cancelPaymentBtn.addEventListener('click', closePaymentModal);
+        confirmPaymentBtn.addEventListener('click', processPayment);
+        toggleMenu.addEventListener('click', toggleSidebar);
+        window.addEventListener('resize', setupMobileView);
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBookingHistory();
+            setupMobileView();
+        });
+    </script>
+</body>
+</html>
+
+
