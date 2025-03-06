@@ -106,41 +106,45 @@ public boolean saveBooking(Booking booking) {
         return null;
     }
     
-    @Override
-    public List<Booking> getBookingsByPassengerId(int passengerId) {
-        List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM [megacitycab].[dbo].[Bookings] WHERE [passenger_id] = ?";
+public List<Booking> getBookingsByPassengerId(int passengerId) {
+    List<Booking> bookings = new ArrayList<>();
+    String sql = "SELECT b.*, d.full_name AS driver_name, d.phone AS driver_phone " +
+                 "FROM [megacitycab].[dbo].[Bookings] b " +
+                 "LEFT JOIN [megacitycab].[dbo].[Drivers] d ON b.driver_id = d.driver_id " +
+                 "WHERE b.passenger_id = ?";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
         
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, passengerId);
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Booking booking = new Booking();
-                    booking.setBookingId(rs.getInt("booking_id"));
-                    booking.setPassengerId(rs.getInt("passenger_id"));
-                    booking.setVehicleType(rs.getString("vehicle_type"));
-                    booking.setPickupLocation(rs.getString("pickup_location"));
-                    booking.setDropoffLocation(rs.getString("dropoff_location"));
-                    booking.setBookingDateTime(rs.getString("booking_datetime"));
-                    booking.setPaymentMethod(rs.getString("payment_method"));
-                    
-                    if (rs.getObject("hire_fee") != null) {
-                        booking.setHireFee(rs.getDouble("hire_fee"));
-                    }
-                    
-                    bookings.add(booking);
+        stmt.setInt(1, passengerId);
+        
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Booking booking = new Booking();
+                booking.setBookingId(rs.getInt("booking_id"));
+                booking.setPassengerId(rs.getInt("passenger_id"));
+                booking.setVehicleType(rs.getString("vehicle_type"));
+                booking.setPickupLocation(rs.getString("pickup_location"));
+                booking.setDropoffLocation(rs.getString("dropoff_location"));
+                booking.setStatus(rs.getString("status"));
+                
+                booking.setPaymentMethod(rs.getString("payment_method"));
+                
+                booking.setDriverName(rs.getString("driver_name"));
+                booking.setDriverPhone(rs.getString("driver_phone"));
+                
+                if (rs.getObject("hire_fee") != null) {
+                    booking.setHireFee(rs.getDouble("hire_fee"));
                 }
+                
+                bookings.add(booking);
             }
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        
-        return bookings;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return bookings;
+}
     
     public boolean updateBooking(Booking booking) {
     String sql = "UPDATE [megacitycab].[dbo].[Bookings] SET " +
@@ -233,42 +237,59 @@ public List<Booking> getBookingsByStatus(String status) {
 
 public Booking getBooking(int bookingId) {
     Booking booking = null;
-    String sql = "SELECT b.*, d.full_name AS driver_name, p.full_name AS passenger_name " +
+    String sql = "SELECT b.*, d.full_name AS driver_name, d.phone AS driver_phone, " +
+                 "p.full_name AS passenger_name " +  
                  "FROM [megacitycab].[dbo].[Bookings] b " +
                  "LEFT JOIN [megacitycab].[dbo].[Drivers] d ON b.driver_id = d.driver_id " +
                  "JOIN [megacitycab].[dbo].[Passengers] p ON b.passenger_id = p.passenger_id " +
                  "WHERE b.booking_id = ?";
 
-    
     try (Connection conn = DBConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
         
         stmt.setInt(1, bookingId);
+        
         try (ResultSet rs = stmt.executeQuery()) {
-    if (rs.next()) {
-        booking = new Booking();
-        booking.setBookingId(rs.getInt("booking_id"));
-        booking.setPassengerId(rs.getInt("passenger_id"));
-        booking.setVehicleType(rs.getString("vehicle_type"));
-        booking.setPickupLocation(rs.getString("pickup_location"));
-        booking.setDropoffLocation(rs.getString("dropoff_location"));
-        booking.setBookingDateTime(rs.getString("booking_datetime"));
-        booking.setPaymentMethod(rs.getString("payment_method"));
-        booking.setHireFee(rs.getDouble("hire_fee"));
-        booking.setStatus(rs.getString("status"));
+            if (rs.next()) {
+                booking = new Booking();
+                booking.setBookingId(rs.getInt("booking_id"));
+                booking.setPassengerId(rs.getInt("passenger_id"));
+                booking.setVehicleType(rs.getString("vehicle_type"));
+                booking.setPickupLocation(rs.getString("pickup_location"));
+                booking.setDropoffLocation(rs.getString("dropoff_location"));
+                booking.setBookingDateTime(rs.getString("booking_datetime"));
+                booking.setPaymentMethod(rs.getString("payment_method"));
+                booking.setHireFee(rs.getDouble("hire_fee"));
 
-        if (rs.getObject("driver_id") != null) {
-            booking.setDriverId(rs.getInt("driver_id"));
-            booking.setDriverName(rs.getString("driver_name"));
-        }
+             
+                String status = rs.getString("status");
+                booking.setStatus(status != null ? status : "PENDING");
+
+           
+                int driverId = rs.getInt("driver_id");
+                String driverName = rs.getString("driver_name");
+                String driverPhone = rs.getString("driver_phone");
+
+        
+                if (driverId > 0 && driverName != null && !driverName.trim().isEmpty()) {
+                    booking.setDriverId(driverId);
+                    booking.setDriverName(driverName);
+                    booking.setDriverPhone(driverPhone);
+                } else if ("assigned".equalsIgnoreCase(status)) {
                 
+                    booking.setDriverName("Driver Assigned");
+                } else {
+                    booking.setDriverName("Awaiting Driver Assignment");
+                }
             }
         }
     } catch (SQLException e) {
+        System.err.println("SQL Error in getBooking(): " + e.getMessage());
         e.printStackTrace();
     }
     return booking;
 }
+
     
 @Override
 public boolean updateBookingFee(int bookingId, double hireFee) {
@@ -326,6 +347,26 @@ String sql = "UPDATE [megacitycab].[dbo].[Bookings] " +
         }
     }
 }
+
+public boolean updateBookingPayment(int bookingId, String paymentMethod, String status) {
+
+    String sql = "UPDATE [megacitycab].[dbo].[Bookings] SET payment_method = ?, status = ? WHERE booking_id = ?";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setString(1, paymentMethod);
+        stmt.setString(2, status);
+        stmt.setInt(3, bookingId);
+        
+        return stmt.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+
 
 
 private Booking mapRowToBooking(ResultSet rs) throws SQLException {

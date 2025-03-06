@@ -13,6 +13,7 @@ public class Booking {
     private String passengerName;
     private String driverName;
     private Integer driverId;
+     private String driverPhone;
 
     public Booking() {
   
@@ -114,6 +115,16 @@ public class Booking {
     public void setDriverId(Integer driverId) {
         this.driverId = driverId;
     }
+
+    public String getDriverPhone() {
+        return driverPhone;
+    }
+
+    public void setDriverPhone(String driverPhone) {
+        this.driverPhone = driverPhone;
+    }
+    
+    
 
     @Override
     public String toString() {
