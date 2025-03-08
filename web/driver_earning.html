@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Earnings </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link rel="stylesheet" href="css/driver_earnings.css">
+    
+    <style>
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal {
+    background-color: #faf7e8;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal {
+    transform: translateY(0);
+}
+.card-actions {
+    position: absolute;
+    right: 10px;
+    display: flex;
+    gap: 4px;
+    z-index: 2;
+    padding: 3px;
+    border-radius: 6px;
+    margin-top: 30px;
+    margin-left: 30px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    color: white;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.icon-btn:hover {
+    opacity: 0.8;
+}
+
+.credit-card {
+    background: linear-gradient(135deg, #303133, #1a1c1e);
+    height: 180px;
+    border-radius: 12px;
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 5px;
+}
+
+.card-number {
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-top: 30px;
+}
+
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: -10px;
+}
+
+.card-info-item {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.card-info-value {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+
+</style>
+ 
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="images/megacitycablogo.png" alt="Mega City Cab Logo" class="logo-img">
+            <h2>Mega City Cab</h2>
+        </div>
+        <div class="nav-item"><a href="driver_dashboard.html"><i class="fas fa-home"></i> Dashboard</a></div>
+        <div class="nav-item"><a href="ridemanagement.html"><i class="fas fa-route"></i> Current Rides</a></div>
+        <div class="nav-item"><a href="ride_history.html"><i class="fas fa-history"></i> Ride History</a></div>
+        <div class="nav-item active"><a href="earnings.html"><i class="fas fa-wallet"></i> Earnings</a></div>
+        <div class="nav-item"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></div>
+        <div class="nav-item"><a href="help_center.html"><i class="fas fa-question-circle"></i> Help Center</a></div>
+        <div class="nav-item"><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Your Earnings</h1>
+            <button class="btn btn-outline">
+                <i class="fas fa-download"></i> Download Statement
+            </button>
+        </div>
+
+        <!-- Wallet Balance Card -->
+        <div class="wallet-balance">
+            <div class="wallet-content">
+                <h2>Available Balance</h2>
+                <div class="balance-amount">$1,245.80</div>
+                <div class="wallet-actions">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Top Up
+                    </button>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-arrow-right"></i> Withdraw
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid Layout -->
+        <div class="grid-container">
+            <!-- Left Column - Transaction History -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-exchange-alt"></i> Transaction History
+                        </h2>
+                    </div>
+                    
+                    <div class="filters">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Income</button>
+                        <button class="filter-btn">Expenses</button>
+                        <button class="filter-btn">
+                            <i class="fas fa-calendar"></i> Date Range
+                        </button>
+                    </div>
+                    
+                    <div class="search-input">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search transactions..." style="background-color: #faf7e8;">
+                    </div>
+                    
+                    <div class="transaction-list">
+                        <!-- Transaction Item -->
+                        <div class="transaction-item">
+                            <div style="display: flex; align-items: center;">
+                                <div class="transaction-icon credit">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <div class="transaction-name">Ride Earnings</div>
+                                    <div class="transaction-date">Mar 5, 2025 • 3:45 PM</div>
+                                </div>
+                            </div>
+                            <div class="transaction-amount credit">+$42.50</div>
+                        </div>
+                        
+                        <!-- Transaction Item -->
+                        <div class="transaction-item">
+                            <div style="display: flex; align-items: center;">
+                                <div class="transaction-icon debit">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <div class="transaction-name">Withdrawal to Bank</div>
+                                    <div class="transaction-date">Mar 3, 2025 • 11:20 AM</div>
+                                </div>
+                            </div>
+                            <div class="transaction-amount debit">-$350.00</div>
+                        </div>
+                        
+                        <!-- Transaction Item -->
+                        <div class="transaction-item">
+                            <div style="display: flex; align-items: center;">
+                                <div class="transaction-icon credit">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <div class="transaction-name">Ride Earnings</div>
+                                    <div class="transaction-date">Mar 2, 2025 • 8:15 PM</div>
+                                </div>
+                            </div>
+                            <div class="transaction-amount credit">+$38.75</div>
+                        </div>
+                        
+                        <!-- Transaction Item -->
+                        <div class="transaction-item">
+                            <div style="display: flex; align-items: center;">
+                                <div class="transaction-icon credit">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <div class="transaction-name">Bonus Payment</div>
+                                    <div class="transaction-date">Mar 1, 2025 • 10:30 AM</div>
+                                </div>
+                            </div>
+                            <div class="transaction-amount credit">+$25.00</div>
+                        </div>
+                        
+                        <!-- Transaction Item -->
+                        <div class="transaction-item">
+                            <div style="display: flex; align-items: center;">
+                                <div class="transaction-icon credit">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <div class="transaction-name">Ride Earnings</div>
+                                    <div class="transaction-date">Feb 28, 2025 • 6:20 PM</div>
+                                </div>
+                            </div>
+                            <div class="transaction-amount credit">+$51.25</div>
+                        </div>
+                        
+                        <!-- Transaction Item -->
+                        <div class="transaction-item">
+                            <div style="display: flex; align-items: center;">
+                                <div class="transaction-icon debit">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <div class="transaction-name">Service Fee</div>
+                                    <div class="transaction-date">Feb 27, 2025 • 9:10 AM</div>
+                                </div>
+                            </div>
+                            <div class="transaction-amount debit">-$12.50</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Payment Methods -->
+            <div>
+                <!-- Card Management Section -->
+                <div class="card payment-methods-section">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-credit-card"></i> Payment Cards
+                        </h2>
+                        <button class="action-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="credit-cards">
+                        <!-- Credit Card -->
+                        <div class="credit-card">
+                            <div class="card-content">
+                                <div class="card-top">
+                                    <div class="card-chip"></div>
+                                    <div class="card-provider">VISA</div>
+                                </div>
+                                <div class="card-number">**** **** **** 4532</div>
+                                <div class="card-info">
+                                    <div>
+                                        <div class="card-info-item">CARD HOLDER</div>
+                                        <div class="card-info-value">John Driver</div>
+                                    </div>
+                                    <div>
+                                        <div class="card-info-item">EXPIRES</div>
+                                        <div class="card-info-value">05/27</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Add New Card Button -->
+                        <button class="add-card-btn">
+                            <i class="fas fa-plus"></i> Add New Card
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Bank Management Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-university"></i> Bank Accounts
+                        </h2>
+                        <button class="action-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="bank-list">
+                        <!-- Bank Item -->
+                        <div class="bank-item">
+                            <div class="bank-info">
+                                <div class="bank-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div>
+                                    <div class="bank-name">Chase Bank <span class="default-badge">Default</span></div>
+                                    <div class="bank-account">****6789</div>
+                                </div>
+                            </div>
+                            <button class="action-btn">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Bank Item -->
+                        <div class="bank-item">
+                            <div class="bank-info">
+                                <div class="bank-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div>
+                                    <div class="bank-name">Bank of America</div>
+                                    <div class="bank-account">****4321</div>
+                                </div>
+                            </div>
+                            <button class="action-btn">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Add New Bank Button -->
+                        <button class="add-bank-btn">
+                            <i class="fas fa-plus"></i> Add New Bank Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Top Up Modal -->
+ <div class="modal-overlay" id="topUpModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Top Up Your Wallet</h2>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label class="form-label">Select Payment Method</label>
+                    <select class="form-select" required>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Enter Amount</label>
+                    <input type="number" class="form-input" placeholder="0.00" min="1" step="0.01" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Top Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+    <!-- Add New Card Modal -->
+   <div class="modal-overlay" id="addCardModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Add New Payment Card</h2>
+            <button class="modal-close" id="closeCardModal">&times;</button>
+        </div>
+        <form id="cardAddForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Card Number</label>
+                    <input type="text" name="cardNumber" class="form-input" placeholder="•••• •••• •••• ••••" maxlength="19">
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="text" name="expiryDate" class="form-input" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">CVV</label>
+                        <input type="text" name="cvv" class="form-input" placeholder="•••" maxlength="3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cardholder Name</label>
+                    <input type="text" name="cardholderName" class="form-input" placeholder="Enter name as it appears on card">
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" id="default-card-checkbox" name="isDefault">
+                        <label for="default-card-checkbox" style="font-size: 14px; color: #666;">
+                            Set as default payment method
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelAddCard">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Card</button>
+            </div>
+        </form>
+    </div>
+</div>
+    
+    
+    
+    <!-- Edit Card Modal -->
+<div class="modal-overlay" id="editCardModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Edit Payment Card</h2>
+            <button class="modal-close" id="closeEditCardModal">&times;</button>
+        </div>
+        <form id="cardEditForm">
+            <input type="hidden" name="cardId" id="editCardId">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Card Number</label>
+                    <input type="text" id="editCardNumber" class="form-input" readonly 
+                           placeholder="•••• •••• •••• ••••">
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="text" name="expiryDate" id="editExpiryDate" 
+                               class="form-input" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">CVV</label>
+                        <input type="text" name="cvv" id="editCvv" 
+                               class="form-input" placeholder="•••" maxlength="3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cardholder Name</label>
+                    <input type="text" name="cardholderName" id="editCardholderName" 
+                           class="form-input" placeholder="Enter name as it appears on card">
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" id="editDefaultCardCheckbox" name="isDefault">
+                        <label for="editDefaultCardCheckbox" style="font-size: 14px; color: #666;">
+                            Set as default payment method
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelEditCard">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+    
+    <!-- Withdraw Modal -->
+    <div class="modal-overlay" id="withdrawModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Withdraw Funds</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Select Bank Account</label>
+                    <select class="form-select">
+                        <option value="">Chase Bank (Default) **** 6789</option>
+                        <option value="">Bank of America **** 4321</option>
+                        <option value="add-new-bank">Add New Bank Account</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Enter Amount</label>
+                    <div style="position: relative;">
+                        <input type="number" class="form-input" placeholder="0.00" min="1" step="0.01">
+                        <span style="position: absolute; left: 12px; top: 12px;">$</span>
+                        <div style="color: #888; font-size: 12px; margin-top: 5px;">Available balance: $1,245.80</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Withdrawal Notes (Optional)</label>
+                    <textarea class="form-input" rows="3" placeholder="Add any notes for this transaction..."></textarea>
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
+                        <input type="checkbox" id="terms-checkbox">
+                        <label for="terms-checkbox" style="font-size: 14px; color: #666;">
+                            I confirm this withdrawal request and understand it may take 1-3 business days to process.
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary">Withdraw Funds</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Bank Account Modal -->
+    <div class="modal-overlay" id="addBankModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Add New Bank Account</h2>
+            <button type="button" class="modal-close">&times;</button>
+        </div>
+        <form id="addBankForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Bank Name</label>
+                    <input type="text" name="bankName" class="form-input" placeholder="Enter bank name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Account Holder Name</label>
+                    <input type="text" name="accountHolderName" class="form-input" placeholder="Enter full name on account" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Account Number</label>
+                    <input type="text" name="accountNumber" class="form-input" placeholder="Enter account number" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Routing Number</label>
+                    <input type="text" name="ifscCode" class="form-input" placeholder="Enter routing number" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Account Type</label>
+                    <select name="accountType" class="form-select">
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" id="default-account-checkbox" name="isDefault">
+                        <label for="default-account-checkbox" style="font-size: 14px; color: #666;">
+                            Set as default account for withdrawals
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Bank Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <!-- Withdrawal Confirmation Modal -->
+    <div class="modal-overlay" id="withdrawConfirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Withdrawal</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: 20px 0;">
+                    <i class="fas fa-check-circle" style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
+                    <h3 style="margin-bottom: 10px;">Withdrawal Request Submitted</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Your withdrawal request for <strong>$350.00</strong> to Chase Bank (****6789) has been submitted.</p>
+                    <div style="background-color: var(--light-gray); padding: 15px; border-radius: 8px; text-align: left;">
+                        <div style="margin-bottom: 10px;"><strong>Transaction ID:</strong> <span style="color: #666;">WD83721956</span></div>
+                        <div style="margin-bottom: 10px;"><strong>Estimated Arrival:</strong> <span style="color: #666;">1-3 business days</span></div>
+                        <div><strong>Status:</strong> <span style="background-color: #fff8e1; color: #ffa000; padding: 3px 8px; border-radius: 4px; font-size: 12px;">Processing</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetchDriverStatus();
+    
+    function showToast(message, type = 'success') {
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    function fetchDriverStatus() {
+        console.log('Fetching driver status...');
+        fetch('/CabSystem/getDriverStatus')
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Driver status response not OK:', response.status);
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Driver status data:', data);
+                if (!data.success) {
+                    console.error('Driver status unsuccessful:', data.message);
+                    window.location.href = 'login.html';
+                    return;
+                }
+                initializeApp(data.driverId);
+            })
+            .catch(error => {
+                console.error('Error fetching driver status:', error);
+                showToast('Failed to verify login status. Please try refreshing the page.', 'error');
+                initializeApp('debug-driver-id');
+            });
+    }
+
+    function initializeApp(driverId) {
+        console.log('Initializing app for driver ID:', driverId);
+        updateWalletDisplay();
+        loadTransactions();
+        loadCards();
+        loadBanks();
+        setupEventListeners();
+    }
+    
+    
+    
+// wallet and topup scene
+function setupEventListeners() {
+    const topUpBtn = document.querySelector('.wallet-actions .btn-primary');
+    if (topUpBtn) {
+        topUpBtn.addEventListener('click', async () => {
+            try {
+                const cards = await fetchDriverCards();
+                populateCardSelect(cards);
+                showModal('topUpModal');
+            } catch (error) {
+                console.error('Error loading cards:', error);
+                showToast('Failed to load payment methods', 'error');
+            }
+        });
+    }
+        const withdrawBtn = document.querySelector('.wallet-actions .btn-outline');
+        if (withdrawBtn) {
+            withdrawBtn.addEventListener('click', () => showModal('withdrawModal'));
+        }
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filters = {};
+                const buttonText = btn.textContent.trim();
+                if (buttonText === 'Income') filters.type = 'credit';
+                if (buttonText === 'Expenses') filters.type = 'debit';
+                if (buttonText.includes('Date Range')) {
+                    console.log('Date range filter clicked');
+                }
+                
+                loadTransactions(filters);
+            });
+        });
+        
+        document.querySelectorAll('.modal-close, .modal-footer .btn-secondary').forEach(btn => {
+            btn.addEventListener('click', closeAllModals);
+        });
+        const searchInput = document.querySelector('.search-input input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchInput.timeout);
+                searchInput.timeout = setTimeout(() => {
+                    loadTransactions({ search: e.target.value });
+                }, 500);
+            });
+        }
+    }
+
+    function updateWalletDisplay() {
+        console.log('Updating wallet display...');
+        fetch('/CabSystem/driver/wallet')
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Wallet response not OK:', response.status);
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Wallet data:', data);
+                if (data.success) {
+                    const balanceElement = document.querySelector('.balance-amount');
+                    if (balanceElement) {
+                        balanceElement.textContent = `LKR ${parseFloat(data.wallet.walletBalance).toFixed(2)}`;
+                    } else {
+                        console.error('Balance amount element not found');
+                    }
+                } else {
+                    console.error('Wallet fetch unsuccessful:', data.message);
+                    showToast(data.message || 'Failed to update wallet balance', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Wallet error:', error);
+                showToast('Failed to update wallet balance. Using cached data.', 'warning');
+            });
+    }
+
+    // Transaction Management
+    function loadTransactions(filters = {}) {
+        console.log('Loading transactions with filters:', filters);
+        const params = new URLSearchParams(filters);
+        fetch(`/CabSystem/driver/transactions?${params}`)
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Transactions response not OK:', response.status);
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Transaction data:', data);
+                updateTransactionUI(data);
+            })
+            .catch(error => {
+                console.error('Transaction error:', error);
+                showToast('Failed to load transactions. Showing cached data.', 'warning');
+            });
+    }
+
+    function updateTransactionUI(data) {
+        const container = document.querySelector('.transaction-list');
+        if (!container) {
+            console.error('Transaction list container not found');
+            return;
+        }
+        container.innerHTML = '';        
+        if (!data.transactions || data.transactions.length === 0) {
+            container.innerHTML = `
+                <div class="no-transactions" style="text-align: center; padding: 20px; color: #888;">
+                    No transactions found
+                </div>`;
+            return;
+        }
+        
+        data.transactions.forEach(transaction => {
+            const isCredit = transaction.transactionType === 'CREDIT' || 
+                           ['Top Up', 'Ride Earnings', 'Bonus Payment'].includes(transaction.transactionType);
+            
+            const item = document.createElement('div');
+            item.className = 'transaction-item';
+            item.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <div class="transaction-icon ${isCredit ? 'credit' : 'debit'}">
+                        <i class="fas fa-${isCredit ? 'arrow-down' : 'arrow-up'}"></i>
+                    </div>
+                    <div class="transaction-details">
+                        <div class="transaction-name">${transaction.transactionType || transaction.description}</div>
+                        <div class="transaction-date">${formatDate(transaction.dateTime || transaction.date)}</div>
+                    </div>
+                </div>
+                <div class="transaction-amount ${isCredit ? 'credit' : 'debit'}">
+                    ${isCredit ? '+' : '-'}LKR ${parseFloat(transaction.amount).toFixed(2)}
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+
+
+
+    // Card Management
+    function loadCards() {
+    console.log('Loading payment cards...');
+    fetch('/CabSystem/driverCards')
+        .then(response => {
+            if (!response.ok) {
+                console.error('Cards response not OK:', response.status);
+                throw new Error(`Server returned ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.cards) {
+                updateCardsUI(data);
+            }
+        })
+        .catch(error => console.error('Cards error:', error));
+}
+
+   function updateCardsUI(data) {
+    const container = document.querySelector('.credit-cards');
+    if (!container) {
+        console.error('Credit cards container not found');
+        return;
+    }
+        container.innerHTML = '';
+    
+    if (!data.cards || data.cards.length === 0) {
+        const noCards = document.createElement('div');
+        noCards.className = 'no-cards';
+        noCards.style.textAlign = 'center';
+        noCards.style.padding = '20px';
+        noCards.style.color = '#888';
+        noCards.textContent = 'No payment cards added yet';
+        container.appendChild(noCards);
+    } else {
+        data.cards.forEach(card => {
+    const cardEl = document.createElement('div');
+    cardEl.className = 'credit-card';
+    cardEl.innerHTML = `
+            <div class="card-content">
+                <div class="card-top">
+                    <div class="card-chip"></div>
+                    <div class="card-provider">${getCardProvider(card.cardNumber)}</div>
+                    <div class="card-actions">
+                    <button class="icon-btn edit-card" data-card-id="${card.cardId}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="icon-btn delete-card" data-card-id="${card.cardId}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+                  ${card.isDefault ? '<div class="default-badge">Default</div>' : ''}
+            <div class="card-number">${formatCardNumber(card.cardNumber)}</div> 
+            <div class="card-info">
+                <div>
+                    <div class="card-info-item">CARD HOLDER</div>
+                    <div class="card-info-value">${card.cardholderName}</div>
+                </div>
+                <div>
+                    <div class="card-info-item">EXPIRES</div>
+                    <div class="card-info-value">${card.expiryDate}</div>
+                </div>
+            </div>
+        </div>
+    `;                
+            container.appendChild(cardEl);
+        });
+    document.querySelectorAll('.edit-card').forEach(btn => {
+        btn.addEventListener('click', handleEditCard);
+    });
+    
+    document.querySelectorAll('.delete-card').forEach(btn => {
+        btn.addEventListener('click', handleDeleteCard);
+    });
+        
+    }
+    
+   
+    
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-card-btn';
+    addBtn.innerHTML = '<i class="fas fa-plus"></i> Add New Card';
+    addBtn.addEventListener('click', () => showModal('addCardModal'));
+    container.appendChild(addBtn);
+}
+
+
+
+
+    // Bank Management
+    function loadBanks() {
+        console.log('Loading bank accounts...');
+        fetch('/CabSystem/api/drivers/banks/')
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Banks response not OK:', response.status);
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Bank data:', data);
+                updateBanksUI(data);
+            })
+            .catch(error => {
+                console.error('Banks error:', error);
+                showToast('Failed to load bank accounts: ' + error.message, 'warning');
+            });
+    }
+
+    function updateBanksUI(data) {
+    const container = document.querySelector('.bank-list');
+    if (!container) {
+        console.error('Bank list container not found');
+        return;
+    }
+    container.innerHTML = '';
+    
+    if (!data.banks || data.banks.length === 0) {
+        const noBanks = document.createElement('div');
+        noBanks.className = 'no-banks';
+        noBanks.style.textAlign = 'center';
+        noBanks.style.padding = '20px';
+        noBanks.style.color = '#888';
+        noBanks.textContent = 'No bank accounts added yet';
+        container.appendChild(noBanks);
+    } else {
+        data.banks.forEach(bank => {
+            const bankEl = document.createElement('div');
+            bankEl.className = 'bank-item';
+            bankEl.innerHTML = `
+                <div class="bank-info">
+                    <div class="bank-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div>
+                        <div class="bank-name">${bank.bankName} ${bank.isDefault ? '<span class="default-badge">Default</span>' : ''}</div>
+                        <div class="bank-account">${bank.accountNumber}</div>
+                    </div>
+                </div>
+                <button class="action-btn" data-bank-id="${bank.bankId}">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            `;
+            container.appendChild(bankEl);
+            
+            const actionBtn = bankEl.querySelector('.action-btn');
+            if (actionBtn) {
+                actionBtn.addEventListener('click', (e) => {
+                    const bankId = parseInt(e.currentTarget.getAttribute('data-bank-id'));
+                    showBankActions(bankId, e.currentTarget);
+                });
+            }
+        });
+    }
+    
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-bank-btn';
+    addBtn.innerHTML = '<i class="fas fa-plus"></i> Add New Bank Account';
+    addBtn.addEventListener('click', () => {
+        resetAddBankForm();
+        showModal('addBankModal');
+    });
+    container.appendChild(addBtn);
+}
+
+
+    // Modal Handling
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+        } else {
+            console.error(`Modal with ID ${modalId} not found`);
+        }
+    }
+    
+    function closeAllModals() {
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.classList.remove('active');
+            const form = modal.querySelector('form');
+            if (form) form.reset();
+        });
+    }
+
+
+
+    // Bank Actions Dropdown
+function showBankActions(bankId, buttonElement) {
+    console.log('Showing actions for bank:', bankId);
+    
+    // Create a dropdown menu
+    const dropdown = document.createElement('div');
+    dropdown.className = 'bank-actions-dropdown';
+    dropdown.innerHTML = `
+        <ul>
+            <li data-action="edit"><i class="fas fa-edit"></i> Edit</li>
+            <li data-action="default"><i class="fas fa-check-circle"></i> Set as Default</li>
+            <li data-action="delete"><i class="fas fa-trash"></i> Remove</li>
+        </ul>
+    `;
+    
+    // Position the dropdown
+    dropdown.style.position = 'absolute';
+    dropdown.style.zIndex = '1000';
+    dropdown.style.backgroundColor = '#fff';
+    dropdown.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+    dropdown.style.borderRadius = '4px';
+    dropdown.style.padding = '5px 0';
+    
+    // Position next to the button
+    const rect = buttonElement.getBoundingClientRect();
+    dropdown.style.top = `${rect.bottom}px`;
+    dropdown.style.right = `${window.innerWidth - rect.right}px`;
+    
+    // Style the list
+    const ul = dropdown.querySelector('ul');
+    ul.style.listStyle = 'none';
+    ul.style.padding = '0';
+    ul.style.margin = '0';
+    
+    const items = dropdown.querySelectorAll('li');
+    items.forEach(item => {
+        item.style.padding = '8px 15px';
+        item.style.cursor = 'pointer';
+        item.style.fontSize = '14px';
+        
+        item.addEventListener('mouseenter', () => {
+            item.style.backgroundColor = '#f5f5f5';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            item.style.backgroundColor = 'transparent';
+        });
+        
+        item.addEventListener('click', () => {
+            document.body.removeChild(dropdown);
+            
+            const action = item.getAttribute('data-action');
+            switch (action) {
+                case 'edit':
+                    editBank(bankId);
+                    break;
+                case 'default':
+                    setDefaultBank(bankId);
+                    break;
+                case 'delete':
+                    deleteBank(bankId);
+                    break;
+            }
+        });
+    });
+    
+    // Add to the document
+    document.body.appendChild(dropdown);
+    
+    // Close the dropdown when clicking outside
+    function closeDropdown(e) {
+        if (!dropdown.contains(e.target) && e.target !== buttonElement) {
+            document.body.removeChild(dropdown);
+            document.removeEventListener('click', closeDropdown);
+        }
+    }
+    
+    // Use setTimeout to avoid the immediate click closing the dropdown
+    setTimeout(() => {
+        document.addEventListener('click', closeDropdown);
+    }, 0);
+}
+
+
+    // Bank Management Functions
+function setDefaultBank(bankId) {
+    console.log('Setting default bank:', bankId);
+    showToast('Setting default bank...', 'info');
+    
+ 
+    fetch(`/CabSystem/api/drivers/banks/${bankId}`, {
+        method: 'PATCH'
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Server returned ${response.status}`);
+        return response.json();
+    })
+    .then(result => {
+        if (result.success) {
+            showToast('Default bank updated');
+            loadBanks();
+        } else {
+            showToast(result.message || 'Failed to set default', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Set default error:', error);
+        showToast('Failed to set default: ' + error.message, 'error');
+    });
+}
+
+function editBank(bankId) {
+    console.log('Editing bank:', bankId);
+    
+    fetch(`/CabSystem/api/drivers/banks/${bankId}`)
+    .then(response => {
+        if (!response.ok) {
+            console.error('Fetch bank details response not OK:', response.status);
+            throw new Error(`Server returned ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(response => {
+        console.log('Bank details:', response);
+        
+        if (!response.success) {
+            showToast(response.message || 'Failed to fetch bank details', 'error');
+            return;
+        }
+        
+        // The bank data structure might be in response.banks[0] or directly in response
+        let bankData;
+        if (response.banks && response.banks.length > 0) {
+            // Find the bank with the matching ID
+            bankData = response.banks.find(bank => bank.bankId === bankId);
+        } else {
+            bankData = response.bank || response.data;
+        }
+        
+        if (!bankData) {
+            showToast('Bank details not found', 'error');
+            return;
+        }
+        
+        showModal('addBankModal');
+        
+        const form = document.getElementById('addBankForm');
+        if (form) {
+            // Create or update a hidden input for bankId
+            let bankIdInput = form.querySelector('input[name="bankId"]');
+            if (!bankIdInput) {
+                bankIdInput = document.createElement('input');
+                bankIdInput.type = 'hidden';
+                bankIdInput.name = 'bankId';
+                form.appendChild(bankIdInput);
+            }
+            bankIdInput.value = bankId;
+            
+            // Fill the form with bank data
+            form.querySelector('input[name="bankName"]').value = bankData.bankName || '';
+            form.querySelector('input[name="accountHolderName"]').value = bankData.accountHolderName || '';
+            form.querySelector('input[name="accountNumber"]').value = bankData.accountNumber || '';
+            form.querySelector('input[name="ifscCode"]').value = bankData.ifscCode || '';
+            
+            const accountTypeSelect = form.querySelector('select[name="accountType"]');
+            if (accountTypeSelect && bankData.accountType) {
+                accountTypeSelect.value = bankData.accountType;
+            }
+            
+            const defaultCheckbox = form.querySelector('#default-account-checkbox');
+            if (defaultCheckbox) {
+                defaultCheckbox.checked = bankData.isDefault || false;
+            }
+            
+            // Update modal title and submit button
+            const modalTitle = document.querySelector('#addBankModal .modal-title');
+            if (modalTitle) modalTitle.textContent = 'Edit Bank Account';
+            
+            const submitButton = document.querySelector('#addBankModal .btn-primary');
+            if (submitButton) submitButton.textContent = 'Update Bank Account';
+            
+            // Store the edit mode state
+            form.setAttribute('data-mode', 'edit');
+        }
+    })
+    .catch(error => {
+        console.error('Edit bank error:', error);
+        showToast('Failed to load bank details', 'error');
+    });
+}
+
+
+    function deleteBank(bankId) {
+    console.log('Deleting bank:', bankId);
+    
+    if (confirm('Are you sure you want to remove this bank account?')) {
+        showToast('Removing bank account...', 'info');
+        
+        fetch(`/CabSystem/api/drivers/banks/${bankId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.error('Delete bank response not OK:', response.status);
+                throw new Error(`Server returned ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('Delete bank result:', result);
+            if (result.success) {
+                showToast('Bank account removed successfully');
+                loadBanks();
+            } else {
+                showToast(result.message || 'Failed to remove bank account', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Delete bank error:', error);
+            showToast('Failed to remove bank account', 'error');
+        });
+    }
+}
+
+function resetAddBankForm() {
+    const form = document.getElementById('addBankForm');
+    if (form) {
+        form.reset();
+        
+        // Remove the bankId if it exists
+        const bankIdInput = form.querySelector('input[name="bankId"]');
+        if (bankIdInput) {
+            bankIdInput.value = '';
+        }
+        
+        // Update modal title and submit button
+        const modalTitle = document.querySelector('#addBankModal .modal-title');
+        if (modalTitle) modalTitle.textContent = 'Add New Bank Account';
+        
+        const submitButton = document.querySelector('#addBankModal .btn-primary');
+        if (submitButton) submitButton.textContent = 'Add Bank Account';
+        
+        // Reset the mode
+        form.setAttribute('data-mode', 'add');
+    }
+}
+
+
+
+
+    // Utility Functions
+    function getCardProvider(number) {
+        if (!number) return 'CARD';
+        const firstDigit = number.toString().charAt(0);
+        const firstTwoDigits = parseInt(number.toString().substring(0, 2));
+        
+        if (firstDigit === '4') return 'VISA';
+        if (firstTwoDigits >= 51 && firstTwoDigits <= 55) return 'MASTERCARD';
+        if (firstTwoDigits === 34 || firstTwoDigits === 37) return 'AMEX';
+        if (firstTwoDigits === 62) return 'UNIONPAY';
+        return 'CARD';
+    }
+
+function formatCardNumber(number) {
+    const lastFour = number.slice(-4);
+    return `•••• •••• •••• ${lastFour}`;
+}
+
+    function maskAccountNumber(number) {
+        if (!number) return '••••••••';
+        if (number.length <= 4) return number;
+        return '••••' + number.slice(-4);
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+        } catch (e) {
+            console.error('Date format error:', e);
+            return dateString; 
+        }
+    }
+
+
+
+    // Form Submissions
+    function setupFormSubmissions() {
+        // Top Up Form
+const topUpForm = document.querySelector('#topUpModal form');
+if (topUpForm) {
+    topUpForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const amount = topUpForm.querySelector('input[type="number"]').value;
+        const cardId = topUpForm.querySelector('select').value;
+        
+        if (cardId === 'add-new-card') {
+            closeAllModals();
+            showModal('addCardModal');
+            return;
+        }
+                if (!amount || amount <= 0) {
+                    showToast('Please enter a valid amount', 'error');
+                    return;
+                }
+                
+                if (!cardId) {
+                    showToast('Please select a payment method', 'error');
+                    return;
+                }
+                
+                topUpWallet(amount, cardId);
+            });
+        }
+
+        // Withdraw Form
+        const withdrawForm = document.querySelector('#withdrawModal form');
+        if (withdrawForm) {
+            withdrawForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const amount = withdrawForm.querySelector('input[type="number"]').value;
+                const bankId = withdrawForm.querySelector('select').value;
+                
+                if (!amount || amount <= 0) {
+                    showToast('Please enter a valid amount', 'error');
+                    return;
+                }
+                
+                if (!bankId) {
+                    showToast('Please select a bank account', 'error');
+                    return;
+                }
+                
+                withdrawWallet(amount, bankId);
+            });
+        }
+
+        // Add Card Form
+        const addCardForm = document.querySelector('#addCardModal form');
+        if (addCardForm) {
+            addCardForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const cardNumber = addCardForm.querySelector('input[placeholder="•••• •••• •••• ••••"]').value;
+                const expiryDate = addCardForm.querySelector('input[placeholder="MM/YY"]').value;
+                const cvv = addCardForm.querySelector('input[placeholder="•••"]').value;
+                const cardholderName = addCardForm.querySelector('input[placeholder="Enter name as it appears on card"]').value;
+                
+                addCard(cardNumber, expiryDate, cvv, cardholderName);
+            });
+        }
+
+
+    
+    
+}
+
+
+// Edit Card Handler
+async function handleEditCard(event) {
+    const cardId = event.currentTarget.dataset.cardId;
+    
+    try {
+        const response = await fetch(`/CabSystem/driverCards/${cardId}`);
+        if (!response.ok) throw new Error('Failed to fetch card');
+        const card = await response.json();
+        
+        // Populate edit form
+        document.getElementById('editCardId').value = card.cardId;
+        document.getElementById('editCardNumber').value = formatCardNumber(card.cardNumber);
+        document.getElementById('editExpiryDate').value = card.expiryDate;
+        document.getElementById('editCvv').value = '';
+        document.getElementById('editCardholderName').value = card.cardholderName;
+        document.getElementById('editDefaultCardCheckbox').checked = card.isDefault;
+        
+        showModal('editCardModal');
+    } catch (error) {
+        showToast('Failed to load card details', 'error');
+    }
+}
+
+// Delete Card Handler
+function handleDeleteCard(event) {
+    const cardId = event.currentTarget.dataset.cardId;
+    
+    showConfirmationDialog(
+        'Delete Card',
+        'Are you sure you want to delete this card?',
+        async () => {
+            try {
+                const response = await fetch(`/CabSystem/driverCards/${cardId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Card deleted successfully');
+                    loadCards();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                showToast(`Delete failed: ${error.message}`, 'error');
+            }
+        }
+    );
+}
+
+
+
+// Edit Form Submission
+document.getElementById('cardEditForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new URLSearchParams();
+    formData.append('expiryDate', document.getElementById('editExpiryDate').value);
+    formData.append('cvv', document.getElementById('editCvv').value);
+    formData.append('cardholderName', document.getElementById('editCardholderName').value);
+    formData.append('isDefault', document.getElementById('editDefaultCardCheckbox').checked);
+    
+    try {
+        const response = await fetch(`/CabSystem/driverCards/${document.getElementById('editCardId').value}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            showToast('Card updated successfully');
+            loadCards();
+            closeAllModals();
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        showToast(`Update failed: ${error.message}`, 'error');
+    }
+});
+
+
+document.getElementById('addBankForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const bankId = document.querySelector('input[name="bankId"]')?.value;
+    const bankName = document.querySelector('input[name="bankName"]').value;
+    const accountHolderName = document.querySelector('input[name="accountHolderName"]').value;
+    const accountNumber = document.querySelector('input[name="accountNumber"]').value;
+    const ifscCode = document.querySelector('input[name="ifscCode"]').value;
+    const accountType = document.querySelector('select[name="accountType"]').value;
+    const isDefault = document.getElementById('default-account-checkbox').checked;
+    
+    if (!validateBankFields(bankName, accountHolderName, accountNumber, ifscCode)) {
+        return;
+    }
+    
+    if (bankId) {
+        updateBank(bankId, bankName, accountHolderName, accountNumber, ifscCode, isDefault);
+    } else {
+        addBank(bankName, accountHolderName, accountNumber, ifscCode, accountType, isDefault);
+    }
+});
+
+
+function validateBankFields(bankName, accountHolderName, accountNumber, ifscCode) {
+        // Validation with better error messages
+        if (!bankName) {
+            showToast('Please enter the bank name', 'error');
+            return;
+        }
+        
+        if (!accountHolderName) {
+            showToast('Please enter the account holder name', 'error');
+            return;
+        }
+        
+        if (!accountNumber) {
+            showToast('Please enter the account number', 'error');
+            return;
+        }
+        
+        if (!ifscCode) {
+            showToast('Please enter the routing number', 'error');
+            return;
+        }
+    return true;
+}
+      
+
+    
+function addBank(bankName, accountHolderName, accountNumber, ifscCode, accountType, isDefault) {
+    console.log('Adding bank account...');
+    showToast('Adding bank account...', 'info');
+    
+    const params = new URLSearchParams();
+    params.append('bankName', bankName);
+    params.append('accountHolderName', accountHolderName);
+    params.append('accountNumber', accountNumber);
+    params.append('ifscCode', ifscCode);
+    params.append('accountType', accountType);
+    params.append('isDefault', isDefault);
+    
+    fetch('/CabSystem/api/drivers/banks/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString()
+    })
+    .then(response => {
+        if (!response.ok) {
+            console.error('Add bank response not OK:', response.status);
+            throw new Error(`Server returned ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        console.log('Add bank result:', result);
+        if (result.success) {
+            showToast('Bank account added successfully');
+            loadBanks(); // Refresh the bank list
+            
+            // Reset the form
+            document.getElementById('addBankForm').reset();
+        } else {
+            showToast(result.message || 'Failed to add bank account', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Add bank error:', error);
+        showToast('Failed to add bank account: ' + error.message, 'error');
+    });
+}
+
+
+function updateBank(bankId, bankName, accountHolderName, accountNumber, ifscCode, isDefault) {
+    console.log('Updating bank:', bankId);
+    console.log('isDefault value (before conversion):', isDefault);
+    showToast('Updating bank account...', 'info');
+    
+    // Ensure isDefault is a proper boolean first, then convert to string
+    isDefault = Boolean(isDefault);
+    const isDefaultStr = isDefault ? "true" : "false";
+    console.log('isDefault converted to:', isDefaultStr);
+    
+    const params = new URLSearchParams();
+    params.append('bankName', bankName.trim());
+    params.append('accountHolderName', accountHolderName.trim());
+    params.append('accountNumber', accountNumber.trim());
+    params.append('ifscCode', ifscCode.trim());
+    params.append('isDefault', isDefaultStr);
+    
+    // Log the request for debugging
+    console.log('Update request params:', params.toString());
+    
+    fetch(`/CabSystem/api/drivers/banks/${bankId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString()
+    })
+    .then(response => {
+        console.log('Update response status:', response.status);
+        if (!response.ok) {
+            console.error('Update response not OK:', response.status);
+            throw new Error(`Server returned ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        console.log('Update result:', result);
+        if (result.success) {
+            showToast('Bank account updated successfully');
+            loadBanks(); // Refresh the bank list
+            closeAllModals();
+        } else {
+            showToast(result.message || 'Update failed', 'error');
+            console.error('Server reported update failure:', result);
+        }
+    })
+    .catch(error => {
+        console.error('Update error:', error);
+        showToast('Update failed: ' + error.message, 'error');
+    });
+}
+
+
+    // Improved Add Card Function
+  function addCard(cardNumber, expiryDate, cvv, cardholderName, isDefault) {
+    cardNumber = cardNumber.replace(/\s/g, '');
+    
+    if (!/^\d{13,19}$/.test(cardNumber)) {
+        showToast('Please enter a valid card number', 'error');
+        return;
+    }
+    
+    if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+        showToast('Please enter a valid expiry date (MM/YY)', 'error');
+        return;
+    }
+    
+    if (!/^\d{3,4}$/.test(cvv)) {
+        showToast('Please enter a valid CVV', 'error');
+        return;
+    }
+    
+    if (!cardholderName.trim()) {
+        showToast('Please enter the cardholder name', 'error');
+        return;
+    }
+    
+    const formData = new URLSearchParams();
+    formData.append('cardNumber', cardNumber);
+    formData.append('expiryDate', expiryDate);
+    formData.append('cvv', cvv);
+    formData.append('cardholderName', cardholderName);
+    formData.append('isDefault', isDefault ? 'true' : 'false');
+    
+    fetch('/CabSystem/driverCards', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        credentials: 'include',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Server returned ${response.status}`);
+        return response.text().then(text => text ? JSON.parse(text) : {});
+    })
+    .then(data => {
+        if (data.success) {
+            showToast('Card added successfully');
+            loadCards();
+            closeAllModals();
+            document.getElementById('cardAddForm').reset();
+        } else {
+            showToast(data.message || 'Failed to add card', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding card:', error);
+        showToast('Failed to add card: ' + error.message, 'error');
+    });
+}
+
+
+
+async function fetchDriverCards() {
+    const response = await fetch('/CabSystem/driverCards');
+    if (!response.ok) throw new Error('Failed to fetch cards');
+    const data = await response.json();
+    return data.cards;
+}
+
+
+function populateCardSelect(cards) {
+    const select = document.querySelector('#topUpModal select.form-select');
+    if (!select) return;
+
+    select.innerHTML = ''; // Clear existing options
+    
+    // Add saved cards
+    cards.forEach(card => {
+        const option = document.createElement('option');
+        option.value = card.cardId;
+        option.textContent = `${card.cardholderName} - ${card.cardNumber}`;
+        select.appendChild(option);
+    });
+    
+    // Add "Add New Card" option
+    const addNewOption = document.createElement('option');
+    addNewOption.value = 'add-new-card';
+    addNewOption.textContent = 'Add New Card';
+    select.appendChild(addNewOption);
+}
+
+    // Transaction Functions
+function topUpWallet(amount, cardId) {
+    // Show loading indicator
+    const submitBtn = document.querySelector('#topUpModal button[type="submit"]');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+    
+    console.log(`Sending top-up request: amount=${amount}, cardId=${cardId}`);
+    
+    fetch('/CabSystem/driverTopup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `amount=${amount}&cardId=${cardId}`
+    })
+    .then(response => {
+        console.log('Top-up response status:', response.status);
+        // Log the raw response for debugging
+        return response.text().then(text => {
+            console.log('Top-up raw response:', text);
+            try {
+                // Try to parse as JSON
+                return JSON.parse(text);
+            } catch (e) {
+                // If not valid JSON, throw error with the response text
+                throw new Error(`Invalid JSON response: ${text}`);
+            }
+        });
+    })
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, 'success');
+            updateWalletDisplay();
+            loadTransactions(); // Reload transactions to show the new top-up
+            closeAllModals();
+        } else {
+            showToast(data.message || 'Unknown error occurred', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Top-up error:', error);
+        showToast('Failed to process top-up: ' + error.message, 'error');
+    })
+    .finally(() => {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+    });
+}
+
+
+
+    function withdrawWallet(amount, bankId) {
+        fetch('/CabSystem/driver/withdraw', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `amount=${amount}&bankId=${bankId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message);
+                updateWalletDisplay();
+                closeAllModals();
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Withdrawal error:', error);
+            showToast('Failed to process withdrawal', 'error');
+        });
+    }
+
+    window.walletApp = {
+        updateWalletDisplay,
+        loadTransactions,
+        loadCards,
+        loadBanks,
+        showToast
+    };
+
+    // Initialize form submissions after DOM loaded
+    setupFormSubmissions();
+});
+</script>
+</body>
+</html>
