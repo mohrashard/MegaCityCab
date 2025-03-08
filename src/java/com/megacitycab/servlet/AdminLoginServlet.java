@@ -35,21 +35,22 @@ public class AdminLoginServlet extends HttpServlet {
                 return;
             }
 
-  
-            String query = "SELECT password, salt FROM Admins WHERE username = ?";
+            String query = "SELECT adminId, password, salt FROM Admins WHERE username = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                int adminId = rs.getInt("adminId");
                 String storedHashedPassword = rs.getString("password");
                 String storedSalt = rs.getString("salt");
 
-        
                 if (PasswordUtil.verifyPassword(password, storedHashedPassword, storedSalt)) {
                     HttpSession session = request.getSession();
                     session.setAttribute("admin", username);
-                    
+                    session.setAttribute("adminId", adminId);
+                    session.setMaxInactiveInterval(30 * 60);
+
                     jsonResponse.put("success", true);
                     jsonResponse.put("message", "Login successful!");
                     jsonResponse.put("redirectUrl", "adminDashboard.html");
