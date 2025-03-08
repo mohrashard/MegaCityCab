@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Wallet</title>
+    <link rel="stylesheet" href="css/adminwallet.css"/>
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    
+    
+    
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">Mega City Cab</div>
+        <ul class="nav-links">
+          <li><a href="adminDashboard.html" data-page="dashboard">Dashboard</a></li>
+          <li>
+            <a href="bookingmanagement.html" data-page="bookings">Bookings</a>
+          </li>
+          <li><a href="#" data-page="customers">Customers</a></li>
+          <li><a href="#" data-page="drivers">Drivers</a></li>
+          <li>
+            <a href="managevehicles.html" data-page="vehicles">Vehicles</a>
+          </li>
+          <li>
+            <a href="adminwallet.html" class="active" data-page="wallet"
+              >Wallet</a
+            >
+          </li>
+          <li><a href="#" data-page="logout">Logout</a></li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Wallet Grid Layout -->
+        <div class="wallet-grid">
+          <!-- Balance Section -->
+          <div class="balance-section">
+            <div class="balance-card">
+              <div>
+                <h2 class="balance-title">Available Balance</h2>
+                <div class="balance-amount">LKR 12,485.65</div>
+              </div>
+              <div class="balance-meta">
+                <span class="last-updated">Last updated: Today, 10:45 AM</span>
+                <button class="withdraw-btn">Withdraw</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Transactions -->
+          <div class="recent-transactions">
+            <div class="transactions-title">
+              <span>Recent Transactions</span>
+              <a href="#trans" class="view-all-link">View All</a>
+            </div>
+            <div class="transaction-preview">
+              <div class="transaction-item">
+                <div class="transaction-details">
+                  <div class="transaction-title">Driver Commission</div>
+                  <div class="transaction-date">Today, 9:32 AM</div>
+                </div>
+                <div class="transaction-amount income">+LKR 245.00</div>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-details">
+                  <div class="transaction-title">Bank Withdrawal</div>
+                  <div class="transaction-date">Yesterday, 4:15 PM</div>
+                </div>
+                <div class="transaction-amount withdrawal">-LKR 1,500.00</div>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-details">
+                  <div class="transaction-title">Booking #12854</div>
+                  <div class="transaction-date">Mar 06, 2025, 11:05 AM</div>
+                </div>
+                <div class="transaction-amount income">+LKR 78.50</div>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-details">
+                  <div class="transaction-title">System Transfer</div>
+                  <div class="transaction-date">Mar 05, 2025, 2:47 PM</div>
+                </div>
+                <div class="transaction-amount pending">$350.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bank Management Section -->
+          <div class="bank-management">
+            <h2 class="bank-title">Bank Accounts</h2>
+            <div class="banks-grid">
+              <div class="bank-card">
+                <div class="bank-logo">CA</div>
+                <div class="bank-info">
+                  <div class="bank-name">City Bank</div>
+                  <div class="account-number">****4582</div>
+                </div>
+                <div class="bank-actions">
+                  <button class="bank-action-btn">✏️</button>
+                  <button class="bank-action-btn">🗑️</button>
+                </div>
+              </div>
+              <div class="bank-card">
+                <div class="bank-logo">NB</div>
+                <div class="bank-info">
+                  <div class="bank-name">National Bank</div>
+                  <div class="account-number">****7823</div>
+                </div>
+                <div class="bank-actions">
+                  <button class="bank-action-btn">✏️</button>
+                  <button class="bank-action-btn">🗑️</button>
+                </div>
+              </div>
+              <div class="bank-card">
+                <div class="bank-logo">MC</div>
+                <div class="bank-info">
+                  <div class="bank-name">Metro Credit Union</div>
+                  <div class="account-number">****9214</div>
+                </div>
+                <div class="bank-actions">
+                  <button class="bank-action-btn">✏️</button>
+                  <button class="bank-action-btn">🗑️</button>
+                </div>
+              </div>
+              <button class="add-bank-btn">
+                <div class="add-bank-icon">+</div>
+                <span>Add New Bank Account</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Transaction History Section -->
+          <div class="transaction-history" id="trans">
+            <h2 class="history-title">Transaction History</h2>
+            <table class="transaction-table">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+
+                  <th>Description</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mar 08, 2025, 9:32 AM</td>
+
+                  <td>Driver Commission</td>
+                  <td style="color: var(--success-color)">+LKR 245.00</td>
+                </tr>
+                <tr>
+                  <td>Mar 07, 2025, 4:15 PM</td>
+
+                  <td>Bank Withdrawal</td>
+                  <td style="color: var(--danger-color)">-LKR 1,500.00</td>
+                </tr>
+                <tr>
+                  <td>Mar 06, 2025, 11:05 AM</td>
+
+                  <td>Booking #12854</td>
+                  <td style="color: var(--success-color)">+LKR 78.50</td>
+                </tr>
+                <tr>
+                  <td>Mar 05, 2025, 2:47 PM</td>
+
+                  <td>System Transfer</td>
+                  <td style="color: var(--pending-color)">LKR 350.00</td>
+                </tr>
+                <tr>
+                  <td>Mar 04, 2025, 9:15 AM</td>
+
+                  <td>Booking #12842</td>
+                  <td style="color: var(--success-color)">+LKR 125.75</td>
+                </tr>
+                <tr>
+                  <td>Mar 03, 2025, 3:22 PM</td>
+
+                  <td>Bank Withdrawal</td>
+                  <td style="color: var(--danger-color)">-LKR 800.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
