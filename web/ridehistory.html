@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link rel="stylesheet" href="css/ridehistory.css">
+
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="images/megacitycablogo.png" alt="Mega City Cab Logo" class="logo-img">
+            <h2>Mega City Cab</h2>
+        </div>
+        <div class="nav-item"><a href="driver_dashboard.html"><i class="fas fa-home"></i> Dashboard</a></div>
+        <div class="nav-item"><a href="ridemanagement.html"><i class="fas fa-route"></i> Current Rides</a></div>
+        <div class="nav-item active"><a href="ride_history.html"><i class="fas fa-history"></i> Ride History</a></div>
+        <div class="nav-item"><a href="driver_earning.html"><i class="fas fa-wallet"></i> Earnings</a></div>
+        <div class="nav-item"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></div>
+        <div class="nav-item"><a href="help_center.html"><i class="fas fa-question-circle"></i> Help Center</a></div>
+        <div class="nav-item"><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Ride History</h1>
+            <button class="toggle-sidebar"></button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label for="date-from">From:</label>
+                <input type="date" id="date-from">
+            </div>
+            <div class="filter-group">
+                <label for="date-to">To:</label>
+                <input type="date" id="date-to">
+            </div>
+            <div class="filter-group">
+                <label for="payment-status">Payment Status:</label>
+                <select id="payment-status">
+                    <option value="all">All</option>
+                    <option value="paid">Paid</option>
+                    <option value="pending">Pending</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="sort-by">Sort By:</label>
+                <select id="sort-by">
+                    <option value="date-desc">Date (Latest)</option>
+                    <option value="date-asc">Date (Oldest)</option>
+                    <option value="earnings-desc">Earnings (Highest)</option>
+                    <option value="earnings-asc">Earnings (Lowest)</option>
+                </select>
+            </div>
+            <button class="apply-filters">Apply Filters</button>
+        </div>
+
+        <!-- Rides Container -->
+        <div class="rides-container" id="rides-container">
+            <!-- Ride cards will be dynamically generated here -->
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="payment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Pay Admin Fee</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert-error" id="payment-error">
+                    Insufficient wallet balance. Please top up your wallet or choose another payment method.
+                </div>
+                <div class="payment-details">
+                    <div class="payment-row">
+                        <span>Hire Fee:</span>
+                        <span id="modal-hire-fee">$0.00</span>
+                    </div>
+                    <div class="payment-row">
+                        <span>Admin Fee (30%):</span>
+                        <span id="modal-admin-fee">$0.00</span>
+                    </div>
+                    <div class="payment-row total">
+                        <span>Your Earnings:</span>
+                        <span id="modal-earnings">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="wallet-balance">
+                    <span>Current Wallet Balance:</span>
+                    <span class="wallet-amount" id="wallet-balance">$120.00</span>
+                </div>
+
+                <div class="payment-methods">
+                    <h4>Select Payment Method:</h4>
+                    <div class="payment-method selected" data-method="wallet">
+                        <input type="radio" name="payment-method" id="method-wallet" class="payment-method-radio" checked>
+                        <label for="method-wallet">Wallet Balance</label>
+                    </div>
+                    <div class="payment-method" data-method="card">
+                        <input type="radio" name="payment-method" id="method-card" class="payment-method-radio">
+                        <label for="method-card">Credit Card (**** 4582)</label>
+                    </div>
+                    <div class="payment-method" data-method="paypal">
+                        <input type="radio" name="payment-method" id="method-paypal" class="payment-method-radio">
+                        <label for="method-paypal">PayPal (john.doe@example.com)</label>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="modal-btn cancel-btn" id="cancel-payment">Cancel</button>
+                    <button class="modal-btn confirm-btn" id="confirm-payment">Confirm Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Ride</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this ride? This action cannot be undone.</p>
+                <p>Note: The earnings record will be kept for reference.</p>
+                
+                <div class="modal-actions" style="margin-top: 20px;">
+                    <button class="modal-btn cancel-btn" id="cancel-delete">Cancel</button>
+                    <button class="modal-btn delete-btn" id="confirm-delete">Delete Ride</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample ride data (in a real app, this would come from an API)
+        const rides = [
+            {
+                id: 1,
+                passengerName: "James Wilson",
+                pickupLocation: { name: "Home", address: "123 Main St, Downtown" },
+                dropoffLocation: { name: "Office", address: "456 Business Ave, Financial District" },
+                dateTime: "2025-02-28T09:30:00",
+                vehicleType: "Sedan",
+                status: "ended",
+                hireFee: 35.50,
+                adminFee: 10.65,
+                ownEarnings: 24.85,
+                adminFeePaid: true
+            },
+            {
+                id: 2,
+                passengerName: "Emily Johnson",
+                pickupLocation: { name: "Shopping Mall", address: "789 Retail Plaza, Commerce Center" },
+                dropoffLocation: { name: "Residential Complex", address: "101 Apartment Way, Eastside" },
+                dateTime: "2025-02-27T14:45:00",
+                vehicleType: "SUV",
+                status: "ended",
+                hireFee: 42.75,
+                adminFee: 12.83,
+                ownEarnings: 29.92,
+                adminFeePaid: false
+            },
+            {
+                id: 3,
+                passengerName: "Michael Brown",
+                pickupLocation: { name: "Airport", address: "Terminal 3, International Airport" },
+                dropoffLocation: { name: "Hotel Grand", address: "555 Luxury Blvd, Tourism District" },
+                dateTime: "2025-02-25T22:15:00",
+                vehicleType: "Premium",
+                status: "ended",
+                hireFee: 78.20,
+                adminFee: 23.46,
+                ownEarnings: 54.74,
+                adminFeePaid: true
+            },
+            {
+                id: 4,
+                passengerName: "Sarah Davis",
+                pickupLocation: { name: "Restaurant Zone", address: "321 Culinary St, Food District" },
+                dropoffLocation: { name: "Riverside Apartments", address: "999 River View, North Side" },
+                dateTime: "2025-02-23T19:00:00",
+                vehicleType: "Sedan",
+                status: "ended",
+                hireFee: 28.90,
+                adminFee: 8.67,
+                ownEarnings: 20.23,
+                adminFeePaid: false
+            },
+            {
+                id: 5,
+                passengerName: "Robert Martinez",
+                pickupLocation: { name: "Gym Center", address: "777 Fitness Ave, Sports District" },
+                dropoffLocation: { name: "City Hospital", address: "246 Medical Lane, Healthcare Zone" },
+                dateTime: "2025-02-21T16:30:00",
+                vehicleType: "Compact",
+                status: "ended",
+                hireFee: 22.40,
+                adminFee: 6.72,
+                ownEarnings: 15.68,
+                adminFeePaid: true
+            },
+            {
+                id: 6,
+                passengerName: "Jennifer Lee",
+                pickupLocation: { name: "Concert Hall", address: "135 Entertainment St, Arts District" },
+                dropoffLocation: { name: "Luxury Condos", address: "864 High Rise Blvd, Central District" },
+                dateTime: "2025-02-19T23:45:00",
+                vehicleType: "Premium",
+                status: "ended",
+                hireFee: 56.80,
+                adminFee: 17.04,
+                ownEarnings: 39.76,
+                adminFeePaid: false
+            }
+        ];
+
+        // Current wallet balance
+        let walletBalance = 120.00;
+
+        // Format date and time
+        function formatDateTime(dateTimeStr) {
+            const date = new Date(dateTimeStr);
+            return date.toLocaleString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return '$' + parseFloat(amount).toFixed(2);
+        }
+
+        // Generate ride cards
+        function generateRideCards(ridesData) {
+            const container = document.getElementById('rides-container');
+            container.innerHTML = '';
+
+            ridesData.forEach(ride => {
+                const card = document.createElement('div');
+                card.className = 'ride-card';
+                card.dataset.rideId = ride.id;
+
+                const dateTime = formatDateTime(ride.dateTime);
+                const paymentStatus = ride.adminFeePaid ? 
+                    '<span class="payment-badge payment-paid">Paid</span>' : 
+                    '<span class="payment-badge payment-pending">Pending</span>';
+
+                card.innerHTML = `
+                    <div class="ride-header">
+                        <div class="ride-date">${dateTime}</div>
+                        <div class="ride-vehicle">${ride.vehicleType}</div>
+                    </div>
+                    <div class="ride-content">
+                        <div class="ride-info">
+                            <div class="info-row">
+                                <div class="info-label">Passenger:</div>
+                                <div class="info-value">${ride.passengerName}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Status:</div>
+                                <div class="info-value">${ride.status.charAt(0).toUpperCase() + ride.status.slice(1)}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Admin Fee:</div>
+                                <div class="info-value">${paymentStatus}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ride-locations">
+                            <div class="location">
+                                <div class="location-name">Pickup: ${ride.pickupLocation.name}</div>
+                                <div class="location-address">${ride.pickupLocation.address}</div>
+                            </div>
+                            <div class="location">
+                                <div class="location-name">Dropoff: ${ride.dropoffLocation.name}</div>
+                                <div class="location-address">${ride.dropoffLocation.address}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="earnings-details">
+                            <div class="earnings-row">
+                                <span>Hire Fee:</span>
+                                <span>${formatCurrency(ride.hireFee)}</span>
+                            </div>
+                            <div class="earnings-row">
+                                <span>Admin Fee (30%):</span>
+                                <span>${formatCurrency(ride.adminFee)}</span>
+                            </div>
+                            <div class="earnings-row total">
+                                <span>Your Earnings:</span>
+                                <span>${formatCurrency(ride.ownEarnings)}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ride-actions">
+                            ${!ride.adminFeePaid ? 
+                                `<button class="action-btn pay-btn" data-ride-id="${ride.id}">Pay Admin Fee</button>` : 
+                                ''
+                            }
+                            <button class="action-btn delete-btn" data-ride-id="${ride.id}">Delete</button>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            // Add event listeners to buttons
+            document.querySelectorAll('.pay-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const rideId = parseInt(this.dataset.rideId);
+                    openPaymentModal(rideId);
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const rideId = parseInt(this.dataset.rideId);
+                    openDeleteModal(rideId);
+                });
+            });
+        }
+
+        // Open payment modal
+        function openPaymentModal(rideId) {
+            const ride = rides.find(r => r.id === rideId);
+            if (!ride) return;
+
+            document.getElementById('modal-hire-fee').textContent = formatCurrency(ride.hireFee);
+            document.getElementById('modal-admin-fee').textContent = formatCurrency(ride.adminFee);
+            document.getElementById('modal-earnings').textContent = formatCurrency(ride.ownEarnings);
+            document.getElementById('wallet-balance').textContent = formatCurrency(walletBalance);
+
+            // Check if wallet balance is sufficient
+            if (walletBalance < ride.adminFee) {
+                document.getElementById('payment-error').style.display = 'block';
+            } else {
+                document.getElementById('payment-error').style.display = 'none';
+            }
+
+            // Show modal
+            document.getElementById('payment-modal').style.display = 'flex';
+
+            // Set current ride ID
+            document.getElementById('confirm-payment').dataset.rideId = rideId;
+        }
+
+        // Open delete confirmation modal
+        function openDeleteModal(rideId) {
+            document.getElementById('delete-modal').style.display = 'flex';
+            document.getElementById('confirm-delete').dataset.rideId = rideId;
+        }
+
+        // Process payment
+        function processPayment(rideId) {
+            const ride = rides.find(r => r.id === rideId);
+            if (!ride) return;
+
+            const selectedMethod = document.querySelector('.payment-method.selected').dataset.method;
+
+            if (selectedMethod === 'wallet' && walletBalance < ride.adminFee) {
+                document.getElementById('payment-error').style.display = 'block';
+                return false;
+            }
+
+            // Update ride data
+            ride.adminFeePaid = true;
+
+            // If using wallet, deduct from balance
+            if (selectedMethod === 'wallet') {
+                walletBalance -= ride.adminFee;
+                document.getElementById('wallet-balance').textContent = formatCurrency(walletBalance);
+            }
+
+            // Close modal and refresh ride cards
+            document.getElementById('payment-modal').style.display = 'none';
+            generateRideCards(rides);
+
+            return true;
+        }
+
+        // Delete ride
+        function deleteRide(rideId) {
+            const rideIndex = rides.findIndex(r => r.id === rideId);
+            if (rideIndex !== -1) {
+                rides.splice(rideIndex, 1);
+                generateRideCards(rides);
+            }
+            document.getElementById('delete-modal').style.display = 'none';
+        }
+
+                // ... (previous JavaScript code)
+
+        // Apply filters
+        function applyFilters() {
+            const dateFrom = document.getElementById('date-from').value;
+            const dateTo = document.getElementById('date-to').value;
+            const paymentStatus = document.getElementById('payment-status').value;
+            const sortBy = document.getElementById('sort-by').value;
+
+            let filteredRides = [...rides];
+
+            // Filter by date range
+            if (dateFrom) {
+                const startDate = new Date(dateFrom);
+                filteredRides = filteredRides.filter(ride => {
+                    const rideDate = new Date(ride.dateTime);
+                    return rideDate >= startDate;
+                });
+            }
+
+            if (dateTo) {
+                const endDate = new Date(dateTo);
+                filteredRides = filteredRides.filter(ride => {
+                    const rideDate = new Date(ride.dateTime);
+                    return rideDate <= endDate;
+                });
+            }
+
+            // Filter by payment status
+            if (paymentStatus !== 'all') {
+                filteredRides = filteredRides.filter(ride => 
+                    paymentStatus === 'paid' ? ride.adminFeePaid : !ride.adminFeePaid
+                );
+            }
+
+            // Sort rides
+            switch(sortBy) {
+                case 'date-asc':
+                    filteredRides.sort((a, b) => 
+                        new Date(a.dateTime) - new Date(b.dateTime));
+                    break;
+                case 'date-desc':
+                    filteredRides.sort((a, b) => 
+                        new Date(b.dateTime) - new Date(a.dateTime));
+                    break;
+                case 'earnings-asc':
+                    filteredRides.sort((a, b) => a.ownEarnings - b.ownEarnings);
+                    break;
+                case 'earnings-desc':
+                    filteredRides.sort((a, b) => b.ownEarnings - a.ownEarnings);
+                    break;
+            }
+
+            generateRideCards(filteredRides);
+        }
+
+        // Event listeners
+        document.querySelector('.apply-filters').addEventListener('click', applyFilters);
+
+        // Modal close handlers
+        document.querySelectorAll('.close-modal, .cancel-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            });
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Payment confirmation
+        document.getElementById('confirm-payment').addEventListener('click', function() {
+            const rideId = parseInt(this.dataset.rideId);
+            processPayment(rideId);
+        });
+
+        // Delete confirmation
+        document.getElementById('confirm-delete').addEventListener('click', function() {
+            const rideId = parseInt(this.dataset.rideId);
+            deleteRide(rideId);
+        });
+
+        // Toggle sidebar
+        document.querySelector('.toggle-sidebar').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        });
+
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(m => 
+                    m.classList.remove('selected'));
+                method.classList.add('selected');
+            });
+        });
+
+        // Initial load
+        generateRideCards(rides);
+</script>
+</body>
+</html>
