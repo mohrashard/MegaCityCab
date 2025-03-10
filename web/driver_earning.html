@@ -293,12 +293,12 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="main-content">
-        <div class="page-header">
-            <h1 class="page-title">Your Earnings</h1>
-            <button class="btn btn-outline">
-                <i class="fas fa-download"></i> Download Statement
-            </button>
+<div class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">Your Earnings</h1>
+        <button class="btn btn-outline download-statement-btn">
+            <i class="fas fa-download"></i> Download Statement
+        </button>
         </div>
 
         <!-- Wallet Balance Card -->
@@ -484,8 +484,6 @@
     </div>
 </div>
     
-    
-    
     <!-- Edit Card Modal -->
 <div class="modal-overlay" id="editCardModal">
     <div class="modal">
@@ -536,48 +534,45 @@
 </div>
     
     <!-- Withdraw Modal -->
-    <div class="modal-overlay" id="withdrawModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Withdraw Funds</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
+  <div class="modal-overlay" id="withdrawModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Withdraw Funds</h2>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="withdrawForm">
                 <div class="form-group">
                     <label class="form-label">Select Bank Account</label>
-                    <select class="form-select">
-                        <option value="">Chase Bank (Default) **** 6789</option>
-                        <option value="">Bank of America **** 4321</option>
-                        <option value="add-new-bank">Add New Bank Account</option>
+                    <select class="form-select" id="bankSelect" name="bankId" required>
+                        <!-- Dynamically populated -->
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Enter Amount</label>
+                    <label class="form-label">Enter Amount (LKR)</label>
                     <div style="position: relative;">
-                        <input type="number" class="form-input" placeholder="0.00" min="1" step="0.01">
-                        <span style="position: absolute; left: 12px; top: 12px;">$</span>
-                        <div style="color: #888; font-size: 12px; margin-top: 5px;">Available balance: $1,245.80</div>
+                        <input type="number" class="form-input" 
+                               name="amount" placeholder="0.00" 
+                               min="1" step="0.01" required>
+                        <div class="balance-info">Available balance: 
+                            <span id="availableBalance"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Withdrawal Notes (Optional)</label>
-                    <textarea class="form-input" rows="3" placeholder="Add any notes for this transaction..."></textarea>
+                <div class="form-group terms-group">
+                    <input type="checkbox" id="terms-checkbox" required>
+                    <label for="terms-checkbox">
+                        I confirm this withdrawal request
+                    </label>
                 </div>
-                <div class="form-group">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
-                        <input type="checkbox" id="terms-checkbox">
-                        <label for="terms-checkbox" style="font-size: 14px; color: #666;">
-                            I confirm this withdrawal request and understand it may take 1-3 business days to process.
-                        </label>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Withdraw Funds</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary">Cancel</button>
-                <button class="btn btn-primary">Withdraw Funds</button>
-            </div>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- Add New Bank Account Modal -->
     <div class="modal-overlay" id="addBankModal">
@@ -628,39 +623,14 @@
     </div>
 </div>
 
-    <!-- Withdrawal Confirmation Modal -->
-    <div class="modal-overlay" id="withdrawConfirmModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Confirm Withdrawal</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div style="text-align: center; padding: 20px 0;">
-                    <i class="fas fa-check-circle" style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
-                    <h3 style="margin-bottom: 10px;">Withdrawal Request Submitted</h3>
-                    <p style="color: #666; margin-bottom: 15px;">Your withdrawal request for <strong>$350.00</strong> to Chase Bank (****6789) has been submitted.</p>
-                    <div style="background-color: var(--light-gray); padding: 15px; border-radius: 8px; text-align: left;">
-                        <div style="margin-bottom: 10px;"><strong>Transaction ID:</strong> <span style="color: #666;">WD83721956</span></div>
-                        <div style="margin-bottom: 10px;"><strong>Estimated Arrival:</strong> <span style="color: #666;">1-3 business days</span></div>
-                        <div><strong>Status:</strong> <span style="background-color: #fff8e1; color: #ffa000; padding: 3px 8px; border-radius: 4px; font-size: 12px;">Processing</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary">Done</button>
-            </div>
-        </div>
-    </div>
     
     <div id="notification-container"></div>
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-    fetchDriverStatus();
+fetchDriverStatus();
     
 function showToast(message, type = 'success') {
-    // Ensure notification container exists
     let notificationContainer = document.getElementById('notification-container');
     if (!notificationContainer) {
         notificationContainer = document.createElement('div');
@@ -668,11 +638,9 @@ function showToast(message, type = 'success') {
         document.body.appendChild(notificationContainer);
     }
 
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     
-    // Notification HTML structure matching your CSS
     notification.innerHTML = `
         <div class="notification-content">
             <div class="notification-message">${message}</div>
@@ -680,30 +648,30 @@ function showToast(message, type = 'success') {
         </div>
     `;
 
-    // Add to container
+
     notificationContainer.appendChild(notification);
 
-    // Auto-remove after delay
+
     const autoRemoveTimeout = setTimeout(() => {
         notification.classList.add('hide');
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 
-    // Manual close handler
+ 
     notification.querySelector('.notification-close').addEventListener('click', () => {
         clearTimeout(autoRemoveTimeout);
         notification.classList.add('hide');
         setTimeout(() => notification.remove(), 300);
     });
 
-    // Cleanup old notifications
+ 
     const notifications = notificationContainer.querySelectorAll('.notification');
     if (notifications.length > 5) {
         notifications[0].remove();
     }
 }
 
-    function fetchDriverStatus() {
+function fetchDriverStatus() {
         console.log('Fetching driver status...');
         fetch('/CabSystem/getDriverStatus')
             .then(response => {
@@ -729,7 +697,7 @@ function showToast(message, type = 'success') {
             });
     }
 
-    function initializeApp(driverId) {
+function initializeApp(driverId) {
         console.log('Initializing app for driver ID:', driverId);
         updateWalletDisplay();
         loadTransactions();
@@ -737,9 +705,7 @@ function showToast(message, type = 'success') {
         loadBanks();
         setupEventListeners();
     }
-    
-    
-    
+     
 // wallet and topup scene
 function setupEventListeners() {
     const topUpBtn = document.querySelector('.wallet-actions .btn-primary');
@@ -755,43 +721,154 @@ function setupEventListeners() {
             }
         });
     }
-        const withdrawBtn = document.querySelector('.wallet-actions .btn-outline');
-        if (withdrawBtn) {
-            withdrawBtn.addEventListener('click', () => showModal('withdrawModal'));
+    
+const withdrawBtn = document.querySelector('.wallet-actions .btn-outline');
+if (withdrawBtn) {
+    withdrawBtn.addEventListener('click', async () => {
+        try {
+            const [banks, balance] = await Promise.all([
+                fetchBanks(),
+                fetchWalletBalance()
+            ]);
+            
+            populateBankSelect(banks);
+            document.getElementById('availableBalance').textContent = 
+                `LKR ${parseFloat(balance).toFixed(2)}`;
+            
+            showModal('withdrawModal');
+        } catch (error) {
+            showToast('Failed to load withdrawal details', 'error');
         }
-        
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                const filters = {};
-                const buttonText = btn.textContent.trim();
-                if (buttonText === 'Income') filters.type = 'credit';
-                if (buttonText === 'Expenses') filters.type = 'debit';
-                if (buttonText.includes('Date Range')) {
-                    console.log('Date range filter clicked');
-                }
-                
-                loadTransactions(filters);
-            });
+    });
+}
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const filters = {};
+            const buttonText = btn.textContent.trim();
+            if (buttonText === 'Income') filters.type = 'credit';
+            if (buttonText === 'Expenses') filters.type = 'debit';
+            if (buttonText.includes('Date Range')) {
+                console.log('Date range filter clicked');
+            }
+            
+            loadTransactions(filters);
         });
-        
-        document.querySelectorAll('.modal-close, .modal-footer .btn-secondary').forEach(btn => {
-            btn.addEventListener('click', closeAllModals);
+    });
+    
+    document.querySelectorAll('.modal-close, .modal-footer .btn-secondary').forEach(btn => {
+        btn.addEventListener('click', closeAllModals);
+    });
+    
+    const searchInput = document.querySelector('.search-input input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchInput.timeout);
+            searchInput.timeout = setTimeout(() => {
+                loadTransactions({ search: e.target.value });
+            }, 500);
         });
-        const searchInput = document.querySelector('.search-input input');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                clearTimeout(searchInput.timeout);
-                searchInput.timeout = setTimeout(() => {
-                    loadTransactions({ search: e.target.value });
-                }, 500);
-            });
-        }
     }
+    
+    document.querySelectorAll('.btn.btn-outline').forEach(btn => {
+    if (btn.textContent.includes('Download Statement')) {
+        btn.addEventListener('click', handleDownloadStatement);
+    }
+});
+}
 
-    function updateWalletDisplay() {
+async function handleDownloadStatement() {
+    try {
+        const filters = getCurrentFilters();
+        const params = new URLSearchParams(filters);
+        
+        const response = await fetch(`/CabSystem/driver/transaction/statement?${params}`);
+        
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+        
+        const blob = await response.blob();
+        const contentDisposition = response.headers.get('Content-Disposition');
+        const filename = contentDisposition 
+            ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+            : `transaction_statement_${new Date().toISOString().slice(0,19).replace(/[-T:]/g, '')}.csv`;
+
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        document.body.removeChild(a);
+        
+    } catch (error) {
+        console.error('Download failed:', error);
+        showToast('Failed to download statement: ' + error.message, 'error');
+    }
+}
+
+function getCurrentFilters() {
+    const filters = {};
+    
+    // Get active transaction type
+    const activeTypeBtn = document.querySelector('.filter-btn.active');
+    if (activeTypeBtn) {
+        const btnText = activeTypeBtn.textContent.trim();
+        if (btnText === 'Income') filters.type = 'credit';
+        if (btnText === 'Expenses') filters.type = 'debit';
+    }
+    
+    // Get date range values - assuming you have date inputs with these IDs
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    
+    if (startDateInput?.value) filters.startDate = startDateInput.value;
+    if (endDateInput?.value) filters.endDate = endDateInput.value;
+    
+    return filters;
+}
+
+async function fetchBanks() {
+    const response = await fetch('/CabSystem/api/drivers/banks/');
+    if (!response.ok) throw new Error('Failed to fetch banks');
+    const data = await response.json();
+    return data.banks || [];
+}
+
+async function fetchWalletBalance() {
+    const response = await fetch('/CabSystem/driver/wallet');
+    if (!response.ok) throw new Error('Failed to fetch balance');
+    const data = await response.json();
+    return data.wallet.walletBalance;
+}
+
+function populateBankSelect(banks) {
+    const select = document.getElementById('bankSelect');
+    select.innerHTML = '';
+    
+    if (banks.length === 0) {
+        const option = document.createElement('option');
+        option.textContent = 'No bank accounts - Add one first';
+        option.disabled = true;
+        select.appendChild(option);
+        return;
+    }
+    
+    banks.forEach(bank => {
+        const option = document.createElement('option');
+        option.value = bank.bankId;
+        const maskedAccount = `**** ${bank.accountNumber.slice(-4)}`;
+        option.textContent = `${bank.bankName} ${bank.isDefault ? '(Default) ' : ''}${maskedAccount}`;
+        select.appendChild(option);
+    });
+}
+        
+function updateWalletDisplay() {
         console.log('Updating wallet display...');
         fetch('/CabSystem/driver/wallet')
             .then(response => {
@@ -822,7 +899,7 @@ function setupEventListeners() {
     }
 
     // Transaction Management
-    function loadTransactions(filters = {}) {
+function loadTransactions(filters = {}) {
         console.log('Loading transactions with filters:', filters);
         const params = new URLSearchParams(filters);
         fetch(`/CabSystem/driver/transactions?${params}`)
@@ -843,7 +920,7 @@ function setupEventListeners() {
             });
     }
 
-    function updateTransactionUI(data) {
+function updateTransactionUI(data) {
         const container = document.querySelector('.transaction-list');
         if (!container) {
             console.error('Transaction list container not found');
@@ -881,12 +958,9 @@ function setupEventListeners() {
             container.appendChild(item);
         });
     }
-
-
-
-
+    
     // Card Management
-    function loadCards() {
+function loadCards() {
     console.log('Loading payment cards...');
     fetch('/CabSystem/driverCards')
         .then(response => {
@@ -904,7 +978,7 @@ function setupEventListeners() {
         .catch(error => console.error('Cards error:', error));
 }
 
-   function updateCardsUI(data) {
+function updateCardsUI(data) {
     const container = document.querySelector('.credit-cards');
     if (!container) {
         console.error('Credit cards container not found');
@@ -972,12 +1046,8 @@ function setupEventListeners() {
     addBtn.addEventListener('click', () => showModal('addCardModal'));
     container.appendChild(addBtn);
 }
-
-
-
-
     // Bank Management
-    function loadBanks() {
+function loadBanks() {
         console.log('Loading bank accounts...');
         fetch('/CabSystem/api/drivers/banks/')
             .then(response => {
@@ -997,7 +1067,7 @@ function setupEventListeners() {
             });
     }
 
-    function updateBanksUI(data) {
+function updateBanksUI(data) {
     const container = document.querySelector('.bank-list');
     if (!container) {
         console.error('Bank list container not found');
@@ -1052,10 +1122,8 @@ function setupEventListeners() {
     });
     container.appendChild(addBtn);
 }
-
-
     // Modal Handling
-    function showModal(modalId) {
+function showModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.classList.add('active');
@@ -1064,21 +1132,16 @@ function setupEventListeners() {
         }
     }
     
-    function closeAllModals() {
+function closeAllModals() {
         document.querySelectorAll('.modal-overlay').forEach(modal => {
             modal.classList.remove('active');
             const form = modal.querySelector('form');
             if (form) form.reset();
         });
     }
-
-
-
     // Bank Actions Dropdown
 function showBankActions(bankId, buttonElement) {
     console.log('Showing actions for bank:', bankId);
-    
-    // Create a dropdown menu
     const dropdown = document.createElement('div');
     dropdown.className = 'bank-actions-dropdown';
     dropdown.innerHTML = `
@@ -1088,21 +1151,15 @@ function showBankActions(bankId, buttonElement) {
             <li data-action="delete"><i class="fas fa-trash"></i> Remove</li>
         </ul>
     `;
-    
-    // Position the dropdown
     dropdown.style.position = 'absolute';
     dropdown.style.zIndex = '1000';
     dropdown.style.backgroundColor = '#fff';
     dropdown.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
     dropdown.style.borderRadius = '4px';
     dropdown.style.padding = '5px 0';
-    
-    // Position next to the button
     const rect = buttonElement.getBoundingClientRect();
     dropdown.style.top = `${rect.bottom}px`;
     dropdown.style.right = `${window.innerWidth - rect.right}px`;
-    
-    // Style the list
     const ul = dropdown.querySelector('ul');
     ul.style.listStyle = 'none';
     ul.style.padding = '0';
@@ -1139,24 +1196,17 @@ function showBankActions(bankId, buttonElement) {
             }
         });
     });
-    
-    // Add to the document
     document.body.appendChild(dropdown);
-    
-    // Close the dropdown when clicking outside
     function closeDropdown(e) {
         if (!dropdown.contains(e.target) && e.target !== buttonElement) {
             document.body.removeChild(dropdown);
             document.removeEventListener('click', closeDropdown);
         }
     }
-    
-    // Use setTimeout to avoid the immediate click closing the dropdown
     setTimeout(() => {
         document.addEventListener('click', closeDropdown);
     }, 0);
 }
-
 
     // Bank Management Functions
 function setDefaultBank(bankId) {
@@ -1204,10 +1254,9 @@ function editBank(bankId) {
             return;
         }
         
-        // The bank data structure might be in response.banks[0] or directly in response
+
         let bankData;
         if (response.banks && response.banks.length > 0) {
-            // Find the bank with the matching ID
             bankData = response.banks.find(bank => bank.bankId === bankId);
         } else {
             bankData = response.bank || response.data;
@@ -1222,7 +1271,6 @@ function editBank(bankId) {
         
         const form = document.getElementById('addBankForm');
         if (form) {
-            // Create or update a hidden input for bankId
             let bankIdInput = form.querySelector('input[name="bankId"]');
             if (!bankIdInput) {
                 bankIdInput = document.createElement('input');
@@ -1231,8 +1279,7 @@ function editBank(bankId) {
                 form.appendChild(bankIdInput);
             }
             bankIdInput.value = bankId;
-            
-            // Fill the form with bank data
+
             form.querySelector('input[name="bankName"]').value = bankData.bankName || '';
             form.querySelector('input[name="accountHolderName"]').value = bankData.accountHolderName || '';
             form.querySelector('input[name="accountNumber"]').value = bankData.accountNumber || '';
@@ -1248,14 +1295,13 @@ function editBank(bankId) {
                 defaultCheckbox.checked = bankData.isDefault || false;
             }
             
-            // Update modal title and submit button
+
             const modalTitle = document.querySelector('#addBankModal .modal-title');
             if (modalTitle) modalTitle.textContent = 'Edit Bank Account';
             
             const submitButton = document.querySelector('#addBankModal .btn-primary');
             if (submitButton) submitButton.textContent = 'Update Bank Account';
-            
-            // Store the edit mode state
+
             form.setAttribute('data-mode', 'edit');
         }
     })
@@ -1265,8 +1311,7 @@ function editBank(bankId) {
     });
 }
 
-
-    function deleteBank(bankId) {
+function deleteBank(bankId) {
     console.log('Deleting bank:', bankId);
     
     if (confirm('Are you sure you want to remove this bank account?')) {
@@ -1301,31 +1346,22 @@ function editBank(bankId) {
 function resetAddBankForm() {
     const form = document.getElementById('addBankForm');
     if (form) {
-        form.reset();
-        
-        // Remove the bankId if it exists
+        form.reset();       
         const bankIdInput = form.querySelector('input[name="bankId"]');
         if (bankIdInput) {
             bankIdInput.value = '';
         }
-        
-        // Update modal title and submit button
+
         const modalTitle = document.querySelector('#addBankModal .modal-title');
         if (modalTitle) modalTitle.textContent = 'Add New Bank Account';
-        
         const submitButton = document.querySelector('#addBankModal .btn-primary');
         if (submitButton) submitButton.textContent = 'Add Bank Account';
-        
-        // Reset the mode
         form.setAttribute('data-mode', 'add');
     }
 }
-
-
-
-
-    // Utility Functions
-    function getCardProvider(number) {
+   
+        // Utility Functions
+function getCardProvider(number) {
         if (!number) return 'CARD';
         const firstDigit = number.toString().charAt(0);
         const firstTwoDigits = parseInt(number.toString().substring(0, 2));
@@ -1342,13 +1378,13 @@ function formatCardNumber(number) {
     return `•••• •••• •••• ${lastFour}`;
 }
 
-    function maskAccountNumber(number) {
+function maskAccountNumber(number) {
         if (!number) return '••••••••';
         if (number.length <= 4) return number;
         return '••••' + number.slice(-4);
     }
 
-    function formatDate(dateString) {
+function formatDate(dateString) {
         if (!dateString) return '';
         try {
             const date = new Date(dateString);
@@ -1364,11 +1400,9 @@ function formatCardNumber(number) {
             return dateString; 
         }
     }
-
-
-
+    
     // Form Submissions
-    function setupFormSubmissions() {
+function setupFormSubmissions() {
         // Top Up Form
 const topUpForm = document.querySelector('#topUpModal form');
 if (topUpForm) {
@@ -1396,27 +1430,27 @@ if (topUpForm) {
             });
         }
 
-        // Withdraw Form
-        const withdrawForm = document.querySelector('#withdrawModal form');
-        if (withdrawForm) {
-            withdrawForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const amount = withdrawForm.querySelector('input[type="number"]').value;
-                const bankId = withdrawForm.querySelector('select').value;
-                
-                if (!amount || amount <= 0) {
-                    showToast('Please enter a valid amount', 'error');
-                    return;
-                }
-                
-                if (!bankId) {
-                    showToast('Please select a bank account', 'error');
-                    return;
-                }
-                
-                withdrawWallet(amount, bankId);
-            });
+// Withdraw Form
+const withdrawForm = document.querySelector('#withdrawModal form');
+if (withdrawForm) {
+    withdrawForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const amount = withdrawForm.querySelector('input[type="number"]').value;
+        const bankId = withdrawForm.querySelector('select').value;
+        
+        if (!amount || amount <= 0) {
+            showToast('Please enter a valid amount', 'error');
+            return;
         }
+        
+        if (!bankId) {
+            showToast('Please select a bank account', 'error');
+            return;
+        }
+        
+        withdrawWallet(amount, bankId);
+    });
+}
 
         // Add Card Form
         const addCardForm = document.querySelector('#addCardModal form');
@@ -1430,13 +1464,8 @@ if (topUpForm) {
                 
                 addCard(cardNumber, expiryDate, cvv, cardholderName);
             });
-        }
-
-
-    
-    
+        }    
 }
-
 
 // Edit Card Handler
 async function handleEditCard(event) {
@@ -1545,7 +1574,6 @@ document.getElementById('addBankForm').addEventListener('submit', function(e) {
 
 
 function validateBankFields(bankName, accountHolderName, accountNumber, ifscCode) {
-        // Validation with better error messages
         if (!bankName) {
             showToast('Please enter the bank name', 'error');
             return;
@@ -1668,8 +1696,7 @@ function updateBank(bankId, bankName, accountHolderName, accountNumber, ifscCode
 }
 
 
-    // Improved Add Card Function
-  function addCard(cardNumber, expiryDate, cvv, cardholderName, isDefault) {
+function addCard(cardNumber, expiryDate, cvv, cardholderName, isDefault) {
     cardNumber = cardNumber.replace(/\s/g, '');
     
     if (!/^\d{13,19}$/.test(cardNumber)) {
@@ -1725,8 +1752,6 @@ function updateBank(bankId, bankName, accountHolderName, accountNumber, ifscCode
     });
 }
 
-
-
 async function fetchDriverCards() {
     const response = await fetch('/CabSystem/driverCards');
     if (!response.ok) throw new Error('Failed to fetch cards');
@@ -1758,7 +1783,6 @@ function populateCardSelect(cards) {
 
     // Transaction Functions
 function topUpWallet(amount, cardId) {
-    // Show loading indicator
     const submitBtn = document.querySelector('#topUpModal button[type="submit"]');
     const originalBtnText = submitBtn.textContent;
     submitBtn.disabled = true;
@@ -1806,31 +1830,36 @@ function topUpWallet(amount, cardId) {
     });
 }
 
+async function withdrawWallet(amount, bankId) {
+    const submitBtn = document.querySelector('#withdrawForm button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
 
-
-    function withdrawWallet(amount, bankId) {
-        fetch('/CabSystem/driver/withdraw', {
+    try {
+        const response = await fetch('/CabSystem/driver/withdraw', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `amount=${amount}&bankId=${bankId}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast(data.message);
-                updateWalletDisplay();
-                closeAllModals();
-            } else {
-                showToast(data.message, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Withdrawal error:', error);
-            showToast('Failed to process withdrawal', 'error');
         });
-    }
 
-    window.walletApp = {
+        const data = await response.json();
+        if (data.success) {
+            showToast('Withdrawal successful! Funds will be transferred within 1-3 business days.');
+            updateWalletDisplay();
+            loadTransactions();
+            closeAllModals();
+        } else {
+            showToast(data.message || 'Withdrawal failed', 'error');
+        }
+    } catch (error) {
+        showToast('Network error - please try again', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Withdraw Funds';
+    }
+}
+
+window.walletApp = {
         updateWalletDisplay,
         loadTransactions,
         loadCards,
@@ -1838,7 +1867,7 @@ function topUpWallet(amount, cardId) {
         showToast
     };
 
-    // Initialize form submissions after DOM loaded
+
     setupFormSubmissions();
 });
 </script>

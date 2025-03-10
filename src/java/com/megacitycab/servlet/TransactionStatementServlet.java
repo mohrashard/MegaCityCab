@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -32,7 +34,6 @@ public class TransactionStatementServlet extends HttpServlet {
         int driverId = (int) session.getAttribute("userId");
         
         try {
-            // Get filter parameters
             String type = request.getParameter("type");
             
             Date startDate = null;
@@ -45,46 +46,135 @@ public class TransactionStatementServlet extends HttpServlet {
                 endDate = Date.valueOf(request.getParameter("endDate"));
             }
             
-            // Get filtered transactions
             List<DriverTransaction> transactions = transactionDAO.findByDriverIdAndFilters(driverId, type, startDate, endDate);
             
-            // Set response headers for CSV download
-            response.setContentType("text/csv");
-            response.setHeader("Content-Disposition", "attachment; filename=\"transaction_statement.csv\"");
+            response.setContentType("text/html");
             
-            // Create CSV content
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            String timestamp = LocalDateTime.now().format(dtf);
+            String fileName = "transaction_statement_" + timestamp + ".html";
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            
             PrintWriter writer = response.getWriter();
             
-            // Write CSV header
-            writer.println("Transaction ID,Date,Type,Amount (LKR),Description");
+ 
+            writer.println("<!DOCTYPE html>");
+            writer.println("<html>");
+            writer.println("<head>");
+            writer.println("<meta charset=\"UTF-8\">");
+            writer.println("<title>Transaction Statement</title>");
+            writer.println("<style>");
+            writer.println("body { font-family: Arial, sans-serif; margin: 40px; }");
+            writer.println("h1 { color: #333366; }");
+            writer.println("table { width: 100%; border-collapse: collapse; margin-top: 20px; }");
+            writer.println("th { background-color: #333366; color: white; padding: 10px; text-align: left; }");
+            writer.println("td { padding: 8px; border-bottom: 1px solid #ddd; }");
+            writer.println("tr:nth-child(even) { background-color: #f2f2f2; }");
+            writer.println(".positive { color: green; }");
+            writer.println(".negative { color: red; }");
+            writer.println(".print-btn { background-color: #333366; color: white; padding: 10px 20px; ");
+            writer.println("  border: none; border-radius: 4px; cursor: pointer; margin-top: 20px; }");
+            writer.println("@media print {");
+            writer.println("  .print-btn { display: none; }");
+            writer.println("  body { margin: 0; }");
+            writer.println("}");
+            writer.println("</style>");
+            writer.println("</head>");
+            writer.println("<body>");
             
-            // Format for date and time
+ 
+            writer.println("<h1>MegaCityCab - Transaction Statement</h1>");
+            writer.println("<p><strong>Driver ID:</strong> " + driverId + "</p>");
+            
+    
+            if (startDate != null && endDate != null) {
+                writer.println("<p><strong>Period:</strong> " + startDate + " to " + endDate + "</p>");
+            } else if (startDate != null) {
+                writer.println("<p><strong>From:</strong> " + startDate + "</p>");
+            } else if (endDate != null) {
+                writer.println("<p><strong>Until:</strong> " + endDate + "</p>");
+            }
+            
+  
+            if (type != null && !type.isEmpty()) {
+                writer.println("<p><strong>Transaction Type:</strong> " + type + "</p>");
+            }
+            
+
+            writer.println("<table>");
+            writer.println("<tr>");
+            writer.println("<th>Transaction ID</th>");
+            writer.println("<th>Date</th>");
+            writer.println("<th>Type</th>");
+            writer.println("<th>Amount (LKR)</th>");
+            writer.println("<th>Description</th>");
+            writer.println("</tr>");
+            
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            BigDecimal totalAmount = BigDecimal.ZERO;
             
-            // Write transaction data
             for (DriverTransaction transaction : transactions) {
-                writer.print(transaction.getTransactionId());
-                writer.print(",");
-                writer.print(transaction.getDateTime().format(formatter));
-                writer.print(",");
-                writer.print(transaction.getTransactionType());
-                writer.print(",");
+                writer.println("<tr>");
                 
-                // Format amount based on transaction type
+                writer.println("<td>" + transaction.getTransactionId() + "</td>");
+                writer.println("<td>" + transaction.getDateTime().format(formatter) + "</td>");
+                writer.println("<td>" + transaction.getTransactionType() + "</td>");
+                
+
+                String amountClass = "";
+                String amountPrefix = "";
+                BigDecimal amount = transaction.getAmount();
+                
                 if (transaction.getTransactionType().equals("Top Up") || 
                     transaction.getTransactionType().equals("Ride Earnings")) {
-                    writer.print("+");
+                    amountClass = "positive";
+                    amountPrefix = "+";
+                    totalAmount = totalAmount.add(amount);
                 } else {
-                    writer.print("-");
+                    amountClass = "negative";
+                    amountPrefix = "-";
+                    totalAmount = totalAmount.subtract(amount);
                 }
-                writer.print(transaction.getAmount());
                 
-                writer.print(",");
-                // Ensure description doesn't break CSV format (escape commas)
-                String description = transaction.getDescription().replace("\"", "\"\"");
-                writer.print("\"" + description + "\"");
-                writer.println();
+                writer.println("<td class=\"" + amountClass + "\">" + amountPrefix + amount + "</td>");
+                
+   
+                String description = transaction.getDescription().replace("<", "&lt;").replace(">", "&gt;");
+                writer.println("<td>" + description + "</td>");
+                
+                writer.println("</tr>");
             }
+            
+
+            writer.println("<tr>");
+            writer.println("<td colspan=\"3\"><strong>Balance</strong></td>");
+            String balanceClass = totalAmount.compareTo(BigDecimal.ZERO) >= 0 ? "positive" : "negative";
+            String balancePrefix = totalAmount.compareTo(BigDecimal.ZERO) >= 0 ? "+" : "";
+            writer.println("<td class=\"" + balanceClass + "\"><strong>" + balancePrefix + totalAmount + "</strong></td>");
+            writer.println("<td></td>");
+            writer.println("</tr>");
+            
+            writer.println("</table>");
+            
+   
+            writer.println("<button class=\"print-btn\" onclick=\"window.print()\">Print Statement</button>");
+            
+    
+            writer.println("<p style=\"margin-top: 40px; font-size: 12px; color: #666;\">Generated on: " 
+                + LocalDateTime.now().format(formatter) + " by MegaCityCab System</p>");
+            
+ 
+            writer.println("</body>");
+            writer.println("<script>");
+            writer.println("// Auto download prompt");
+            writer.println("if(window.navigator.msSaveOrOpenBlob) {");
+            writer.println("  var blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});");
+            writer.println("  window.navigator.msSaveOrOpenBlob(blob, '" + fileName + "');");
+            writer.println("} else if(!window.location.href.includes('download=true')) {");
+            writer.println("  window.print();");
+            writer.println("}");
+            writer.println("</script>");
+            writer.println("</html>");
             
         } catch (Exception e) {
             e.printStackTrace();

@@ -28,121 +28,111 @@ public class DriverWithdrawServlet extends HttpServlet {
     private final DriverWalletDAO walletDAO = new DriverWalletDAOImpl();
     private final DriverBankDAO bankDAO = new DriverBankDAOImpl();
     private final DriverTransactionDAO transactionDAO = new DriverTransactionDAOImpl();
-    
-    // Constants for withdrawal limits
+
     private static final BigDecimal MIN_WITHDRAWAL = new BigDecimal("100");
     private static final BigDecimal MAX_WITHDRAWAL = new BigDecimal("1000000");
     
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null || !session.getAttribute("userType").equals("driver")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    HttpSession session = request.getSession(false);
+    if (session == null || session.getAttribute("userId") == null || !session.getAttribute("userType").equals("driver")) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return;
+    }
+    
+    int driverId = (int) session.getAttribute("userId");
+    response.setContentType("application/json");
+    PrintWriter out = response.getWriter();
+    
+    try {
+        String amountStr = request.getParameter("amount");
+        if (amountStr == null || amountStr.isEmpty()) {
+            out.print("{\"success\": false, \"message\": \"Amount is required.\"}");
             return;
         }
         
-        int driverId = (int) session.getAttribute("userId");
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-        
+        BigDecimal amount;
         try {
-            // Get and validate the withdrawal amount
-            String amountStr = request.getParameter("amount");
-            if (amountStr == null || amountStr.isEmpty()) {
-                out.print("{\"success\": false, \"message\": \"Amount is required.\"}");
+            amount = new BigDecimal(amountStr);
+            
+            if (amount.compareTo(MIN_WITHDRAWAL) < 0) {
+                out.print("{\"success\": false, \"message\": \"Minimum withdrawal amount is LKR " + MIN_WITHDRAWAL + ".\"}");
                 return;
             }
             
-            BigDecimal amount;
-            try {
-                amount = new BigDecimal(amountStr);
-                
-                // Check minimum and maximum withdrawal limits
-                if (amount.compareTo(MIN_WITHDRAWAL) < 0) {
-                    out.print("{\"success\": false, \"message\": \"Minimum withdrawal amount is LKR " + MIN_WITHDRAWAL + ".\"}");
-                    return;
-                }
-                
-                if (amount.compareTo(MAX_WITHDRAWAL) > 0) {
-                    out.print("{\"success\": false, \"message\": \"Maximum withdrawal amount is LKR " + MAX_WITHDRAWAL + ".\"}");
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                out.print("{\"success\": false, \"message\": \"Invalid amount format.\"}");
+            if (amount.compareTo(MAX_WITHDRAWAL) > 0) {
+                out.print("{\"success\": false, \"message\": \"Maximum withdrawal amount is LKR " + MAX_WITHDRAWAL + ".\"}");
                 return;
             }
-            
-            // Get bank details
-            String bankIdStr = request.getParameter("bankId");
-            if (bankIdStr == null || bankIdStr.isEmpty()) {
-                out.print("{\"success\": false, \"message\": \"Bank account selection is required.\"}");
-                return;
-            }
-            
-            int bankId;
-            try {
-                bankId = Integer.parseInt(bankIdStr);
-            } catch (NumberFormatException e) {
-                out.print("{\"success\": false, \"message\": \"Invalid bank account selection.\"}");
-                return;
-            }
-            
-            // Check if the bank account belongs to the driver
-            Optional<DriverBank> bankOpt = bankDAO.findById(bankId);
-            if (!bankOpt.isPresent() || bankOpt.get().getDriverId() != driverId) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                out.print("{\"success\": false, \"message\": \"You don't have permission to use this bank account.\"}");
-                return;
-            }
-            
-            // Check if wallet exists and has sufficient balance
-            Optional<DriverWallet> walletOpt = walletDAO.findByDriverId(driverId);
-            if (!walletOpt.isPresent()) {
-                out.print("{\"success\": false, \"message\": \"Wallet not found.\"}");
-                return;
-            }
-            
-            DriverWallet wallet = walletOpt.get();
-            if (wallet.getWalletBalance().compareTo(amount) < 0) {
-                out.print("{\"success\": false, \"message\": \"Insufficient balance.\"}");
-                return;
-            }
-            
-            // Process withdrawal
-            boolean updateSuccess = walletDAO.updateBalance(driverId, amount, false);
-            
-            if (updateSuccess) {
-                // Record the transaction
-                DriverTransaction transaction = new DriverTransaction();
-                transaction.setDriverId(driverId);
-                transaction.setTransactionType("Withdrawal");
-                transaction.setAmount(amount);
-                
-                // Mask account number for security in the description
-                String accountNumber = bankOpt.get().getAccountNumber();
-                String maskedAccount = accountNumber.length() > 4 ? 
-                    "XXXX" + accountNumber.substring(accountNumber.length() - 4) : accountNumber;
-                
-                transaction.setDescription("Withdrawal to " + bankOpt.get().getBankName() + 
-                                          " account ending with " + maskedAccount);
-                transaction.setDateTime(LocalDateTime.now());
-                
-                boolean txnSuccess = transactionDAO.save(transaction);
-                
-                if (txnSuccess) {
-                    out.print("{\"success\": true, \"message\": \"Withdrawal successful. Money will be transferred to your bank account.\"}");
-                } else {
-                    // This is a critical situation where wallet is updated but transaction record failed
-                    out.print("{\"success\": true, \"message\": \"Withdrawal processed but transaction recording failed. Please contact support.\"}");
-                }
-            } else {
-                out.print("{\"success\": false, \"message\": \"Failed to process withdrawal. Please try again later.\"}");
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.print("{\"success\": false, \"message\": \"An error occurred: " + e.getMessage() + "\"}");
+        } catch (NumberFormatException e) {
+            out.print("{\"success\": false, \"message\": \"Invalid amount format.\"}");
+            return;
         }
+        
+        String bankIdStr = request.getParameter("bankId");
+        if (bankIdStr == null || bankIdStr.isEmpty()) {
+            out.print("{\"success\": false, \"message\": \"Bank account selection is required.\"}");
+            return;
+        }
+        
+        int bankId;
+        try {
+            bankId = Integer.parseInt(bankIdStr);
+        } catch (NumberFormatException e) {
+            out.print("{\"success\": false, \"message\": \"Invalid bank account selection.\"}");
+            return;
+        }
+
+        Optional<DriverBank> bankOpt = bankDAO.findById(bankId);
+        if (!bankOpt.isPresent() || bankOpt.get().getDriverId() != driverId) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            out.print("{\"success\": false, \"message\": \"You don't have permission to use this bank account.\"}");
+            return;
+        }
+        
+        Optional<DriverWallet> walletOpt = walletDAO.findByDriverId(driverId);
+        if (!walletOpt.isPresent()) {
+            out.print("{\"success\": false, \"message\": \"Wallet not found.\"}");
+            return;
+        }
+        
+        DriverWallet wallet = walletOpt.get();
+        if (wallet.getWalletBalance().compareTo(amount) < 0) {
+            out.print("{\"success\": false, \"message\": \"Insufficient balance.\"}");
+            return;
+        }
+        
+        boolean updateSuccess = walletDAO.updateBalance(driverId, amount, false);
+        
+        if (updateSuccess) {
+            DriverTransaction transaction = new DriverTransaction();
+            transaction.setDriverId(driverId);
+            transaction.setTransactionType("Withdrawal");
+            
+   
+            String description = String.format("Withdrawal to %s account (****%s)", 
+                bankOpt.get().getBankName(), 
+                bankOpt.get().getAccountNumber().substring(bankOpt.get().getAccountNumber().length() - 4));
+            transaction.setDescription(description);
+            
+            transaction.setAmount(amount);
+            transaction.setDateTime(LocalDateTime.now());
+            
+            boolean txnSuccess = transactionDAO.save(transaction);
+            
+            if (txnSuccess) {
+                out.print("{\"success\": true, \"message\": \"Withdrawal successful. Money will be transferred to your bank account.\"}");
+            } else {
+                out.print("{\"success\": true, \"message\": \"Withdrawal processed but transaction recording failed. Please contact support.\"}");
+            }
+        } else {
+            out.print("{\"success\": false, \"message\": \"Failed to process withdrawal. Please try again later.\"}");
+        }
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        out.print("{\"success\": false, \"message\": \"An error occurred: " + e.getMessage() + "\"}");
     }
+}
 }

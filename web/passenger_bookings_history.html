@@ -204,7 +204,6 @@ function renderBookingHistory(bookings) {
 
     bookings.forEach(booking => {
         const row = document.createElement('tr');
-        // Normalize status to lowercase and handle payment status
         const status = booking.status?.toLowerCase() || 'pending';
         const paymentStatus = status === 'completed' ? 'paid' : (booking.paymentMethod || 'pending');
         

@@ -449,7 +449,6 @@ async function fetchRideHistory(filters = {}) {
         rideData = await response.json();
         
         if (Array.isArray(rideData)) {
-            // Apply locally tracked payment statuses
             rideData.forEach(ride => {
                 const rideKey = `ride-${currentDriverId}-${ride.bookingId}`;
                 if (paidRides[rideKey]) {
@@ -459,7 +458,6 @@ async function fetchRideHistory(filters = {}) {
             
             generateRideCards(rideData);
             updateSummaryStats(rideData);
-            // Reapply event listeners after DOM update
             reapplyEventListeners();
         } else if (rideData.error) {
             showNotification(rideData.error, 'error');
@@ -732,7 +730,7 @@ async function showPaymentModal(ride) {
         const methodDiv = document.createElement('div');
         methodDiv.className = 'payment-method no-cards';
         methodDiv.innerHTML = `
-            <p>No cards found. <a href="add-card.jsp">Add a card</a></p>
+            <p>No cards found. </p>
         `;
         methodsContainer.appendChild(methodDiv);
     }

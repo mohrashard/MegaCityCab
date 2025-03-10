@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import javax.servlet.ServletException;
@@ -88,6 +90,12 @@ public class PaymentServlet extends HttpServlet {
         conn.setAutoCommit(false);
         
 
+        int driverId = getDriverIdFromBooking(conn, bookingId);
+        if (driverId <= 0) {
+            throw new PaymentException("Could not find a driver assigned to this booking");
+        }
+
+
         if (paymentMethod.equals("Wallet")) {
             BigDecimal currentBalance = walletDAO.getWalletBalance(conn, passengerId);
             if (currentBalance.compareTo(amount) < 0) {
@@ -95,7 +103,7 @@ public class PaymentServlet extends HttpServlet {
             }
         }
         
-
+   
         if (!bookingDAO.updateBookingPayment(bookingId, paymentMethod, "ended")) {
             throw new PaymentException("Failed to update booking payment details");
         }
@@ -108,15 +116,20 @@ public class PaymentServlet extends HttpServlet {
         transaction.setDescription(getPaymentDescription(paymentMethod));
         transaction.setDateTime(LocalDateTime.now());
         
-
         transactionDAO.addTransaction(conn, transaction);
  
+
         if (paymentMethod.equals("Wallet")) {
-  
             walletDAO.updateWalletBalance(conn, passengerId, amount.negate());
         } else if (paymentMethod.equals("Card")) {
             cardPaymentProcessor.processPayment(passengerId, bookingId, amount, transaction.getDescription());
         }
+        
+
+        updateDriverWallet(conn, driverId, amount);
+        
+
+        addDriverTransaction(conn, driverId, amount, paymentMethod);
         
         conn.commit();
         return true;
@@ -135,6 +148,95 @@ public class PaymentServlet extends HttpServlet {
             case "Cash": return "Paid in Cash";
             case "Wallet": return "Wallet Payment";
             default: return "Card Payment";
+        }
+    }
+    
+
+    private int getDriverIdFromBooking(Connection conn, int bookingId) throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            String sql = "SELECT driver_id FROM bookings WHERE booking_id = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, bookingId);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("driver_id");
+            }
+            return -1;
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+        }
+    }
+    
+
+    private void updateDriverWallet(Connection conn, int driverId, BigDecimal amount) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            if (!driverWalletExists(conn, driverId)) {
+                createDriverWallet(conn, driverId);
+            }
+
+            String sql = "UPDATE driver_wallet SET " +
+                         "wallet_balance = wallet_balance + ?, " +
+                         "total_earnings = total_earnings + ? " +
+                         "WHERE driver_id = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setBigDecimal(1, amount);
+            stmt.setBigDecimal(2, amount);
+            stmt.setInt(3, driverId);
+            stmt.executeUpdate();
+        } finally {
+            if (stmt != null) stmt.close();
+        }
+    }
+    
+
+    private boolean driverWalletExists(Connection conn, int driverId) throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            String sql = "SELECT driver_id FROM driver_wallet WHERE driver_id = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, driverId);
+            rs = stmt.executeQuery();
+            return rs.next();
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+        }
+    }
+    
+
+    private void createDriverWallet(Connection conn, int driverId) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String sql = "INSERT INTO driver_wallet (driver_id, wallet_balance, total_earnings, total_expenses) " +
+                         "VALUES (?, 0.00, 0.00, 0.00)";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, driverId);
+            stmt.executeUpdate();
+        } finally {
+            if (stmt != null) stmt.close();
+        }
+    }
+    
+
+    private void addDriverTransaction(Connection conn, int driverId, BigDecimal amount, String paymentMethod) 
+            throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String sql = "INSERT INTO driver_transaction " +
+                         "(driver_id, transaction_type, amount, description, date_time) " +
+                         "VALUES (?, 'Ride Earnings', ?, ?, GETDATE())";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, driverId);
+            stmt.setBigDecimal(2, amount);
+            stmt.setString(3, "Ride payment received via " + paymentMethod);
+            stmt.executeUpdate();
+        } finally {
+            if (stmt != null) stmt.close();
         }
     }
 }
