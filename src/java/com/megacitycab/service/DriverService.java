@@ -5,7 +5,7 @@ import com.megacitycab.model.Driver;
 import com.megacitycab.util.PasswordUtil;
 
 public class DriverService {
-    private DriverDAO driverDAO;
+    public DriverDAO driverDAO;
 
     public DriverService() {
         driverDAO = new DriverDAO();
