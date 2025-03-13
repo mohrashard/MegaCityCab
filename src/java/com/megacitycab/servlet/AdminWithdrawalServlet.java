@@ -1,8 +1,6 @@
 package com.megacitycab.servlet;
 
 import com.megacitycab.service.AdminTransactionService;
-import com.megacitycab.service.AdminTransactionService;
-import com.megacitycab.service.AdminTransactionServiceImpl;
 import com.megacitycab.service.AdminTransactionServiceImpl;
 
 import javax.servlet.ServletException;
@@ -14,7 +12,6 @@ import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.System.out;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
@@ -24,16 +21,14 @@ public class AdminWithdrawalServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    HttpSession session = request.getSession();
-    Integer adminId = (Integer) session.getAttribute("adminId");
-    
-    if (adminId == null) {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().print("{\"success\": false, \"message\": \"Unauthorized\"}");
-        return;
-    }
+        HttpSession session = request.getSession();
+        Integer adminId = (Integer) session.getAttribute("adminId");
         
-
+        if (adminId == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("{\"success\": false, \"message\": \"Unauthorized\"}");
+            return;
+        }
         
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -52,6 +47,11 @@ public class AdminWithdrawalServlet extends HttpServlet {
             String body = sb.toString();
             String amountStr = extractValueFromJson(body, "amount");
             String description = extractValueFromJson(body, "description");
+            
+            // Set default description if null
+            if (description == null || description.isEmpty()) {
+                description = "withdrawal";
+            }
             
             if (amountStr == null || amountStr.isEmpty()) {
                 out.print("{\"success\": false, \"message\": \"Amount is required.\"}");
@@ -91,7 +91,7 @@ public class AdminWithdrawalServlet extends HttpServlet {
         }
     }
     
-private int getAdminIdFromSession(HttpSession session) {
+    private int getAdminIdFromSession(HttpSession session) {
         Object adminIdObj = session.getAttribute("adminId");
         if (adminIdObj instanceof Integer) {
             return (Integer) adminIdObj;
@@ -100,7 +100,7 @@ private int getAdminIdFromSession(HttpSession session) {
         }
     }
     
-    // Helper method to extract values from JSON string
+    // Improved helper method to extract values from JSON string
     private String extractValueFromJson(String json, String key) {
         String keyWithQuotes = "\"" + key + "\"";
         int keyIndex = json.indexOf(keyWithQuotes);
@@ -108,22 +108,62 @@ private int getAdminIdFromSession(HttpSession session) {
             return null;
         }
         
-        int valueStartIndex = json.indexOf(":", keyIndex) + 1;
+        int colonIndex = json.indexOf(":", keyIndex);
+        if (colonIndex == -1) {
+            return null;
+        }
+        
+        int valueStartIndex = colonIndex + 1;
+        // Skip whitespace
         while (valueStartIndex < json.length() && Character.isWhitespace(json.charAt(valueStartIndex))) {
             valueStartIndex++;
         }
         
-        boolean isStringValue = json.charAt(valueStartIndex) == '"';
-        if (isStringValue) {
+        if (valueStartIndex >= json.length()) {
+            return null;
+        }
+        
+        char firstChar = json.charAt(valueStartIndex);
+        
+        // Handle string values
+        if (firstChar == '"') {
             valueStartIndex++; // Skip opening quote
-            int valueEndIndex = json.indexOf("\"", valueStartIndex);
-            return json.substring(valueStartIndex, valueEndIndex);
-        } else {
+            int valueEndIndex = valueStartIndex;
+            
+            // Find closing quote that's not escaped
+            boolean escaped = false;
+            while (valueEndIndex < json.length()) {
+                char c = json.charAt(valueEndIndex);
+                if (c == '\\') {
+                    escaped = !escaped;
+                } else if (c == '"' && !escaped) {
+                    break;
+                } else {
+                    escaped = false;
+                }
+                valueEndIndex++;
+            }
+            
+            if (valueEndIndex < json.length()) {
+                return json.substring(valueStartIndex, valueEndIndex);
+            }
+        } 
+        // Handle numeric, boolean, or null values
+        else {
             int valueEndIndex = json.indexOf(",", valueStartIndex);
             if (valueEndIndex == -1) {
                 valueEndIndex = json.indexOf("}", valueStartIndex);
             }
-            return json.substring(valueStartIndex, valueEndIndex).trim();
+            if (valueEndIndex != -1) {
+                String value = json.substring(valueStartIndex, valueEndIndex).trim();
+                // Handle null value
+                if ("null".equals(value)) {
+                    return null;
+                }
+                return value;
+            }
         }
+        
+        return null;
     }
 }

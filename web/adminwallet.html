@@ -638,16 +638,16 @@ function renderBanks() {
   }
 
   // Transaction handling
-  async function handleWithdraw() {
-    try {
-      const amount = document.getElementById('withdrawAmount').value;
-      const bankId = document.getElementById('bankSelect').value;
-      
-      const res = await fetch('/CabSystem/admin/withdraw', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ amount, bankId })
-      });
+async function handleWithdraw() {
+  try {
+    const res = await fetch('/CabSystem/admin/withdrawal', { // Changed to match servlet mapping
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ 
+        amount: document.getElementById('withdrawAmount').value,
+        bankId: document.getElementById('bankSelect').value 
+      })
+    });
       
       if (!res.ok) throw new Error('Withdrawal failed');
       const data = await res.json();
