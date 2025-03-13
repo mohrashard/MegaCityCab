@@ -1,7 +1,6 @@
 package com.megacitycab.test;
 
 import com.megacitycab.dao.DriverCardDAO;
-import com.megacitycab.dao.DriverCardDAOImpl;
 import com.megacitycab.model.DriverCard;
 import com.megacitycab.service.DriverCardsService;
 
