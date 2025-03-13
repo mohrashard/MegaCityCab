@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class DriverDAO {
 
     public void saveDriver(Driver driver) {
-        String sql = "INSERT INTO Drivers (full_name, email, phone, password, license_no, vehicle_type, vehicle_reg) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Drivers (full_name, email, phone, password, salt, license_no, vehicle_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -20,11 +20,11 @@ public class DriverDAO {
             pstmt.setString(2, driver.getEmail());
             pstmt.setString(3, driver.getPhone());
             pstmt.setString(4, driver.getPassword());
-            pstmt.setString(5, driver.getLicenseNo());
-            pstmt.setString(6, driver.getVehicleType());
-            pstmt.setString(7, driver.getVehicleReg());
-            pstmt.executeUpdate();
+            pstmt.setString(5, driver.getSalt());
+            pstmt.setString(6, driver.getLicenseNo());
+            pstmt.setString(7, driver.getVehicleType());
 
+            pstmt.executeUpdate();
             System.out.println("Driver saved successfully!");
         } catch (SQLException e) {
             System.out.println("Error saving driver: " + e.getMessage());
@@ -46,11 +46,11 @@ public class DriverDAO {
                     rs.getString("full_name"),
                     rs.getString("email"),
                     rs.getString("phone"),
-                    rs.getString("password"),
                     rs.getString("license_no"),
-                    rs.getString("vehicle_type"),
-                    rs.getString("vehicle_reg")
+                    rs.getString("vehicle_type")
                 );
+                driver.setPassword(rs.getString("password")); 
+                driver.setSalt(rs.getString("salt")); 
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving driver: " + e.getMessage());
@@ -58,4 +58,76 @@ public class DriverDAO {
 
         return driver;
     }
+
+    public Driver getDriverByPhone(String phone) {
+        String sql = "SELECT * FROM Drivers WHERE phone = ?";
+        Driver driver = null;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, phone);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                driver = new Driver(
+                    rs.getString("full_name"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("license_no"),
+                    rs.getString("vehicle_type")
+                );
+                driver.setPassword(rs.getString("password")); 
+                driver.setSalt(rs.getString("salt")); 
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving driver: " + e.getMessage());
+        }
+
+        return driver;
+    }
+
+    public Driver getDriverByLicense(String licenseNo) {
+        String sql = "SELECT * FROM Drivers WHERE license_no = ?";
+        Driver driver = null;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, licenseNo);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                driver = new Driver(
+                    rs.getString("full_name"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("license_no"),
+                    rs.getString("vehicle_type")
+                );
+                driver.setPassword(rs.getString("password")); 
+                driver.setSalt(rs.getString("salt")); 
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving driver: " + e.getMessage());
+        }
+
+        return driver;
+    }
+    public boolean updateDriverStatus(int driverId, String status) {
+    String sql = "UPDATE [megacitycab].[dbo].[Drivers] SET status = ? WHERE driver_id = ?";
+    
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setString(1, status);
+        stmt.setInt(2, driverId);
+        
+        return stmt.executeUpdate() > 0;
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 }

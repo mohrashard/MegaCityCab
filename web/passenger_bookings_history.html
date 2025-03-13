@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History</title>
+         <link rel="stylesheet" href="css/pass_book_history.css">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        .card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card-owner {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.card-number {
+    letter-spacing: 1px;
+    font-family: monospace;
+}
+    </style>
+</head>
+<body>
+  
+    <nav class="sidebar"> 
+        <div class="logo"> 
+            <img src="images/megacitycablogo.png" alt="" class="logo-img"> 
+            Mega City Cab 
+        </div> 
+ 
+        <ul class="nav-links"> 
+            <li class="nav-item"> 
+                <a href="passenger_dashboard.html" class="nav-link"> 
+                    <i class="fas fa-home"></i> Dashboard 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="passengerbooking.html" class="nav-link"> 
+                    <i class="fas fa-car"></i> Book a Ride 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="#" class="nav-link active"> 
+                    <i class="fas fa-history"></i> My Bookings 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="passengerwallet.html" class="nav-link"> 
+                    <i class="fas fa-credit-card"></i> Billing 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="passenger_profile.html" class="nav-link"> 
+                    <i class="fas fa-user"></i> Profile 
+                </a> 
+            </li> 
+            <li class="nav-item"> 
+                <a href="pass_help.html" class="nav-link"> 
+                    <i class="fas fa-question-circle"></i> Help 
+                </a> 
+            </li> 
+                                                               <li class="nav-item">
+<a href="PassengerLogout" class="nav-link">
+    <i class="fas fa-sign-out-alt"></i> Log Out
+</a>
+
+                </li>
+            
+        </ul> 
+    </nav>
+
+    <!-- Mobile menu toggle button (visible only on mobile) -->
+    <button class="toggle-menu" id="toggleMenu" style="display: none;">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <div class="container">
+                <h1>Your Booking History</h1>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Driver</th>
+                            <th>Contact</th>
+                            <th>Pick-Up</th>
+                            <th>Drop-Off</th>
+                            <th>Vehicle</th>
+                            <th>Fee</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="booking-history">
+                        <!-- Booking data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+<div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Payment Details</h3>
+            <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="payment-form">
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method:</label>
+                    <select id="paymentMethod" onchange="handlePaymentMethodChange()">
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Credit/Debit Card</option>
+                        <option value="Wallet">Wallet</option>
+                    </select>
+                </div>
+
+
+                <div id="cardSection" class="payment-section" style="display: none;">
+                    <h4>Saved Cards</h4>
+                    <div id="savedCardsList" class="card-list"></div>
+                    <button class="btn btn-secondary" onclick="showAddCardForm()">Add New Card</button>
+                </div>
+
+
+                <div id="walletSection" class="payment-section" style="display: none;">
+                    <p>Available Balance: <span id="walletBalance">LKR 0.00</span></p>
+                </div>
+
+          
+                <div class="payment-info">
+                    
+                    <p><strong>Pickup:</strong> <span id="modalPickupLocation"></span></p>
+                    <p><strong>Dropoff:</strong> <span id="modalDropoffLocation"></span></p>
+                    <p><strong>Amount:</strong> LKR <span id="modalHireFee">0.00</span></p>
+                    <p><strong>Selected Method:</strong> <span id="modalCurrentMethod"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-cancel" id="cancelPayment">Cancel</button>
+            <button class="btn btn-confirm" id="confirmPayment">Confirm Payment</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-overlay" id="addCardModal" style="display: none;">
+    <div class="modal">
+        <!-- Add Card Form -->
+    </div>
+</div>
+
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    loadBookingHistory();
+    setupEventListeners();
+    setupMobileView();
+});
+
+let currentBooking = null;
+let selectedCard = null;
+
+function loadBookingHistory() {
+    fetch('/CabSystem/bookhistory')
+        .then(response => response.json())
+        .then(bookings => renderBookingHistory(bookings))
+        .catch(error => {
+            showToast('Error loading bookings', 'error');
+            console.error('Error loading bookings:', error);
+        });
+}
+
+function setupEventListeners() {
+document.getElementById('booking-history').addEventListener('click', (e) => {
+    const button = e.target.closest('.pay-driver-btn');
+    if (button) {
+        const bookingId = parseInt(button.dataset.id);
+        openPaymentModal(bookingId);
+    }
+});
+
+    document.getElementById('closeModal').addEventListener('click', closePaymentModal);
+    document.getElementById('cancelPayment').addEventListener('click', closePaymentModal);
+    document.getElementById('confirmPayment').addEventListener('click', processPayment);
+    document.getElementById('toggleMenu').addEventListener('click', toggleSidebar);
+    window.addEventListener('resize', setupMobileView);
+}
+
+function renderBookingHistory(bookings) {
+    const bookingHistoryElement = document.getElementById('booking-history');
+    bookingHistoryElement.innerHTML = '';
+
+    bookings.forEach(booking => {
+        const row = document.createElement('tr');
+        const status = booking.status?.toLowerCase() || 'pending';
+        const paymentStatus = status === 'completed' ? 'paid' : (booking.paymentMethod || 'pending');
+        
+        row.innerHTML = `
+            <td>${booking.driverName || 'Pending'}</td>
+            <td>${booking.driverPhone || 'Pending'}</td>
+            <td>${booking.pickupLocation}</td>
+            <td>${booking.dropoffLocation}</td>
+            <td>${booking.vehicleType}</td>
+            <td>${booking.hireFee?.toFixed(2) || 'Pending'}</td>
+            <td><span class="status status-${status}">${booking.status || 'Pending'}</span></td>
+            <td>${paymentStatus}</td>
+            <td>${getActionButton(booking)}</td>
+        `;
+
+        bookingHistoryElement.appendChild(row);
+    });
+}
+
+function getActionButton(booking) {
+    const status = booking.status?.toLowerCase();
+    if (status === 'assigned') {
+        return `<button class="btn btn-primary pay-driver-btn" data-id="${booking.bookingId}">Pay Driver</button>`;
+    }
+    return `<button class="btn btn-disabled" disabled>${status === 'ended' ? 'Completed' : 'Awaiting Driver'}</button>`;
+}
+
+
+function openPaymentModal(bookingId) {
+    document.getElementById('paymentModal').classList.add('active');
+    fetch(`/CabSystem/booking-details?bookingId=${bookingId}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.text();
+        })
+        .then(text => {
+            try {
+                currentBooking = JSON.parse(text);
+                // Update modal elements here
+                document.getElementById('paymentModal').style.display = 'flex';
+            } catch (e) {
+                throw new Error('Invalid JSON: ' + text);
+            }
+        })
+        .catch(error => {
+            showToast('Error: ' + error.message, 'error');
+            console.error('Fetch error:', error);
+        });
+}
+
+async function openPaymentModal(bookingId) {
+    try {
+        const response = await fetch(`/CabSystem/booking-details?bookingId=${bookingId}`);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || 'Failed to fetch booking details');
+        }
+
+        const responseData = await response.json();
+        currentBooking = responseData;
+        
+               console.log('DEBUG: Current Booking Details', currentBooking);
+
+
+        document.getElementById('modalPickupLocation').textContent = currentBooking.pickupLocation;
+        document.getElementById('modalDropoffLocation').textContent = currentBooking.dropoffLocation;
+        document.getElementById('modalHireFee').textContent = (currentBooking.hireFee || 0).toFixed(2);
+        document.getElementById('modalCurrentMethod').textContent = currentBooking.paymentMethod;
+
+        await loadWalletBalance();
+        await loadSavedCards();
+
+
+        document.getElementById('paymentModal').classList.add('active');
+    } catch (error) {
+        showToast(`Error: ${error.message}`, 'error');
+        console.error('Payment modal error:', error);
+    }
+}
+
+function closePaymentModal() {
+    document.getElementById('paymentModal').classList.remove('active');
+    currentBooking = null;
+    selectedCard = null;
+}
+
+async function loadWalletBalance() {
+    try {
+        const response = await fetch(`/CabSystem/viewWallet`);
+        const data = await response.json();
+        document.getElementById('walletBalance').textContent = `LKR ${data.balance.toFixed(2)}`;
+    } catch (error) {
+        console.error('Error loading wallet balance:', error);
+    }
+}
+
+async function loadSavedCards() {
+    try {
+        const response = await fetch('/CabSystem/viewCards/pay');
+        const cards = await response.json();
+        
+        const cardsList = document.getElementById('savedCardsList');
+        cardsList.innerHTML = cards.map(card => {
+         
+            const maskedNumber = card.cardNumber.slice(0, card.cardNumber.length / 2).replace(/\d/g, '*') + 
+                                 card.cardNumber.slice(-4);
+            
+            return `
+                <div class="card-item" onclick="selectCard(this, ${card.cardId})">
+                    <input type="radio" name="selectedCard">
+                    <div class="card-details">
+                        <span class="card-owner">${card.cardholderName}</span>
+                        <span class="card-number">${maskedNumber}</span>
+                        <span class="card-expiry">Exp: ${card.expiryDate}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (error) {
+        showToast('Error loading saved cards', 'error');
+    }
+}
+
+function selectCard(element, cardId) {
+    selectedCard = { cardId: cardId };
+    document.querySelectorAll('.card-item').forEach(item => item.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function handlePaymentMethodChange() {
+    const method = document.getElementById('paymentMethod').value;
+    document.getElementById('cardSection').style.display = method === 'Card' ? 'block' : 'none';
+    document.getElementById('walletSection').style.display = method === 'Wallet' ? 'block' : 'none';
+}
+
+async function processPayment() {
+    const method = document.getElementById('paymentMethod').value;
+
+    if (method === 'Card' && !selectedCard) {
+        showToast('Please select a payment card', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch('/CabSystem/process-payment', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: `bookingId=${currentBooking.bookingId}&paymentMethod=${method}&amount=${currentBooking.hireFee}`
+        });
+
+        const responseText = await response.text();
+        const result = JSON.parse(responseText);
+
+        if (result.success) {
+            showToast('Payment processed successfully!', 'success');
+            closePaymentModal();
+            loadBookingHistory();
+        } else {
+            showToast('Payment processing failed', 'error');
+        }
+    } catch (error) {
+        showToast(error.message || 'Payment processing failed', 'error');
+        console.error('Payment error:', error);
+    }
+}
+
+
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+
+    toast.innerHTML = `
+        <div class="toast-icon">${type === 'success' ? '✓' : '✕'}</div>
+        <div class="toast-message">${message}</div>
+        <button class="toast-close">&times;</button>
+    `;
+
+    document.getElementById('toastContainer').appendChild(toast);
+
+    toast.offsetHeight;
+
+    setTimeout(() => {
+        toast.classList.add('active');
+    }, 10);
+
+    setTimeout(() => {
+        removeToast(toast);
+    }, 5000);
+
+    toast.querySelector('.toast-close').addEventListener('click', () => {
+        removeToast(toast);
+    });
+}
+
+function removeToast(toast) {
+    toast.classList.remove('active');
+    setTimeout(() => {
+        toast.remove();
+    }, 300);
+}
+
+function setupMobileView() {
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        document.getElementById('toggleMenu').style.display = 'block';
+        document.querySelector('.main-content').style.marginLeft = '0';
+        document.querySelector('.main-content').style.width = '100%';
+    } else {
+        document.getElementById('toggleMenu').style.display = 'none';
+        document.querySelector('.main-content').style.marginLeft = '250px';
+        document.querySelector('.main-content').style.width = 'calc(100% - 250px)';
+        document.getElementById('sidebar').classList.remove('open');
+    }
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+}
+
+document.getElementById('closeModalBtn').addEventListener('click', closePaymentModal);
+document.getElementById('cancelPaymentBtn').addEventListener('click', closePaymentModal);
+document.getElementById('confirmPaymentBtn').addEventListener('click', processPayment);
+document.getElementById('toggleMenu').addEventListener('click', toggleSidebar);
+window.addEventListener('resize', setupMobileView);
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadBookingHistory();
+    setupMobileView();
+});
+    </script>
+</body>
+</html>
+
+

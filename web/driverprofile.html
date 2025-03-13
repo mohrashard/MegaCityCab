@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <link rel="website icon" href="images/megacitycablogo.png" type="png">
+
+    <title>Driver Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+        
+        :root {
+            --primary-color: #d4a700;
+            --secondary-color: #282a2c;
+            --background-color: #faefb5;
+            --card-bg: #ffffff;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --text-color: #333333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body { 
+            display: flex; 
+            background-color: var(--background-color); 
+            color: var(--text-color); 
+            overflow-x: hidden; 
+            min-height: 100vh;
+        }
+        
+        .sidebar { 
+            width: 250px; 
+            height: 100vh;
+            background: var(--secondary-color); 
+            padding: 20px; 
+            color: var(--primary-color); 
+            transform: translateX(0); 
+            transition: var(--transition);
+            position: fixed;
+            overflow-y: auto;
+        }
+        
+        .sidebar.collapsed { 
+            transform: translateX(-250px); 
+        }
+        
+        .sidebar-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            padding: 15px; 
+            background-color: var(--secondary-color); 
+            border-bottom: 2px solid var(--primary-color); 
+        } 
+        
+        .sidebar-header h2 { 
+            color: var(--primary-color); 
+            font-size: 18px; 
+            font-weight: bold; 
+        } 
+        
+        .logo-img { 
+            width: 40px; 
+            height: 40px; 
+            object-fit: contain; 
+        }
+        
+        .nav-item { 
+            margin-top: 10px; 
+            padding: 15px; 
+            margin: 5px 0; 
+            border-radius: var(--border-radius); 
+            cursor: pointer; 
+            transition: var(--transition); 
+        }
+        
+        .nav-item:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+        }
+        
+        .nav-item.active { 
+            background: rgba(255, 255, 255, 0.2); 
+        }
+        
+        .nav-item a { 
+            color: inherit; 
+            text-decoration: none; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+        
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            font-size: 28px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            margin-right: 20px;
+        }
+        
+        .profile-info h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .driver-id {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .status {
+            display: inline-block;
+            background-color: var(--success-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+        
+        .form-group {
+            flex: 1 0 calc(50% - 30px);
+            margin: 0 15px 20px;
+            min-width: 250px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+            background-color: #fff;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(212, 167, 0, 0.2);
+        }
+        
+        .form-control:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .has-error .form-control {
+            border-color: var(--danger-color);
+        }
+        
+        .has-error .error-message {
+            display: block;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #c09600;
+        }
+        
+        .btn-primary:disabled {
+            background-color: #e9d78a;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background-color: #eee;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #ddd;
+        }
+        
+        .profile-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-250px);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 100;
+                background-color: var(--primary-color);
+                color: var(--secondary-color);
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: var(--box-shadow);
+            }
+            
+            .form-group {
+                flex: 1 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="images/megacitycablogo.png" alt="Mega City Cab Logo" class="logo-img">
+            <h2>Mega City Cab</h2>
+        </div>
+        <div class="nav-item"><a href="driver_dashboard.html"><i class="fas fa-home"></i> Dashboard</a></div>
+        <div class="nav-item"><a href="ridemanagement.html"><i class="fas fa-route"></i> Current Rides</a></div>
+        <div class="nav-item"><a href="ridehistory.html"><i class="fas fa-history"></i> Ride History</a></div>
+        <div class="nav-item"><a href="earnings.html"><i class="fas fa-wallet"></i> Earnings</a></div>
+        <div class="nav-item active"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></div>
+        <div class="nav-item"><a href="driverHelp.html"><i class="fas fa-question-circle"></i> Help Center</a></div>
+        <div class="nav-item"><a href="PassengerLogout"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+    </nav>
+    
+    <div class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <main class="main-content">
+        <div class="profile-container">
+            <h1 class="page-title"><i class="fas fa-user-circle"></i> Driver Profile</h1>
+            
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="display-name">John Doe</h2>
+                        <div class="driver-id">Driver ID: <span id="display-id">MC10025</span></div>
+                        <span class="status">Active</span>
+                    </div>
+                </div>
+                
+                <form id="profile-form">
+                    <div class="profile-section">
+                        <h3 class="section-title">Personal Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="full_name">Full Name</label>
+                                <input type="text" class="form-control" id="full_name" value="John Doe">
+                                <div class="error-message">Please enter your full name</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="driver_id">Driver ID</label>
+                                <input type="text" class="form-control" id="driver_id" value="MC10025" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email Address</label>
+                                <input type="email" class="form-control" id="email" value="john.doe@example.com">
+                                <div class="error-message">Please enter a valid email address</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="phone">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" value="(555) 123-4567">
+                                <div class="error-message">Please enter a valid phone number</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3 class="section-title">License Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="license_no">License Number</label>
+                                <input type="text" class="form-control" id="license_no" value="DL12345678" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3 class="section-title">Vehicle Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="vehicle_type">Vehicle Type</label>
+                                <select class="form-control" id="vehicle_type">
+                                    <option value="sedan">Sedan</option>
+                                    <option value="suv">SUV</option>
+                                    <option value="hatchback">Hatchback</option>
+                                    <option value="luxury">Luxury</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="vehicle_number">Vehicle Number</label>
+                                <input type="text" class="form-control" id="vehicle_number" value="ABC 1234">
+                                <div class="error-message">Please enter a valid vehicle number</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3 class="section-title">Account Security</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="current_password">Current Password</label>
+                                <input type="password" class="form-control" id="current_password">
+                                <div class="error-message">Please enter your current password</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="new_password">New Password</label>
+                                <input type="password" class="form-control" id="new_password">
+                                <div class="error-message">Password must be at least 8 characters</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="save-btn" disabled>Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadDriverProfile();
+    
+    const form = document.getElementById('profile-form');
+    const saveBtn = document.getElementById('save-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    
+    const formInputs = form.querySelectorAll('input:not([disabled]), select:not([disabled])');
+    
+    window.originalValues = {};
+    
+    formInputs.forEach(input => {
+        window.originalValues[input.id] = input.value;
+        input.addEventListener('input', function() {
+            validateSingleField(input);
+            checkFormChanges();
+        });
+    });
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (validateForm()) {
+            updateDriverProfile();
+        }
+    });
+    
+    cancelBtn.addEventListener('click', function() {
+        formInputs.forEach(input => {
+            input.value = window.originalValues[input.id] || '';
+            input.parentElement.classList.remove('has-error');
+            const errorMsg = input.parentElement.querySelector('.error-message');
+            if (errorMsg) errorMsg.textContent = '';
+        });
+        document.getElementById('current_password').value = '';
+        document.getElementById('new_password').value = '';
+        saveBtn.disabled = true;
+    });
+    
+    addErrorMessageDivs();
+    addStyles();
+});
+
+function loadDriverProfile() {
+    fetch('/CabSystem/driverProfile', {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            populateProfileForm(data.data);
+            addErrorMessageDivs();
+            const form = document.getElementById('profile-form');
+            const formInputs = form.querySelectorAll('input:not([disabled]), select:not([disabled])');
+            formInputs.forEach(input => {
+                window.originalValues[input.id] = input.value;
+            });
+            document.querySelectorAll('.has-error').forEach(field => {
+                field.classList.remove('has-error');
+                const errorMsg = field.querySelector('.error-message');
+                if (errorMsg) errorMsg.textContent = '';
+            });
+        } else {
+            showNotification('error', data.message || 'Failed to load profile');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('error', 'Failed to load profile. Please try again later.');
+    });
+}
+
+function populateProfileForm(data) {
+    document.getElementById('display-name').textContent = data.full_name;
+    document.getElementById('display-id').textContent = data.driver_id;
+    document.getElementById('full_name').value = data.full_name;
+    document.getElementById('driver_id').value = data.driver_id;
+    document.getElementById('email').value = data.email || '';
+    document.getElementById('phone').value = data.phone || '';
+    document.getElementById('license_no').value = data.license_no;
+    const vehicleTypeSelect = document.getElementById('vehicle_type');
+    vehicleTypeSelect.value = data.vehicle_type.toLowerCase();
+    vehicleTypeSelect.disabled = true;
+    const vehicleNumberInput = document.getElementById('vehicle_number');
+    vehicleNumberInput.value = data.vehicle_number;
+    vehicleNumberInput.disabled = true;
+    vehicleTypeSelect.parentElement.classList.add('non-editable');
+    vehicleNumberInput.parentElement.classList.add('non-editable');
+    const statusSpan = document.querySelector('.status');
+    statusSpan.textContent = data.status;
+    statusSpan.className = 'status ' + data.status.toLowerCase();
+}
+
+function updateDriverProfile() {
+    const formData = new FormData(document.getElementById('profile-form'));
+    formData.delete('vehicle_type');
+    formData.delete('vehicle_number');
+    
+    fetch('/CabSystem/driverProfile', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('success', data.message || 'Profile updated successfully!');
+            document.getElementById('display-name').textContent = document.getElementById('full_name').value;
+            const formInputs = document.querySelectorAll('input:not([disabled]), select:not([disabled])');
+            formInputs.forEach(input => {
+                window.originalValues[input.id] = input.value;
+            });
+            document.getElementById('current_password').value = '';
+            document.getElementById('new_password').value = '';
+            document.getElementById('save-btn').disabled = true;
+            document.querySelectorAll('.has-error').forEach(field => {
+                field.classList.remove('has-error');
+                const errorMsg = field.querySelector('.error-message');
+                if (errorMsg) errorMsg.textContent = '';
+            });
+        } else {
+            if (data.errors) {
+                for (const field in data.errors) {
+                    const inputElement = document.getElementById(field);
+                    if (inputElement) {
+                        inputElement.parentElement.classList.add('has-error');
+                        const errorDiv = inputElement.parentElement.querySelector('.error-message');
+                        if (errorDiv) errorDiv.textContent = data.errors[field];
+                    }
+                }
+                showNotification('error', 'Please correct the errors in the form');
+            } else {
+                showNotification('error', data.message || 'Failed to update profile');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('error', 'Failed to update profile. Please try again later.');
+    });
+}
+
+function isValidEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+function isValidPhone(phone) {
+    const regex = /^[\d\s\-\(\)]{7,15}$/;
+    return regex.test(phone);
+}
+
+function isValidPassword(password) {
+    const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    return regex.test(password);
+}
+
+function validateForm() {
+    let isValid = true;
+    document.querySelectorAll('.error-message').forEach(msg => msg.textContent = '');
+    document.querySelectorAll('.has-error').forEach(field => field.classList.remove('has-error'));
+    
+    const fullName = document.getElementById('full_name');
+    if (!fullName.value.trim()) {
+        fullName.parentElement.classList.add('has-error');
+        fullName.parentElement.querySelector('.error-message').textContent = 'Full name is required.';
+        isValid = false;
+    }
+    
+    const email = document.getElementById('email');
+    if (email.value.trim() && !isValidEmail(email.value)) {
+        email.parentElement.classList.add('has-error');
+        email.parentElement.querySelector('.error-message').textContent = 'Please provide a valid email address.';
+        isValid = false;
+    }
+    
+    const phone = document.getElementById('phone');
+    if (phone.value.trim() && !isValidPhone(phone.value)) {
+        phone.parentElement.classList.add('has-error');
+        phone.parentElement.querySelector('.error-message').textContent = 'Please provide a valid phone number.';
+        isValid = false;
+    }
+    
+    const licenseNo = document.getElementById('license_no');
+    if (!licenseNo.value.trim()) {
+        licenseNo.parentElement.classList.add('has-error');
+        licenseNo.parentElement.querySelector('.error-message').textContent = 'License number is required.';
+        isValid = false;
+    }
+    
+    const newPassword = document.getElementById('new_password');
+    const currentPassword = document.getElementById('current_password');
+    if (newPassword.value.trim()) {
+        if (!isValidPassword(newPassword.value)) {
+            newPassword.parentElement.classList.add('has-error');
+            newPassword.parentElement.querySelector('.error-message').textContent = 'Password must be at least 8 characters with one uppercase letter, one number, and one special character';
+            isValid = false;
+        }
+        if (!currentPassword.value.trim()) {
+            currentPassword.parentElement.classList.add('has-error');
+            currentPassword.parentElement.querySelector('.error-message').textContent = 'Current password is required.';
+            isValid = false;
+        }
+    }
+    
+    return isValid;
+}
+
+function validateSingleField(field) {
+    field.parentElement.classList.remove('has-error');
+    const errorMsg = field.parentElement.querySelector('.error-message');
+    errorMsg.textContent = '';
+    
+    switch(field.id) {
+        case 'full_name':
+            if (!field.value.trim()) {
+                field.parentElement.classList.add('has-error');
+                errorMsg.textContent = 'Full name is required.';
+                return false;
+            }
+            break;
+        case 'email':
+            if (field.value.trim() && !isValidEmail(field.value)) {
+                field.parentElement.classList.add('has-error');
+                errorMsg.textContent = 'Please provide a valid email address.';
+                return false;
+            }
+            break;
+        case 'phone':
+            if (field.value.trim() && !isValidPhone(field.value)) {
+                field.parentElement.classList.add('has-error');
+                errorMsg.textContent = 'Please provide a valid phone number.';
+                return false;
+            }
+            break;
+        case 'license_no':
+            if (!field.value.trim()) {
+                field.parentElement.classList.add('has-error');
+                errorMsg.textContent = 'License number is required.';
+                return false;
+            }
+            break;
+        case 'new_password':
+            if (field.value.trim() && !isValidPassword(field.value)) {
+                field.parentElement.classList.add('has-error');
+                errorMsg.textContent = 'Password must be at least 8 characters with one uppercase letter, one number, and one special character';
+                return false;
+            }
+            if (field.value.trim() && !document.getElementById('current_password').value.trim()) {
+                document.getElementById('current_password').parentElement.classList.add('has-error');
+                document.getElementById('current_password').parentElement.querySelector('.error-message').textContent = 'Current password is required.';
+                return false;
+            }
+            break;
+        case 'current_password':
+            if (document.getElementById('new_password').value.trim() && !field.value.trim()) {
+                field.parentElement.classList.add('has-error');
+                errorMsg.textContent = 'Current password is required.';
+                return false;
+            }
+            break;
+    }
+    return true;
+}
+
+function checkFormChanges() {
+    let hasChanges = false;
+    const formInputs = document.querySelectorAll('input:not([disabled]), select:not([disabled])');
+    formInputs.forEach(input => {
+        if ((input.id === 'current_password' || input.id === 'new_password') && input.value.trim() !== '') {
+            hasChanges = true;
+        } else if (input.value !== window.originalValues[input.id]) {
+            hasChanges = true;
+        }
+    });
+    document.getElementById('save-btn').disabled = !hasChanges;
+}
+
+function addErrorMessageDivs() {
+    document.querySelectorAll('.form-group').forEach(group => {
+        if (!group.querySelector('.error-message')) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            group.appendChild(errorDiv);
+        }
+    });
+}
+
+function addStyles() {
+    if (!document.getElementById('profile-styles')) {
+        const style = document.createElement('style');
+        style.id = 'profile-styles';
+        style.textContent = `
+            .error-message { color: #f44336; font-size: 12px; margin-top: 5px; min-height: 17px; }
+            .has-error input, .has-error select { border-color: #f44336; }
+            .non-editable { background-color: #f5f5f5; position: relative; }
+            .non-editable::after { content: "Not editable"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #888; }
+            .non-editable input, .non-editable select { background-color: #f5f5f5; cursor: not-allowed; }
+            .notification { position: fixed; top: 20px; right: 20px; padding: 15px; border-radius: 4px; color: white; display: none; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+            .notification.success { background-color: #4CAF50; }
+            .notification.error { background-color: #f44336; }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function showNotification(type, message) {
+    const notification = document.querySelector('.notification') || document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.display = 'block';
+    document.body.appendChild(notification);
+    setTimeout(() => { notification.style.display = 'none'; }, 5000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ride Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+        <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link rel="stylesheet" href="css/ridemanager.css">
+    
+    <style>
+  
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transform: translateX(120%);
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
+    border-left: 4px solid transparent;
+    z-index: 1000;
+    max-width: 320px;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.notification::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 16px;
+    min-width: 20px;
+}
+
+
+.notification.success {
+    background: #e8f6ef;
+    border-color: #4CAF50;
+    color: #2e7d32;
+}
+
+.notification.success::before {
+    content: "\f058";
+}
+
+.notification.error {
+    background: #feebee;
+    border-color: #f44336;
+    color: #c62828;
+}
+
+.notification.error::before {
+    content: "\f06a";
+}
+
+.notification.warning {
+    background: #fff8e5;
+    border-color: #ffc107;
+    color: #d4a307;
+}
+
+.notification.warning::before {
+    content: "\f071";
+}
+
+.notification.info {
+    background: #e3f2fd;
+    border-color: #2196F3;
+    color: #1565c0;
+}
+
+.notification.info::before {
+    content: "\f05a";
+}
+
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(120%);
+    }
+}
+
+.notification .close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 12px;
+    padding: 2px;
+    transition: opacity 0.2s ease;
+}
+
+.notification .close:hover {
+    opacity: 1;
+}
+
+
+    </style>
+  
+  </head>
+  <body>
+
+
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <img src="images/megacitycablogo.png" alt="Mega City Cab Logo" class="logo-img">  
+        <h2>Mega City Cab</h2>
+      </div>
+
+<div class="nav-item "><a href="driver_dashboard.html"><i class="fas fa-home"></i> Dashboard</a></div>
+  <div class="nav-item active"><a href="r#"><i class="fas fa-route"></i> Current Rides</a></div>
+  <div class="nav-item"><a href="ridehistory.html"><i class="fas fa-history"></i> Ride History</a></div>
+  <div class="nav-item"><a href="driver_earning.html"><i class="fas fa-wallet"></i> Earnings</a></div>
+  <div class="nav-item"><a href="driverprofile.html"><i class="fas fa-user"></i> Profile</a></div>
+  <div class="nav-item"><a href="driverHelp.html"><i class="fas fa-question-circle"></i> Help Center</a></div>
+  <div class="nav-item"><a href="PassengerLogout"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+    </nav>
+
+    <div class="overlay"></div>
+
+    <div class="main-content">
+      <div class="header">
+        <div>
+
+          <h1>Driver Ride Management</h1>
+        </div>
+        <div class="user-info">
+          <div class="#"></div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="current-rides">
+          <i class="fas fa-route"></i> Current Rides
+        </div>
+        <div class="tab" data-tab="ended-rides">
+          <i class="fas fa-history"></i> Ended Rides
+        </div>
+      </div>
+
+      <div class="tab-content active" id="current-rides">
+        <div class="ride-grid">
+ 
+          <div class="ride-card">
+            <div class="ride-status status-pending">Pending</div>
+            <div class="passenger-name">Rahul Sharma</div>
+            <div class="phone-number">
+              <a href="#">
+                <i class="fas fa-phone"></i> +91 98765 43210
+              </a>
+            </div>
+            <div class="location-info">
+              <div class="location-label">
+                <i class="fas fa-map-marker-alt" style="color: green"></i>
+                Pickup Location
+              </div>
+              <div class="location-address">
+                Indiranagar Metro Station, Bangalore
+              </div>
+            </div>
+            <div class="location-info">
+              <div class="location-label">
+                <i class="fas fa-map-marker-alt" style="color: red"></i>
+                Drop-off Location
+              </div>
+              <div class="location-address">
+                Forum Mall, Koramangala, Bangalore
+              </div>
+            </div>
+            <div class="ride-datetime">
+              <i class="far fa-calendar-alt"></i> 1 Mar, 2025 • 11:30 AM
+            </div>
+            <div class="fee-breakdown">
+              <div class="fee-item total">
+                <span>Total Fee:</span>
+                <span>₹1000</span>
+              </div>
+              <div class="fee-item">
+                <span>Admin Charge (30%):</span>
+                <span>₹300</span>
+              </div>
+              <div class="fee-item earnings">
+                <span>Driver Earnings:</span>
+                <span>₹700</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-accept" onclick="acceptRide(this)">
+                <i class="fas fa-check"></i> Accept Ride
+              </button>
+              <button class="btn btn-cancel" onclick="showCancelModal()">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="tab-content" id="ended-rides">
+        <div class="filters">
+          <input
+            type="date"
+            class="filter-input"
+            placeholder="Filter by date"
+          />
+          <input
+            type="text"
+            class="filter-input"
+            placeholder="Search by name"
+          />
+          <select class="filter-input">
+            <option value="">Sort by earnings</option>
+            <option value="high">Highest first</option>
+            <option value="low">Lowest first</option>
+          </select>
+        </div>
+
+        <div class="ride-grid">
+      
+          <div class="ride-card">
+            <div class="ride-status status-completed">Completed</div>
+            <div class="passenger-name">Vikram Singh</div>
+            <div class="phone-number">
+              <a href="tel:+919876543210">
+                <i class="fas fa-phone"></i> +91 98765 43210
+              </a>
+            </div>
+            <div class="location-info">
+              <div class="location-label">
+                <i class="fas fa-map-marker-alt" style="color: green"></i>
+                Pickup Location
+              </div>
+              <div class="location-address">HSR Layout, Bangalore</div>
+            </div>
+            <div class="location-info">
+              <div class="location-label">
+                <i class="fas fa-map-marker-alt" style="color: red"></i>
+                Drop-off Location
+              </div>
+              <div class="location-address">Electronic City, Bangalore</div>
+            </div>
+            <div class="ride-datetime">
+              <i class="far fa-calendar-alt"></i> 28 Feb, 2025 • 3:45 PM
+            </div>
+            <div class="fee-breakdown">
+              <div class="fee-item total">
+                <span>Total Fee:</span>
+                <span>₹850</span>
+              </div>
+              <div class="fee-item">
+                <span>Admin Charge (30%):</span>
+                <span>₹255</span>
+              </div>
+              <div class="fee-item earnings">
+                <span>Driver Earnings:</span>
+                <span>₹595</span>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+    
+    
+    <script src="js/ridermanager.js"></script>
+
+    
+  </body>
+</html>

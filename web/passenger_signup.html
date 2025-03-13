@@ -14,12 +14,10 @@
     
 
 
-<<<<<<< HEAD
+
   
         <style>
-=======
-    <style>
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
+
         .account ul {
     list-style-type: none; 
     padding: 0;
@@ -40,11 +38,19 @@
 .account i:hover {
     color: white;
 }
-    </style>
-<<<<<<< HEAD
+.error-message {
+    color: red;             
+    margin-top: 10px;      
+    background-color: #ffe6e6; 
+    border: 1px solid red;  
+    padding: 10px;         
+    border-radius: 5px;    
+    display: none;          
+    text-align: center;
+}
 
-=======
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
+    </style>
+
     
     </head>
     
@@ -125,6 +131,8 @@
       <textarea id="address" name="address" rows="3" required></textarea>
     </div>
     <button type="submit">Sign Up</button>
+    <div class="error-message" id="error-message" style="color: red; display: none; margin-top: 10px;"></div>
+
   </form>
   <p style="margin-top: 50px;">Already have an account? <a href="login.html" class="login-link">Log In</a></p>
 </div>
@@ -149,7 +157,7 @@
       
       <a href="about.html">About Us</a>
       <a href="contactus.php">Contact Us</a>
-      <a href="logout.php">Claim Admin</a>
+      <a href="admin_login.html">Claim Admin</a>
     </div>
    
   
@@ -162,23 +170,55 @@
 $(document).ready(function() {
     $('#signupForm').on('submit', function(event) {
         event.preventDefault(); 
-
         
-        var formData = $(this).serialize();
+        let phone = $('#phone').val().trim();
+        let password = $('#password').val();
+        let confirmPassword = $('#confirmPassword').val();
+        let nic = $('#nic').val().trim();
+        let email = $('#email').val().trim(); // Ensure you also get the email value
 
-       
-        $.post('passengerSignup', formData, function(response) {
-            
-            $('#message').text(response.message);
+        let errorMessage = "";
+        let errorContainer = $("#error-message");
 
+        errorContainer.hide();
+
+        let phonePattern = /^07\d{8}$/;
+        if (!phonePattern.test(phone)) {
+            errorMessage = "Invalid Sri Lankan phone number.";
+        } 
+        else if (!/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(password)) {
+            errorMessage = "Password must be at least 8 characters long and contain at least 1 special character.";
+        } 
+        else if (password !== confirmPassword) {
+            errorMessage = "Passwords do not match.";
+        } 
+        else if (!/^(\d{9}[Vv]|[0-9]{12})$/.test(nic)) {
+            errorMessage = "Invalid Sri Lankan NIC number.";
+        }
+
+        if (errorMessage !== "") {
+            errorContainer.html(errorMessage);
+            errorContainer.show(); 
+        } else {
+            errorContainer.hide(); 
             
-            $('#message').fadeIn(300).delay(2000).fadeOut(300, function() {
-                
-                location.reload();
+            var formData = $(this).serialize();
+            $.post('passengerSignup', formData, function(response) {
+                if (response.message.includes("already in use")) {
+                    errorContainer.html(response.message);
+                    errorContainer.show();
+                } else {
+                    $('#message').text(response.message);
+                    $('#message').fadeIn(300).delay(2000).fadeOut(300, function() {
+                        location.reload();
+                    });
+                }
             });
-        });
+        }
     });
 });
+
+
 
 
     </script>

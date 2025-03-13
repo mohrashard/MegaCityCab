@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Wallet</title>
+    <link rel="stylesheet" href="css/adminwallet.css"/>
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+ 
+
+    <style>
+    
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-title, .modal-header h3, .modal-header h5 {
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+
+.modal-body {
+  padding: 20px;
+}
+
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-control, .form-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-control:focus, .form-select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #3a7abd;
+}
+
+.btn-secondary {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #e6e6e6;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.alert-danger {
+  background-color: #fdf3f2;
+  color: #d62c1a;
+  border: 1px solid #f9d6d5;
+}
+
+.d-none {
+  display: none;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+
+@media (max-width: 576px) {
+  .modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+    </style>
+
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">Mega City Cab</div>
+        <ul class="nav-links">
+          <li><a href="adminDashboard.html" data-page="dashboard">Dashboard</a></li>
+          <li>
+            <a href="bookingmanagement.html" data-page="bookings">Bookings</a>
+          </li>
+          <li><a href="#" data-page="customers">Customers</a></li>
+          <li><a href="#" data-page="drivers">Drivers</a></li>
+          <li>
+            <a href="managevehicles.html" data-page="vehicles">Vehicles</a>
+          </li>
+          <li>
+            <a href="adminwallet.html" class="active" data-page="wallet"
+              >Wallet</a
+            >
+          </li>
+          <li><a href="#" data-page="logout">Logout</a></li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Wallet Grid Layout -->
+        <div class="wallet-grid">
+          <!-- Balance Section -->
+          <div class="balance-section">
+            <div class="balance-card">
+              <div>
+                <h2 class="balance-title">Available Balance</h2>
+                <div class="balance-amount">LKR 12,485.65</div>
+              </div>
+              <div class="balance-meta">
+                <span class="last-updated">Last updated: Today, 10:45 AM</span>
+                <button class="withdraw-btn">Withdraw</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Transactions -->
+          <div class="recent-transactions">
+  <div class="transactions-title">
+    <span>Recent Transactions</span>
+    <a href="#trans" class="view-all-link">View All</a>
+  </div>
+  <div class="transaction-preview" id="recentTransactionsContainer">
+    <!-- Dynamic content will be loaded here -->
+    <div class="loading-spinner"></div>
+  </div>
+</div>
+
+          <!-- Bank Management Section -->
+          <div class="bank-management">
+            <h2 class="bank-title">Bank Accounts</h2>
+            <div class="banks-grid">
+              <div class="bank-card">
+                <div class="bank-logo">CA</div>
+                <div class="bank-info">
+                  <div class="bank-name">City Bank</div>
+                  <div class="account-number">****4582</div>
+                </div>
+                <div class="bank-actions">
+                  <button class="bank-action-btn">✏️</button>
+                  <button class="bank-action-btn">🗑️</button>
+                </div>
+              </div>
+              <div class="bank-card">
+                <div class="bank-logo">NB</div>
+                <div class="bank-info">
+                  <div class="bank-name">National Bank</div>
+                  <div class="account-number">****7823</div>
+                </div>
+                <div class="bank-actions">
+                  <button class="bank-action-btn">✏️</button>
+                  <button class="bank-action-btn">🗑️</button>
+                </div>
+              </div>
+              <div class="bank-card">
+                <div class="bank-logo">MC</div>
+                <div class="bank-info">
+                  <div class="bank-name">Metro Credit Union</div>
+                  <div class="account-number">****9214</div>
+                </div>
+                <div class="bank-actions">
+                  <button class="bank-action-btn">✏️</button>
+                  <button class="bank-action-btn">🗑️</button>
+                </div>
+              </div>
+              <button class="add-bank-btn">
+                <div class="add-bank-icon">+</div>
+                <span>Add New Bank Account</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Transaction History Section -->
+        <div class="transaction-history" id="trans">
+  <h2 class="history-title">Transaction History</h2>
+  <table class="transaction-table">
+    <thead>
+      <tr>
+        <th>Date & Time</th>
+        <th>Description</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody id="transactionHistoryBody">
+      <!-- Dynamic content will be loaded here -->
+      <tr class="loading-spinner-row">
+        <td colspan="3">
+          <div class="loading-spinner"></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+        </div>
+      </div>
+    </div>
+      
+<!-- Withdraw Modal -->
+<div class="modal" id="withdrawModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Withdraw Funds</h5>
+      <button class="close-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="withdrawForm">
+        <div class="mb-3">
+          <label for="withdrawAmount" class="form-label">Amount (LKR)</label>
+          <input type="number" class="form-control" id="withdrawAmount" min="1" step="0.01" required>
+        </div>
+        <div class="mb-3">
+          <label for="bankSelect" class="form-label">Select Bank Account</label>
+          <select class="form-select" id="bankSelect" required>
+            <!-- Banks will be loaded dynamically -->
+          </select>
+        </div>
+      </form>
+      <div id="withdrawError" class="alert alert-danger mt-3 d-none"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary">Cancel</button>
+      <button type="button" class="btn btn-primary" id="confirmWithdraw">Withdraw</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Bank Modal -->
+<div class="modal" id="addBankModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Add Bank Account</h3>
+      <button class="close-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="addBankForm">
+        <div class="mb-3">
+          <label for="bankName" class="form-label">Bank Name</label>
+          <input type="text" class="form-control" id="bankName" required>
+        </div>
+        <div class="mb-3">
+          <label for="accountNumber" class="form-label">Account Number</label>
+          <input type="text" class="form-control" id="accountNumber" required>
+        </div>
+        <div class="mb-3">
+          <label for="accountName" class="form-label">Account Holder Name</label>
+          <input type="text" class="form-control" id="accountName" required>
+        </div>
+        <div class="mb-3">
+          <label for="branchName" class="form-label">Branch Name</label>
+          <input type="text" class="form-control" id="branchName" required>
+        </div>
+      </form>
+      <div id="addBankError" class="alert alert-danger mt-3 d-none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary">Cancel</button>
+      <button class="btn btn-primary" id="saveBankBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Bank Modal -->
+<div class="modal" id="editBankModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Edit Bank Account</h3>
+      <button class="close-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="editBankForm">
+        <input type="hidden" id="editBankId">
+        <div class="mb-3">
+          <label for="editBankName" class="form-label">Bank Name</label>
+          <input type="text" class="form-control" id="editBankName" required>
+        </div>
+        <div class="mb-3">
+          <label for="editAccountNumber" class="form-label">Account Number</label>
+          <input type="text" class="form-control" id="editAccountNumber" required>
+        </div>
+        <div class="mb-3">
+          <label for="editAccountName" class="form-label">Account Holder Name</label>
+          <input type="text" class="form-control" id="editAccountName" required>
+        </div>
+        <div class="mb-3">
+          <label for="editBranchName" class="form-label">Branch Name</label>
+          <input type="text" class="form-control" id="editBranchName" required>
+        </div>
+      </form>
+      <div id="editBankError" class="alert alert-danger mt-3 d-none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary">Cancel</button>
+      <button class="btn btn-primary" id="updateBankBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Bank Confirmation Modal -->
+<div class="modal" id="deleteBankModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Delete Bank Account</h3>
+      <button class="close-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete this bank account?</p>
+      <input type="hidden" id="deleteBankId">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary">Cancel</button>
+      <button type="button" class="btn btn-danger" id="confirmDeleteBank">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal" id="successModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Success</h5>
+      <button class="close-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="successMessage"></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary">OK</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Define modals
+  const modals = {
+    withdraw: document.getElementById('withdrawModal'),
+    addBank: document.getElementById('addBankModal'),
+    editBank: document.getElementById('editBankModal'),
+    deleteBank: document.getElementById('deleteBankModal'),
+    success: document.getElementById('successModal')
+  };
+
+  let banks = [];
+
+  // Event Listeners
+  document.querySelector('.withdraw-btn')?.addEventListener('click', () => openModal('withdraw'));
+  document.querySelector('.add-bank-btn')?.addEventListener('click', () => openModal('addBank'));
+
+  // Modal close handlers
+  document.querySelectorAll('.close-btn, .btn-secondary').forEach(btn => {
+    btn.addEventListener('click', () => closeAllModals());
+  });
+
+  // Bank card actions using event delegation
+document.querySelector('.banks-grid')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('.bank-action-btn');
+  if (!btn) return;
+
+  const bankId = btn.dataset.bankId;
+  const action = btn.textContent.trim() === '✏️' ? 'edit' : 
+                 btn.textContent.trim() === '🗑️' ? 'delete' : null;
+
+  if (action === 'edit') handleEditBank(bankId);
+  if (action === 'delete') handleDeleteBank(bankId);
+});
+
+  // Form submission handlers
+  document.getElementById('confirmWithdraw')?.addEventListener('click', handleWithdraw);
+  document.getElementById('saveBankBtn')?.addEventListener('click', handleAddBank);
+  document.getElementById('updateBankBtn')?.addEventListener('click', handleUpdateBank);
+  document.getElementById('confirmDeleteBank')?.addEventListener('click', confirmDeleteBank);
+
+  // Initialize data
+  initialize();
+
+  async function initialize() {
+    await Promise.all([
+      loadWalletBalance(),
+      loadRecentTransactions(),
+      loadBanks(),
+      loadTransactionHistory()
+    ]);
+    updateAddButtonState();
+    startAutoRefresh();
+  }
+
+  function startAutoRefresh() {
+    refreshInterval = setInterval(async () => {
+      await loadWalletBalance();
+      await loadRecentTransactions();
+      await loadTransactionHistory();
+    }, 30000); // Refresh every 30 seconds
+  }
+
+  function openModal(type) {
+    closeAllModals();
+    if (modals[type]) modals[type].style.display = 'block';
+    if (type === 'withdraw') loadBankOptions();
+  }
+
+  function closeAllModals() {
+    Object.values(modals).forEach(modal => modal.style.display = 'none');
+    document.querySelectorAll('.alert').forEach(alert => alert.classList.add('d-none'));
+    document.querySelectorAll('form').forEach(form => form.reset());
+  }
+
+  async function loadBankOptions() {
+    const select = document.getElementById('bankSelect');
+    select.innerHTML = banks.length 
+      ? banks.map(bank => `<option value="${bank.bankId}">${bank.bankName} (****${bank.accountNumber.slice(-4)})</option>`).join('')
+      : '<option value="">No bank accounts available</option>';
+  }
+
+  async function handleEditBank(bankId) {
+    const bank = banks.find(b => b.bankId == bankId);
+    if (!bank) return;
+
+    document.getElementById('editBankId').value = bank.bankId;
+    document.getElementById('editBankName').value = bank.bankName;
+    document.getElementById('editAccountNumber').value = bank.accountNumber;
+    document.getElementById('editAccountName').value = bank.accountHolder;
+    document.getElementById('editBranchName').value = bank.branch;
+    openModal('editBank');
+  }
+
+async function handleDeleteBank(bankId) {
+  document.getElementById('deleteBankId').value = bankId;
+  openModal('deleteBank');
+}
+
+  // Data loading functions
+  async function loadWalletBalance() {
+    try {
+      const res = await fetch('/CabSystem/admin/wallet');
+      if (!res.ok) throw new Error('Failed to load balance');
+      const data = await res.json();
+      
+      if (data.success) {
+        document.querySelector('.balance-amount').textContent = `LKR ${parseFloat(data.balance).toFixed(2)}`;
+      }
+    } catch (error) {
+      console.error('Balance error:', error);
+      handleSessionError(error);
+    }
+  }
+
+  async function loadBanks() {
+    try {
+      const res = await fetch('/CabSystem/admin/banks');
+      if (!res.ok) throw new Error('Failed to load banks');
+      const data = await res.json();
+      
+      if (data.success) {
+        banks = data.banks || [];
+        renderBanks();
+      }
+    } catch (error) {
+      console.error('Bank error:', error);
+      handleSessionError(error);
+    }
+  }
+
+function renderBanks() {
+  const container = document.querySelector('.banks-grid');
+  container.innerHTML = '';
+  
+  banks.forEach(bank => {
+    container.insertAdjacentHTML('beforeend', `
+      <div class="bank-card">
+        <div class="bank-logo">${bank.bankName.slice(0,2).toUpperCase()}</div>
+        <div class="bank-info">
+          <div class="bank-name">${bank.bankName}</div>
+          <div class="account-number">****${bank.accountNumber.slice(-4)}</div>
+        </div>
+        <div class="bank-actions">
+          <button class="bank-action-btn" data-bank-id="${bank.bankId}">✏️</button>
+          <button class="bank-action-btn" data-bank-id="${bank.bankId}">🗑️</button>
+        </div>
+      </div>
+    `);
+  });
+
+  // Add "Add New Bank" button if under limit
+  if (banks.length < 3) {
+    container.insertAdjacentHTML('beforeend', `
+      <button class="add-bank-btn">
+        <div class="add-bank-icon">+</div>
+        <span>Add New Bank Account</span>
+      </button>
+    `);
+  }
+  
+  // Re-attach event listener to new add button
+  document.querySelector('.add-bank-btn')?.addEventListener('click', () => openModal('addBank'));
+}
+
+  function updateAddButtonState() {
+    const addButton = document.querySelector('.add-bank-btn');
+    if (addButton) {
+      addButton.disabled = banks.length >= 3;
+    }
+  }
+
+  // Transaction handling
+async function handleWithdraw() {
+  try {
+    const res = await fetch('/CabSystem/admin/withdrawal', { // Changed to match servlet mapping
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ 
+        amount: document.getElementById('withdrawAmount').value,
+        bankId: document.getElementById('bankSelect').value 
+      })
+    });
+      
+      if (!res.ok) throw new Error('Withdrawal failed');
+      const data = await res.json();
+      
+      if (data.success) {
+        showSuccess('Withdrawal successful!');
+        initialize();
+      }
+    } catch (error) {
+      showError('withdrawError', error.message);
+    }
+  }
+
+  // Bank CRUD operations
+  async function handleAddBank() {
+    try {
+      const formData = {
+        bankName: document.getElementById('bankName').value,
+        accountNumber: document.getElementById('accountNumber').value,
+        accountHolder: document.getElementById('accountName').value,
+        branch: document.getElementById('branchName').value
+      };
+
+      const res = await fetch('/CabSystem/admin/banks', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(formData)
+      });
+
+      if (!res.ok) throw new Error('Failed to add bank');
+      const data = await res.json();
+      
+      if (data.success) {
+        showSuccess('Bank added successfully!');
+        await loadBanks();
+        closeAllModals();
+      }
+    } catch (error) {
+      showError('addBankError', error.message);
+    }
+  }
+
+async function handleUpdateBank() {
+  try {
+    const bankId = document.getElementById('editBankId').value;
+    const formData = {
+      bankName: document.getElementById('editBankName').value,
+      accountNumber: document.getElementById('editAccountNumber').value,
+      accountHolder: document.getElementById('editAccountName').value,
+      branch: document.getElementById('editBranchName').value
+    };
+
+    // Make sure to include the correct full path
+    const res = await fetch(`/CabSystem/admin/banks/${bankId}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(formData)
+    });
+
+    if (!res.ok) throw new Error('Failed to update bank');
+    const data = await res.json();
+    
+    if (data.success) {
+      showSuccess('Bank updated successfully!');
+      await loadBanks();
+      closeAllModals();
+    } else {
+      throw new Error(data.message || 'Update failed');
+    }
+  } catch (error) {
+    showError('editBankError', error.message);
+  }
+}
+
+async function confirmDeleteBank() {
+  try {
+    const bankId = document.getElementById('deleteBankId').value;
+    // Make sure to use the correct URL
+    const res = await fetch(`/CabSystem/admin/banks/${bankId}`, {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) throw new Error('Failed to delete bank');
+    const data = await res.json();
+    
+    if (data.success) {
+      showSuccess('Bank deleted successfully!');
+      await loadBanks();
+      closeAllModals();
+    } else {
+      throw new Error(data.message || 'Delete failed');
+    }
+  } catch (error) {
+    console.error('Delete error:', error);
+    showError('generalError', 'Failed to delete bank account: ' + error.message);
+  }
+}
+
+  // Helper functions
+  function showSuccess(message) {
+    document.getElementById('successMessage').textContent = message;
+    openModal('success');
+    setTimeout(closeAllModals, 3000);
+  }
+
+  function showError(elementId, message) {
+    const element = document.getElementById(elementId);
+    element.textContent = message;
+    element.classList.remove('d-none');
+  }
+
+  function handleSessionError(error) {
+    if (error.message.includes('401')) {
+      window.location.href = 'admin_login.html';
+    }
+  }
+  
+  
+  // Helper functions
+  function formatAmount(amount, type) {
+    const formatted = `LKR ${parseFloat(amount).toFixed(2)}`;
+    return type === 'withdrawal' ? `-${formatted}` : formatted;
+  }
+
+  function getAmountClass(transaction) {
+    return {
+      'income': 'income',
+      'withdrawal': 'withdrawal',
+      'pending': 'pending'
+    }[transaction.status.toLowerCase()] || 'pending';
+  }
+
+  function getAmountColor(transaction) {
+    return {
+      'income': 'var(--success-color)',
+      'withdrawal': 'var(--danger-color)',
+      'pending': 'var(--pending-color)'
+    }[transaction.status.toLowerCase()] || 'var(--pending-color)';
+  }
+
+  async function loadRecentTransactions() {
+    try {
+      const container = document.getElementById('recentTransactionsContainer');
+      container.innerHTML = '<div class="loading-spinner"></div>';
+      
+      const res = await fetch('/CabSystem/admin/transactions?limit=5');
+      if (!res.ok) throw new Error('Failed to load transactions');
+      const data = await res.json();
+      
+      if (data.success) {
+        container.innerHTML = data.transactions
+          .map(transaction => createTransactionHTML(transaction))
+          .join('') || '<div class="no-transactions">No recent transactions</div>';
+      }
+    } catch (error) {
+      console.error('Transaction error:', error);
+      showError('generalError', 'Failed to load transactions');
+    }
+  }
+
+  async function loadTransactionHistory() {
+    try {
+      const tbody = document.getElementById('transactionHistoryBody');
+      tbody.innerHTML = '<tr class="loading-spinner-row"><td colspan="3"><div class="loading-spinner"></div></td></tr>';
+      
+      const res = await fetch('/CabSystem/admin/transactions');
+      if (!res.ok) throw new Error('Failed to load transaction history');
+      const data = await res.json();
+      
+      if (data.success) {
+        tbody.innerHTML = data.transactions
+          .map(transaction => createHistoryRowHTML(transaction))
+          .join('') || '<tr><td colspan="3">No transactions found</td></tr>';
+      }
+    } catch (error) {
+      console.error('History error:', error);
+      showError('generalError', 'Failed to load transaction history');
+    }
+  }
+
+  // HTML template functions
+  function createTransactionHTML(transaction) {
+    const date = new Date(transaction.createdAt).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    return `
+      <div class="transaction-item">
+        <div class="transaction-details">
+          <div class="transaction-title">${transaction.description}</div>
+          <div class="transaction-date">${date}</div>
+        </div>
+        <div class="transaction-amount ${getAmountClass(transaction)}">
+          ${formatAmount(transaction.amount, transaction.transactionType)}
+        </div>
+      </div>
+    `;
+  }
+
+  function createHistoryRowHTML(transaction) {
+    const date = new Date(transaction.createdAt).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    return `
+      <tr>
+        <td>${date}</td>
+        <td>${transaction.description}</td>
+        <td style="color: ${getAmountColor(transaction)}">
+          ${formatAmount(transaction.amount, transaction.transactionType)}
+        </td>
+      </tr>
+    `;
+  }
+});
+</script>
+
+  </body>
+</html>

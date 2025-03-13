@@ -7,28 +7,16 @@ public class Driver {
     private String password;
     private String licenseNo;
     private String vehicleType;
-    private String vehicleReg;
+    private String salt; 
 
-<<<<<<< HEAD
-    
-=======
-    // Constructor, Getters, and Setters
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
-    public Driver(String fullName, String email, String phone, String password, String licenseNo, String vehicleType, String vehicleReg) {
+    public Driver(String fullName, String email, String phone, String licenseNo, String vehicleType) {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
-        this.password = password;
         this.licenseNo = licenseNo;
         this.vehicleType = vehicleType;
-        this.vehicleReg = vehicleReg;
     }
 
-<<<<<<< HEAD
-
-=======
-    // Getters and Setters
->>>>>>> 72ae542dfd6364ed1a2fd6a2eb44d3e556980607
 
     public String getFullName() {
         return fullName;
@@ -59,7 +47,7 @@ public class Driver {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = password; 
     }
 
     public String getLicenseNo() {
@@ -78,12 +66,11 @@ public class Driver {
         this.vehicleType = vehicleType;
     }
 
-    public String getVehicleReg() {
-        return vehicleReg;
+    public String getSalt() {
+        return salt; 
     }
 
-    public void setVehicleReg(String vehicleReg) {
-        this.vehicleReg = vehicleReg;
+    public void setSalt(String salt) {
+        this.salt = salt; 
     }
-    
 }

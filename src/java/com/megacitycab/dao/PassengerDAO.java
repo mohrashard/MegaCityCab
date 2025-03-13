@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class PassengerDAO {
 
     public void savePassenger(Passenger passenger) {
-        String sql = "INSERT INTO Passengers (full_name, email, phone, password, nic, address) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Passengers (full_name, email, phone, password, nic, address, salt) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -22,6 +22,7 @@ public class PassengerDAO {
             pstmt.setString(4, passenger.getPassword());
             pstmt.setString(5, passenger.getNic());
             pstmt.setString(6, passenger.getAddress());
+            pstmt.setString(7, passenger.getSalt());
             pstmt.executeUpdate();
 
             System.out.println("Passenger saved successfully!");
@@ -49,6 +50,66 @@ public class PassengerDAO {
                     rs.getString("nic"),
                     rs.getString("address")
                 );
+                passenger.setPassword(rs.getString("password")); 
+                passenger.setSalt(rs.getString("salt"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving passenger: " + e.getMessage());
+        }
+
+        return passenger;
+    }
+
+    public Passenger getPassengerByPhone(String phone) {
+        String sql = "SELECT * FROM Passengers WHERE phone = ?";
+        Passenger passenger = null;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, phone);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                passenger = new Passenger(
+                    rs.getString("full_name"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("password"),
+                    rs.getString("nic"),
+                    rs.getString("address")
+                );
+                passenger.setPassword(rs.getString("password")); 
+                passenger.setSalt(rs.getString("salt"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving passenger: " + e.getMessage());
+        }
+
+        return passenger;
+    }
+
+    public Passenger getPassengerByNic(String nic) {
+        String sql = "SELECT * FROM Passengers WHERE nic = ?";
+        Passenger passenger = null;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, nic);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                passenger = new Passenger(
+                    rs.getString("full_name"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("password"),
+                    rs.getString("nic"),
+                    rs.getString("address")
+                );
+                passenger.setPassword(rs.getString("password")); 
+                passenger.setSalt(rs.getString("salt"));
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving passenger: " + e.getMessage());

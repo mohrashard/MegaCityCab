@@ -1,7 +1,4 @@
 package com.megacitycab.config;
-
-
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,14 +9,10 @@ public class DBConnection {
     private static final String USER = "sa";
     private static final String PASSWORD = "rash123";
 
-    
     public static Connection getConnection() {
         Connection conn = null;
-        try {
-           
+        try {         
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            
-            
             conn = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (ClassNotFoundException e) {
             System.out.println("JDBC Driver not found: " + e.getMessage());
@@ -28,8 +21,6 @@ public class DBConnection {
         }
         return conn;
     }
-
-   
     public static void main(String[] args) {
         try (Connection conn = getConnection()) {
             if (conn != null) {

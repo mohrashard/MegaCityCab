@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Passenger Profile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+        <link rel="stylesheet" href="css/passengerdp.css">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+
+    
+    
+    <style>
+        /* Notification styles */
+.status-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius, 4px);
+  color: white;
+  font-weight: 500;
+  box-shadow: var(--shadow, 0 2px 10px rgba(0, 0, 0, 0.1));
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeInDown 0.3s;
+  z-index: 1001;
+  max-width: 350px;
+}
+
+.status-message.success {
+  background-color: var(--success, #28a745);
+}
+
+.status-message.error {
+  background-color: var(--danger, #dc3545);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Error message styles for form validation */
+.error-message {
+  display: block;
+  color: var(--danger, #dc3545);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.error-input {
+  border-color: var(--danger, #dc3545) !important;
+}
+    </style>
+  </head>
+  <body>
+
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="images/megacitycablogo.png"
+          alt="Mega City Cab Logo"
+          class="logo-img"
+        />
+        Mega City Cab
+      </div>
+
+      <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="passenger_dashboard.html" class="nav-link">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passengerbooking.html" class="nav-link">
+                        <i class="fas fa-car"></i> Book a Ride
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passenger_bookings_history.html" class="nav-link">
+                        <i class="fas fa-history"></i> My Bookings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passengerwallet.html" class="nav-link">
+                        <i class="fas fa-credit-card"></i> Billing
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passenger_profile.html" class="nav-link active">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pass_help.html" class="nav-link">
+                        <i class="fas fa-question-circle"></i> Help
+                    </a>
+                </li>
+                                                                  <li class="nav-item">
+<a href="PassengerLogout" class="nav-link">
+    <i class="fas fa-sign-out-alt"></i> Log Out
+</a>
+
+                </li>
+            </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="profile-title">
+            <h2>User Profile</h2>
+            <p>Manage your personal information</p>
+          </div>
+        </div>
+
+        <div class="edit-mode-toggle">
+          <button class="edit-toggle" id="editToggle">
+            <i class="fas fa-pen"></i> Edit Profile
+          </button>
+        </div>
+
+        <form class="profile-form" id="profileForm">
+
+          <div class="form-group">
+            <label for="full_name">Full Name</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user input-icon"></i>
+              <input
+                type="text"
+                id="full_name"
+                class="form-control"
+                value="John Doe"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                value="john.doe@example.com"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <div class="input-wrapper">
+              <i class="fas fa-phone input-icon"></i>
+              <input
+                type="tel"
+                id="phone"
+                class="form-control"
+                value="+1 123-456-7890"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                value="••••••••"
+                disabled
+              />
+              <span class="password-toggle" id="passwordToggle">
+                <i class="fas fa-eye"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="nic">National ID</label>
+            <div class="input-wrapper">
+              <i class="fas fa-id-badge input-icon"></i>
+              <input
+                type="text"
+                id="nic"
+                class="form-control"
+                value="NIC-123456789"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-home input-icon"></i>
+              <input
+                type="text"
+                id="address"
+                class="form-control"
+                value="123 Main Street, Mega City, State 12345"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-actions hidden" id="formActions">
+            <button type="button" class="btn btn-outline" id="cancelBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script>
+   document.addEventListener('DOMContentLoaded', function() {
+    // Fetch profile data when page loads
+    fetchProfileData();
+    
+    // Set up form submission handler
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        updateProfile();
+    });
+    
+    // Toggle password visibility
+    document.getElementById("passwordToggle").addEventListener("click", function() {
+        const passwordField = document.getElementById("password");
+        const passwordIcon = this.querySelector("i");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            passwordIcon.classList.remove("fa-eye");
+            passwordIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordField.type = "password";
+            passwordIcon.classList.remove("fa-eye-slash");
+            passwordIcon.classList.add("fa-eye");
+        }
+    });
+
+    // Toggle edit mode
+document.getElementById("editToggle").addEventListener("click", function() {
+    const formInputs = document.querySelectorAll(".form-control");
+    const formActions = document.getElementById("formActions");
+    const editToggle = document.getElementById("editToggle");
+
+    // Toggle disabled state on all inputs except NIC
+    formInputs.forEach((input) => {
+        if (input.id !== "nic") {
+            // Keep NIC field disabled always
+            input.disabled = !input.disabled;
+        }
+    });
+
+    // Toggle visibility of form actions
+    formActions.classList.toggle("hidden");
+
+    // Update button text based on current state
+    if (editToggle.innerHTML.includes("Edit")) {
+        editToggle.innerHTML = '<i class="fas fa-times"></i> Cancel Editing';
+    } else {
+        editToggle.innerHTML = '<i class="fas fa-pen"></i> Edit Profile';
+        // If canceling, reset the form to original values
+        fetchProfileData();
+    }
+});
+});
+
+// Cancel button functionality
+document.getElementById("cancelBtn").addEventListener("click", function() {
+    // Reset form to original values
+    fetchProfileData();
+    
+    // Manually reset the edit toggle button
+    const editToggle = document.getElementById("editToggle");
+    editToggle.innerHTML = '<i class="fas fa-pen"></i> Edit Profile';
+    
+    // Disable all form inputs except NIC
+    const formInputs = document.querySelectorAll(".form-control");
+    formInputs.forEach((input) => {
+        if (input.id !== "nic") {
+            input.disabled = true;
+        }
+    });
+    
+    // Hide form actions
+    const formActions = document.getElementById("formActions");
+    formActions.classList.add("hidden");
+
+});
+
+// Function to fetch profile data from the server
+function fetchProfileData() {
+    fetch('/CabSystem/passengerProfile', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin' // Include session cookies
+    })
+    .then(response => {
+        if (!response.ok) {
+            if (response.status === 401) {
+                // Redirect to login page if not authenticated
+                window.location.href = '/login.html';
+                return;
+            }
+            throw new Error('Failed to fetch profile');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Fill form with profile data
+            const profile = data.profile;
+            document.getElementById('full_name').value = profile.full_name;
+            document.getElementById('email').value = profile.email;
+            document.getElementById('phone').value = profile.phone;
+            document.getElementById('nic').value = profile.nic;
+            document.getElementById('address').value = profile.address;
+            document.getElementById('password').value = '••••••••'; // Mask password
+        } else {
+            showError(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError('Failed to load profile data');
+    });
+}
+
+// Function to update profile
+function updateProfile() {
+    // Get form values
+    const fullName = document.getElementById('full_name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const address = document.getElementById('address').value;
+    
+    // Check if password field has been modified (not placeholder dots)
+    const passwordField = document.getElementById('password');
+    const password = passwordField.value !== '••••••••' ? passwordField.value : '';
+    
+    // Client-side validation
+    let hasErrors = false;
+    let errorMessages = {};
+    
+    // Validate full name
+    if (!fullName.trim()) {
+        errorMessages.full_name = 'Full name is required';
+        hasErrors = true;
+    }
+    
+    // Validate email
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!email.trim()) {
+        errorMessages.email = 'Email is required';
+        hasErrors = true;
+    } else if (!emailRegex.test(email)) {
+        errorMessages.email = 'Invalid email format';
+        hasErrors = true;
+    }
+    
+    // Validate Sri Lankan phone number
+    const phoneRegex = /^(\+94|0)[0-9]{9}$/;
+    if (!phone.trim()) {
+        errorMessages.phone = 'Phone number is required';
+        hasErrors = true;
+    } else if (!phoneRegex.test(phone)) {
+        errorMessages.phone = 'Invalid Sri Lankan phone number';
+        hasErrors = true;
+    }
+    
+    // Validate address
+    if (!address.trim()) {
+        errorMessages.address = 'Address is required';
+        hasErrors = true;
+    }
+    
+    // Validate password if provided
+    if (password) {
+        const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(.{8,})$/;
+        if (!passwordRegex.test(password)) {
+            errorMessages.password = 'Password must be at least 8 characters and contain 1 special character';
+            hasErrors = true;
+        }
+    }
+    
+    if (hasErrors) {
+        displayValidationErrors(errorMessages);
+        return;
+    }
+    
+    // Clear any previous error messages
+    clearValidationErrors();
+    
+    // Send the update request to the correct endpoint
+    fetch('/CabSystem/passengerProfile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'full_name': fullName,
+            'email': email,
+            'phone': phone,
+            'address': address,
+            ...(password ? {'password': password} : {})
+        }),
+        credentials: 'same-origin' // Include session cookies
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            showMessage('Profile updated successfully!', 'success');
+            
+            // Manually reset the button text and states
+            const editToggle = document.getElementById("editToggle");
+            editToggle.innerHTML = '<i class="fas fa-pen"></i> Edit Profile';
+            
+            // Disable all form inputs except NIC
+            const formInputs = document.querySelectorAll(".form-control");
+            formInputs.forEach((input) => {
+                if (input.id !== "nic") {
+                    input.disabled = true;
+                }
+            });
+            
+            // Hide form actions
+            const formActions = document.getElementById("formActions");
+            formActions.classList.add("hidden");
+        } else {
+            // Handle validation errors from server
+            if (data.errors) {
+                displayValidationErrors(data.errors);
+            } else {
+                showError(data.message || 'Failed to update profile');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError('An error occurred while updating your profile');
+    });
+}
+
+// Function to display validation errors
+function displayValidationErrors(errors) {
+    clearValidationErrors();
+    
+    Object.keys(errors).forEach(field => {
+        const inputField = document.getElementById(field);
+        if (inputField) {
+            // Add error class
+            inputField.classList.add('error-input');
+            
+            // Create and append error message
+            const errorSpan = document.createElement('span');
+            errorSpan.className = 'error-message';
+            errorSpan.textContent = errors[field];
+            
+            // Insert after the input wrapper
+            const inputWrapper = inputField.closest('.input-wrapper');
+            inputWrapper.insertAdjacentElement('afterend', errorSpan);
+        }
+    });
+}
+
+// Function to clear validation errors
+function clearValidationErrors() {
+    // Remove error class from inputs
+    document.querySelectorAll('.error-input').forEach(input => {
+        input.classList.remove('error-input');
+    });
+    
+    // Remove error messages
+    document.querySelectorAll('.error-message').forEach(span => {
+        span.remove();
+    });
+}
+
+// Function to show general message
+function showMessage(message, type) {
+    // Create message element if it doesn't exist
+    let messageElement = document.getElementById('statusMessage');
+    if (!messageElement) {
+        messageElement = document.createElement('div');
+        messageElement.id = 'statusMessage';
+        document.querySelector('.profile-form').prepend(messageElement);
+    }
+    
+    // Set message content and class
+    messageElement.textContent = message;
+    messageElement.className = `status-message ${type}`;
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        messageElement.remove();
+    }, 5000);
+}
+
+// Function to show error message (wrapper for showMessage)
+function showError(message) {
+    showMessage(message, 'error');
+}
+    </script>
+  </body>
+</html>

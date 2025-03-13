@@ -1,6 +1,7 @@
 package com.megacitycab.servlet;
 
 import com.megacitycab.config.DBConnection;
+import com.megacitycab.util.PasswordUtil;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +23,8 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String userType = request.getParameter("user-type");
 
-        String tableName = userType.equals("driver") ? "Drivers" : "Passengers"; 
+        String tableName = userType.equals("driver") ? "Drivers" : "Passengers";
+        String idColumn = userType.equals("driver") ? "driver_id" : "passenger_id"; 
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -36,21 +38,33 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-            String query = "SELECT * FROM " + tableName + " WHERE email = ? AND password = ?";
+            String query = "SELECT " + idColumn + ", password, salt, full_name FROM " + tableName + " WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, email);
-            stmt.setString(2, password);
-
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                HttpSession session = request.getSession();
-                session.setAttribute("user", email);
-                session.setAttribute("userType", userType);
+                int userId = rs.getInt(idColumn);
+                String storedHashedPassword = rs.getString("password");
+                String storedSalt = rs.getString("salt");
 
-                jsonResponse.put("success", true);
-                jsonResponse.put("userType", userType);
-                jsonResponse.put("message", "Login successful!");
+                if (PasswordUtil.verifyPassword(password, storedHashedPassword, storedSalt)) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", email);
+                    session.setAttribute("userType", userType);
+                    session.setAttribute("userId", userId); 
+
+                 
+                    String fullName = rs.getString("full_name");
+                    session.setAttribute("fullName", fullName);
+
+                    jsonResponse.put("success", true);
+                    jsonResponse.put("userType", userType);
+                    jsonResponse.put("message", "Login successful!");
+                } else {
+                    jsonResponse.put("success", false);
+                    jsonResponse.put("message", "Invalid email or password.");
+                }
             } else {
                 jsonResponse.put("success", false);
                 jsonResponse.put("message", "Invalid email or password.");
@@ -59,7 +73,7 @@ public class LoginServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             jsonResponse.put("success", false);
-            jsonResponse.put("message", "An error occurred.");
+            jsonResponse.put("message", "An error occurred: " + e.getMessage());
         }
 
         out.print(jsonResponse.toString());

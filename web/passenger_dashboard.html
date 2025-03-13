@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passenger Dashboard</title>
+    <link rel="stylesheet" href="css/passengerdashboard.css">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+          .nav-links a.active {
+        background: #fff9e6;
+            
+            color: #d4a700;
+            font-weight: bolder;
+        }
+                .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #f8d161;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-img {
+            width: 50px; 
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <nav class="sidebar">
+            <div class="logo">
+    <img src="images/megacitycablogo.png" alt="Mega City Cab Logo" class="logo-img">
+  Mega City Cab
+</div>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passengerbooking.html" class="nav-link">
+                        <i class="fas fa-car"></i> Book a Ride
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passenger_bookings_history.html" class="nav-link">
+                        <i class="fas fa-history"></i> My Bookings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passengerwallet.html" class="nav-link">
+                        <i class="fas fa-credit-card"></i> Billing
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passenger_profile.html" class="nav-link">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pass_help.html" class="nav-link">
+                        <i class="fas fa-question-circle"></i> Help
+                    </a>
+                </li>
+                                  <li class="nav-item">
+<a href="PassengerLogout" class="nav-link">
+    <i class="fas fa-sign-out-alt"></i> Log Out
+</a>
+
+                </li>
+            </ul>
+        </nav>
+
+       
+        <main class="main-content">
+            <header class="header">
+                <div class="greeting">Hello👋</div>
+               
+            </header>
+
+           
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total Rides</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Money Spent</div>
+                    <div class="stat-value">LKR 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Miles Traveled</div>
+                    <div class="stat-value">0</div>
+                </div>
+            </div>
+
+            <section class="quick-book">
+                <h2>Need a ride?</h2>
+                <p>Book instantly with our quick booking feature</p>
+                <form action="passengerbooking.html">
+    <button type="submit" class="quick-book-btn">Quick Book</button>
+</form>
+
+            </section>
+
+          <h2>Recent Bookings</h2>
+<table class="bookings-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="4" style="text-align: center; padding: 10px; font-style: italic; color: #888;">
+                No recent bookings available
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+        </main>
+    </div>
+
+    
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <h2>Logout Confirmation</h2>
+            <p>Are you sure you want to logout?</p>
+            <button class="quick-book-btn">Confirm</button>
+        </div>
+    </div>
+
+    <script>
+ 
+
+     
+        const quickBookBtn = document.querySelector('.quick-book-btn');
+        quickBookBtn.addEventListener('click', () => {
+            quickBookBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                quickBookBtn.style.transform = 'scale(1)';
+            }, 100);
+        });
+
+        
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+        
+        
+        
+        
+
+       
+    </script>
+</body>
+</html>

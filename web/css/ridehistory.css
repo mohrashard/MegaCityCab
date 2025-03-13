@@ -1,0 +1,502 @@
+
+        :root {
+            --primary-color: #d4a700;
+            --dark-bg: #282a2c;
+            --light-bg: #f5f5f5;
+            --card-bg: #faf7e8;
+            --text-color: #333333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #faefb5;
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+   
+        .sidebar {
+            width: 250px;
+            background: #282a2c;
+            padding: 20px;
+            color: #d4a700;
+            transform: translateX(0);
+            transition: var(--transition);
+        }
+        
+        .sidebar.collapsed {
+            transform: translateX(-250px);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background-color: #282a2c;
+            border-bottom: 2px solid #d4a700;
+        }
+        
+        .sidebar-header h2 {
+            color: #d4a700;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        
+        .nav-item {
+            margin-top: 30px;
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-item a {
+            color: #d4a700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #282a2c;
+        }
+        
+        .toggle-sidebar {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-bg);
+        }
+        
+        .filters {
+            background-color: #282a2c;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            color: var(--primary-color);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-group label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .filter-group select, .filter-group input {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    background: #f0f0f0;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+    font-size: 16px;
+}
+
+
+.filter-group select:focus, .filter-group input:focus {
+    box-shadow: 0 0 5px #d4a700, 
+                0 0 10px #d4a700;
+    border: 1px solid #d4a700;
+}
+
+        
+        .apply-filters {
+            padding: 8px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+        
+        .apply-filters:hover {
+            background-color: #ffe799;
+            color: #282a2c;
+        }
+        
+        .rides-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .ride-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .ride-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        .ride-header {
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ride-date {
+            font-weight: bold;
+        }
+        
+        .ride-vehicle {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .ride-content {
+            padding: 15px;
+        }
+        
+        .ride-info {
+            margin-bottom: 15px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            width: 30%;
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .info-value {
+            width: 70%;
+            word-break: break-word;
+        }
+        
+        .ride-locations {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .location {
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .location:before {
+            content: "";
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+        }
+        
+        .location:first-child:before {
+            background-color: #4CAF50;
+        }
+        
+        .location:not(:last-child):after {
+            content: "";
+            position: absolute;
+            left: -19px;
+            top: 17px;
+            width: 2px;
+            height: calc(100% - 12px);
+            background-color: #ddd;
+        }
+        
+        .location-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .location-address {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .earnings-details {
+            background-color: #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .earnings-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .earnings-row.total {
+            font-weight: bold;
+            border-top: 1px solid #000000;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+        
+        .ride-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+        
+        .pay-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .pay-btn:hover {
+            background-color: #b28900;
+        }
+        
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .payment-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .payment-paid {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .payment-pending {
+            background-color: #FF9800;
+            color: white;
+        }
+        
+    
+        .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    }
+    
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-weight: bold;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .payment-details {
+            margin-bottom: 20px;
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .payment-row.total {
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        .payment-methods {
+            margin-bottom: 20px;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .payment-method:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .payment-method.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(212, 167, 0, 0.1);
+        }
+        
+        .payment-method-radio {
+            accent-color: var(--primary-color);
+        }
+        
+        .wallet-balance {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .wallet-amount {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+        
+        .confirm-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .confirm-btn:hover {
+            background-color: #b28900;
+        }
+        
+        .cancel-btn {
+            background-color: #8a8a8a;
+            color: #333;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .alert-error {
+            background-color: #ffebee;
+            color: #d32f2f;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            display: none;
+        }
