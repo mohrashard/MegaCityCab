@@ -77,11 +77,11 @@ MegaCityCab is a comprehensive ride booking management system designed for Colom
    cd MegaCityCab
    ```
 
-3. Configure the database connection in `src/main/resources/database.properties`:
+3. Configure the database connection in `src/com/megacitycab/megacitycab`:
    ```
-   db.url=jdbc:sqlserver://localhost:1433;databaseName=MegaCityCab
-   db.username=your_username
-   db.password=your_password
+   jdbc:sqlserver://MOHAMED-VIVOBOO:1433;databaseName=megacitycab;encrypt=true;trustServerCertificate=true
+   db.username=sa
+   db.password=rash123
    ```
 
 4. Build the project:
