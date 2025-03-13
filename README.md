@@ -5,6 +5,8 @@
 ![Database](https://img.shields.io/badge/Database-MSSQL-brightgreen)
 ![Frontend](https://img.shields.io/badge/Frontend-AJAX-yellow)
 
+HTML | CSS | JavaScript
+
 ## 📋 Overview
 
 MegaCityCab is a comprehensive ride booking management system designed for Colombo City's popular cab service. The system automates and streamlines the process of booking rides, managing drivers, calculating fares, and handling payments. Built using Java Servlets with AJAX for the frontend and MSSQL for data storage, MegaCityCab replaces the previous manual system with an efficient, user-friendly digital solution.
