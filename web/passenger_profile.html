@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile | Mega City Cab</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+        <link rel="stylesheet" href="css/passengerdp.css">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+
+  </head>
+  <body>
+
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="images/megacitycablogo.png"
+          alt="Mega City Cab Logo"
+          class="logo-img"
+        />
+        Mega City Cab
+      </div>
+
+      <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="passenger_dashboard.html" class="nav-link active">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passengerbooking.html" class="nav-link">
+                        <i class="fas fa-car"></i> Book a Ride
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passenger_bookings_history.html" class="nav-link">
+                        <i class="fas fa-history"></i> My Bookings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passengerwallet.html" class="nav-link">
+                        <i class="fas fa-credit-card"></i> Billing
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passenger_profile.html" class="nav-link">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-question-circle"></i> Help
+                    </a>
+                </li>
+            </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="profile-title">
+            <h2>User Profile</h2>
+            <p>Manage your personal information</p>
+          </div>
+        </div>
+
+        <div class="edit-mode-toggle">
+          <button class="edit-toggle" id="editToggle">
+            <i class="fas fa-pen"></i> Edit Profile
+          </button>
+        </div>
+
+        <form class="profile-form" id="profileForm">
+
+          <div class="form-group">
+            <label for="full_name">Full Name</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user input-icon"></i>
+              <input
+                type="text"
+                id="full_name"
+                class="form-control"
+                value="John Doe"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                value="john.doe@example.com"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <div class="input-wrapper">
+              <i class="fas fa-phone input-icon"></i>
+              <input
+                type="tel"
+                id="phone"
+                class="form-control"
+                value="+1 123-456-7890"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                value="••••••••"
+                disabled
+              />
+              <span class="password-toggle" id="passwordToggle">
+                <i class="fas fa-eye"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="nic">National ID</label>
+            <div class="input-wrapper">
+              <i class="fas fa-id-badge input-icon"></i>
+              <input
+                type="text"
+                id="nic"
+                class="form-control"
+                value="NIC-123456789"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-home input-icon"></i>
+              <input
+                type="text"
+                id="address"
+                class="form-control"
+                value="123 Main Street, Mega City, State 12345"
+                disabled
+              />
+            </div>
+          </div>
+
+          <div class="form-actions hidden" id="formActions">
+            <button type="button" class="btn btn-outline" id="cancelBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script>
+      // Toggle password visibility
+      document
+        .getElementById("passwordToggle")
+        .addEventListener("click", function () {
+          const passwordField = document.getElementById("password");
+          const passwordIcon = this.querySelector("i");
+
+          if (passwordField.type === "password") {
+            passwordField.type = "text";
+            passwordIcon.classList.remove("fa-eye");
+            passwordIcon.classList.add("fa-eye-slash");
+          } else {
+            passwordField.type = "password";
+            passwordIcon.classList.remove("fa-eye-slash");
+            passwordIcon.classList.add("fa-eye");
+          }
+        });
+
+      // Toggle edit mode
+      document
+        .getElementById("editToggle")
+        .addEventListener("click", function () {
+          const formInputs = document.querySelectorAll(".form-control");
+          const formActions = document.getElementById("formActions");
+          const editToggle = document.getElementById("editToggle");
+
+          formInputs.forEach((input) => {
+            if (input.id !== "passenger_id") {
+              // Keep ID field disabled
+              input.disabled = !input.disabled;
+            }
+          });
+
+          formActions.classList.toggle("hidden");
+
+          if (editToggle.innerHTML.includes("Edit")) {
+            editToggle.innerHTML =
+              '<i class="fas fa-times"></i> Cancel Editing';
+          } else {
+            editToggle.innerHTML = '<i class="fas fa-pen"></i> Edit Profile';
+          }
+        });
+
+      // Cancel button functionality
+      document
+        .getElementById("cancelBtn")
+        .addEventListener("click", function () {
+          document.getElementById("editToggle").click();
+        });
+
+      // Form submission
+      document
+        .getElementById("profileForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Here you would send the data to your backend
+          alert("Profile updated successfully!");
+
+          // Reset form to view mode
+          document.getElementById("editToggle").click();
+        });
+    </script>
+  </body>
+</html>
