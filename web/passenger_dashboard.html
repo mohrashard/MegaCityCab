@@ -71,7 +71,7 @@
                     </a>
                 </li>
                                   <li class="nav-item">
-<a href="#" class="nav-link">
+<a href="PassengerLogout" class="nav-link">
     <i class="fas fa-sign-out-alt"></i> Log Out
 </a>
 
@@ -82,7 +82,7 @@
        
         <main class="main-content">
             <header class="header">
-                <div class="greeting">Hello, John! 👋</div>
+                <div class="greeting">Hello👋</div>
                
             </header>
 
@@ -90,50 +90,46 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Total Rides</div>
-                    <div class="stat-value">127</div>
+                    <div class="stat-value">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Money Spent</div>
-                    <div class="stat-value">$1,234</div>
+                    <div class="stat-value">LKR 0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Miles Traveled</div>
-                    <div class="stat-value">892</div>
+                    <div class="stat-value">0</div>
                 </div>
             </div>
 
             <section class="quick-book">
                 <h2>Need a ride?</h2>
                 <p>Book instantly with our quick booking feature</p>
-                <button class="quick-book-btn">Quick Book</button>
+                <form action="passengerbooking.html">
+    <button type="submit" class="quick-book-btn">Quick Book</button>
+</form>
+
             </section>
 
-          
-            <h2>Recent Bookings</h2>
-            <table class="bookings-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Today, 2:30 PM</td>
-                        <td>Home</td>
-                        <td>Office</td>
-                        <td><span class="status status-confirmed">Confirmed</span></td>
-                    </tr>
-                    <tr>
-                        <td>Yesterday</td>
-                        <td>Mall</td>
-                        <td>Home</td>
-                        <td><span class="status status-pending">Completed</span></td>
-                    </tr>
-                </tbody>
-            </table>
+          <h2>Recent Bookings</h2>
+<table class="bookings-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="4" style="text-align: center; padding: 10px; font-style: italic; color: #888;">
+                No recent bookings available
+            </td>
+        </tr>
+    </tbody>
+</table>
+
         </main>
     </div>
 
