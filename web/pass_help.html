@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support – Mega City Cab System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">        
+    <link rel="stylesheet" href="css/passengerdp.css">
+    <link rel="website icon" href="images/megacitycablogo.png" type="png">
+    <style>
+        :root {
+            --border: #e0e0e0;
+            --primary: #d4a700;
+            --primary-light: #f8d161;
+            --background: #faefb5;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #faefb5;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: #282a2c;
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+            height: 100vh;
+            position: fixed;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #fff9e6;
+            color: #d4a700;
+            font-weight: bolder;
+        }
+        
+        .nav-links a.active {
+            background: #fff9e6;
+            color: #d4a700;
+            font-weight: bolder;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #f8d161;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: auto;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .help-section {
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .help-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+        }
+        
+        .feature-item i {
+            color: #5cb85c;
+            margin-top: 0.25rem;
+        }
+        
+        .ui-note, .animation-note {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-light);
+            padding: 0.75rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .animation-note {
+            border-left-color: #6f42c1;
+        }
+        
+        .ui-note i, .animation-note i {
+            font-size: 1rem;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease forwards;
+        }
+        
+        /* FAQ Accordion */
+        .faq-container {
+            margin-top: 1.5rem;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid #eee;
+            margin-bottom: 0.75rem;
+        }
+        
+        .faq-question {
+            padding: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .faq-question:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .faq-answer {
+            padding: 0 0.75rem 0.75rem;
+            display: none;
+            line-height: 1.5;
+        }
+        
+        .faq-question.active + .faq-answer {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        /* Support Chat Button */
+        .chat-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .chat-button:hover {
+            transform: scale(1.1);
+            background-color: #c09600;
+        }
+
+        /* Progress bar for booking */
+        .progress-container {
+            margin: 1.5rem 0;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #e3a200, #ffd866);
+            border-radius: 10px;
+            transition: width 1.5s ease;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(212, 167, 0, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+       <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="images/megacitycablogo.png"
+          alt="Mega City Cab Logo"
+          class="logo-img"
+        />
+        Mega City Cab
+      </div>
+
+      <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="passenger_dashboard.html" class="nav-link">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passengerbooking.html" class="nav-link">
+                        <i class="fas fa-car"></i> Book a Ride
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passenger_bookings_history.html" class="nav-link">
+                        <i class="fas fa-history"></i> My Bookings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passengerwallet.html" class="nav-link">
+                        <i class="fas fa-credit-card"></i> Billing
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="passenger_profile.html" class="nav-link ">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pass_help.html" class="nav-link active">
+                        <i class="fas fa-question-circle"></i> Help
+                    </a>
+                </li>
+                                                   <li class="nav-item">
+<a href="PassengerLogout" class="nav-link">
+    <i class="fas fa-sign-out-alt"></i> Log Out
+</a>
+
+                </li>
+            </ul>
+    </nav>
+
+    <div class="main-content">
+        <h1 class="page-title slide-in"><i class="fas fa-headset"></i> Help & Support – Passenger Guide</h1>
+        
+
+        
+        <section class="help-section slide-in" style="animation-delay: 0.1s;">
+            <h2 class="section-title"><i class="fas fa-flag-checkered"></i> 1. Booking a Ride 🏁</h2>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Enter Details:</strong> Pickup & Drop Location, Date & Time, Payment Method.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Confirm Booking:</strong> Submit your request & wait for an assigned driver.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Real-time Updates:</strong> Get instant notifications on ride status.
+                    </div>
+                </li>
+            </ul>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="bookingProgress"></div>
+            </div>
+            
+      
+        </section>
+        
+        <section class="help-section slide-in" style="animation-delay: 0.2s;">
+            <h2 class="section-title"><i class="fas fa-calendar-alt"></i> 2. Managing Your Bookings 📅</h2>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>View Bookings:</strong> Check driver details, status, and fare.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Modify or Cancel:</strong> Change ride details before assignment.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Complete Payment:</strong> Pay easily via Wallet, Card, or Cash.
+                    </div>
+                </li>
+            </ul>
+    
+        </section>
+        
+        <section class="help-section slide-in" style="animation-delay: 0.3s;">
+            <h2 class="section-title"><i class="fas fa-credit-card"></i> 3. Wallet & Payments 💳</h2>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Check Balance:</strong> See your wallet balance at a glance.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Top-Up Wallet:</strong> Add funds using a secure payment gateway.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Manage Cards:</strong> Add, edit, or delete your saved payment methods.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>View Transactions:</strong> Keep track of your payments & ride history.
+                    </div>
+                </li>
+            </ul>
+   
+        </section>
+        
+        <section class="help-section slide-in" style="animation-delay: 0.4s;">
+            <h2 class="section-title"><i class="fas fa-phone-alt"></i> 4. Contacting Support 📞</h2>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Need help?</strong> Contact your assigned driver from the ride details page.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Support Team:</strong> Chat with us for booking or payment issues.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>FAQs Section:</strong> Find answers instantly with a search bar.
+                    </div>
+                </li>
+            </ul>
+            
+   
+            
+            <div class="faq-container">
+                <h3 style="margin-bottom: 1rem;">Frequently Asked Questions</h3>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How do I cancel my ride?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        You can cancel your ride by going to "My Bookings" section, selecting the ride you wish to cancel, and clicking the "Cancel" button. Please note that cancellation fees may apply if the driver is already on their way.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How do I add money to my wallet?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        To add money to your wallet, navigate to the "Billing" section, click on "Top-Up Wallet," enter the amount you wish to add, select your preferred payment method, and confirm the transaction.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What if my driver doesn't arrive?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        If your driver doesn't arrive within the estimated time, you can contact them directly from the ride details page. If you still face issues, use the support chat button to connect with our customer service team for immediate assistance.
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="chat-button pulse">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+    </div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.getElementById('bookingProgress').style.width = '100%';
+            }, 500);
+            
+
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+       
+                    question.classList.toggle('active');
+  
+                    const icon = question.querySelector('i');
+                    if (question.classList.contains('active')) {
+                        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                    } else {
+                        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    }
+                });
+            });
+            
+            
+            const chatButton = document.querySelector('.chat-button');
+            
+            chatButton.addEventListener('click', () => {
+                alert('Support chat would open here in the actual implementation.');
+            });
+        });
+    </script>
+</body>
+</html>
