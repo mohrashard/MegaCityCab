@@ -1,6 +1,6 @@
 # MegaCityCab - Ride Booking Management System
 
-![MegaCityCab](https://img.shields.io/badge/MegaCityCab-v1.0-blue)
+![MegaCityCab](https://img.shields.io/badge/MegaCityCab-v6.0-blue)
 ![Java](https://img.shields.io/badge/Java-Servlets-orange)
 ![Database](https://img.shields.io/badge/Database-MSSQL-brightgreen)
 ![Frontend](https://img.shields.io/badge/Frontend-AJAX-yellow)
