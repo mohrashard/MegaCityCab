@@ -56,12 +56,12 @@
                 <div class="cards-grid">
                     <div class="card glass">
                         <h3>Today's Earnings</h3>
-                        <h2>$124.50</h2>
-                        <p>3 Rides Completed</p>
+                        <h2>LKR 0</h2>
+                        <p>0 Rides Completed</p>
                     </div>
                     <div class="card glass">
                         <h3>Rating</h3>
-                        <h2>4.8 ⭐</h2>
+                        <h2>0 ⭐</h2>
                         <p>Last 7 days</p>
                     </div>
                     <div class="card glass">
@@ -88,19 +88,19 @@
                     <div class="earnings-summary">
                         <div class="summary-card">
                             <h4>Total Earnings</h4>
-                            <p>$3,245.50</p>
+                            <p>LKR 0</p>
                         </div>
                         <div class="summary-card">
                             <h4>Average Daily</h4>
-                            <p>$115.91</p>
+                            <p>LKR 0</p>
                         </div>
                         <div class="summary-card">
                             <h4>Best Day</h4>
-                            <p>$189.00</p>
+                            <p>LKR 0</p>
                         </div>
                         <div class="summary-card">
                             <h4>Total Rides</h4>
-                            <p>142</p>
+                            <p>0</p>
                         </div>
                     </div>
                 </div>
@@ -215,64 +215,75 @@ document.addEventListener('DOMContentLoaded', function() {
         return data;
     }
 
-    function initializeEarningsChart() {
-        const ctx = document.getElementById('earningsChart').getContext('2d');
-        const earningsData = generateEarningsData();
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: earningsData.map(d => d.date),
-                datasets: [{
-                    label: 'Daily Earnings ($)',
-                    data: earningsData.map(d => d.earnings),
-                    borderColor: '#d4a700',
-                    backgroundColor: 'rgba(212, 167, 0, 0.2)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: '#d4a700',
-                    pointBorderColor: '#d4a700'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: '#d4a700',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#282a2c',
-                        borderWidth: 1,
-                        padding: 10,
-                        displayColors: false,
-                        callbacks: {
-                            label: function(context) {
-                                return `$${context.parsed.y.toFixed(2)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: { grid: { display: false } },
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(212, 167, 0, 0.1)' },
-                        ticks: {
-                            color: '#000',
-                            callback: function(value) { return '$' + value; }
+function initializeEarningsChart() {
+    const ctx = document.getElementById('earningsChart').getContext('2d');
+    
+
+    const earningsData = [
+        { date: 'Mon', earnings: 0 },
+        { date: 'Tue', earnings: 0 },
+        { date: 'Wed', earnings: 0 },
+        { date: 'Thu', earnings: 0 },
+        { date: 'Fri', earnings: 0 },
+        { date: 'Sat', earnings: 0 },
+        { date: 'Sun', earnings: 0 }
+    ];
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: earningsData.map(d => d.date),
+            datasets: [{
+                label: 'Daily Earnings (LKR)',
+                data: earningsData.map(d => d.earnings),
+                borderColor: '#d4a700',
+                backgroundColor: 'rgba(212, 167, 0, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#d4a700',
+                pointBorderColor: '#d4a700'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#d4a700',
+                    titleColor: '#ffffff',
+                    bodyColor: '#ffffff',
+                    borderColor: '#282a2c',
+                    borderWidth: 1,
+                    padding: 10,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `LKR ${context.parsed.y.toFixed(2)}`;
                         }
                     }
                 }
+            },
+            scales: {
+                x: { grid: { display: false } },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(212, 167, 0, 0.1)' },
+                    ticks: {
+                        color: '#000',
+                        callback: function(value) { return 'LKR ' + value; }
+                    }
+                }
             }
-        });
-    }
+        }
+    });
+}
+
 
     initializePage();
 });
